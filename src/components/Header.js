@@ -1,4 +1,8 @@
 import styled from "styled-components";
+import "../css/modal.css";
+import LoginForm from "../pages/LoginForm.js";
+import { useState } from "react";
+import SignupForm from "../pages/SignupForm.js";
 
 const HeaderWrapper = styled.div`
     display : flex;
@@ -8,12 +12,13 @@ const HeaderWrapper = styled.div`
     display : flex;
     justify-content : center;
     background-color : #FFFEFB;
+    position : relative;
 
     & > div{
         display : flex;
         justify-content : space-between;
         align-items : center;
-        width : calc(100vw - 60px);
+        width : calc(100vw - 100px);
         height : 104px;
     }
 
@@ -40,7 +45,7 @@ const HeaderWrapper = styled.div`
             }
         }
 }
-    & > div > button{
+    & > div > div > button{
         border-radius:8px;
         border : none;
         padding:0; 
@@ -48,8 +53,8 @@ const HeaderWrapper = styled.div`
         cursor:pointer;
         width : 60px;
         height : 40px;
-        background : linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
-
+        background-color : #FF8904;
+        opacity : 0.9;
         & > p{
             color : #7C290C;
         }
@@ -57,6 +62,18 @@ const HeaderWrapper = styled.div`
 `
 
 function Header(){
+
+    const [isSignup, setIsSignup] = useState(false);
+    const [isLogin, setIsLogin] = useState(false);
+
+    const handleIsLogin = () => {setIsLogin(true)}
+    const handleIsSignup = () => {setIsSignup(true)}
+    const handleOverlay = () => {
+        setIsLogin(false);
+        setIsSignup(false)
+    }
+    
+
     return(
         <header>
             <HeaderWrapper>
@@ -68,11 +85,29 @@ function Header(){
                             <p>원하는 재료로 직접 만들어 보세요</p>
                         </div>
                     </div>
-                    <button>
+                    <div className="logincontainer">
+                    <button onClick={handleIsLogin}>
                         <p>로그인</p>
                     </button>
+                    <button onClick={handleIsSignup}>
+                        <p>회원가입</p>
+                    </button>
+                    </div>
                 </div>
             </HeaderWrapper>
+            {isLogin &&
+                <div className="loginmodal">
+                    <LoginForm></LoginForm>
+                </div>
+            }
+            {isSignup &&
+                <div className="loginmodal">
+                    <SignupForm></SignupForm>
+                </div>
+            }
+            {(isLogin || isSignup) &&
+            <div className="overlay" onClick={handleOverlay}></div>
+            }
         </header>
     );
 }
