@@ -95,6 +95,7 @@ function Header(){
                     </div>
                 </div>
             </HeaderWrapper>
+<<<<<<< HEAD
             {isLogin &&
                 <div className="loginmodal">
                     <LoginForm></LoginForm>
@@ -108,6 +109,9 @@ function Header(){
             {(isLogin || isSignup) &&
             <div className="overlay" onClick={handleOverlay}></div>
             }
+=======
+
+>>>>>>> 1f8e5180a7b68e66ede93b052526c3448e6a1664
         </header>
     );
 }
