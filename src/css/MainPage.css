@@ -57,6 +57,7 @@
 }
 
 .MP_IngredientTypeList{
+
     overflow-y: auto;
     padding-right: 12px;
 }
@@ -134,8 +135,27 @@
     padding: 12px;
     box-sizing: border-box;
     
-    min-width: 40%;
+    min-width: 34%;
+
+    transform-origin: left;
+    transition-duration: 0.1s;
+    transition-property: transform;
+    
+    cursor: pointer;
 }
+
+
+.MP_IngredientBox:hover{
+    background-color: #FFF7ED;
+    border: 2px solid #FFBD75;
+    transform: scale(1.05); /* 스케일 적용 */
+}
+
+.MP_IngredientBox:hover .MP_TypeAddBtn{
+    background-color: #FFD7A8;
+}
+
+
 .MP_IngredientBox_empty{
     align-items: center;
     flex: 1;
@@ -222,9 +242,22 @@
 .MP_SandwichTopBUttonIconBox{
     border: 1px solid #FFEDD4;
     border-radius: 8px;
+    box-sizing: border-box;
 
     padding: 8px;
+    
+    cursor: pointer;
+
+    
+    transition-duration: 0.025s;
 }
+
+.MP_SandwichTopBUttonIconBox:hover{    
+    scale: 1.2;
+    background-color: #FFF7ED;
+    border: 1px solid #FFBD75;
+}
+
 
 .MP_SandwichTopButtonIcon{
     width: 16px;
@@ -298,7 +331,7 @@
     gap: 12px;
 
     background-color: #FEFAEA;
-    padding: 12px 24px 12px 12px;
+    padding: 12px 12px 12px 12px;
     
     flex: 1; /* 남은 공간을 전부 차지 */
     overflow-y: auto; /* 내용이 많으면 스크롤 */
@@ -311,6 +344,7 @@
     align-items: center;
     border-radius: 12px;
     border: 1px solid #FFEDD4;
+    box-sizing: border-box;
 
     height: 60px;
 
@@ -318,7 +352,13 @@
     padding: 12px;
     box-sizing: border-box;
     
-    min-width: 40%;
+    cursor: pointer;
+}
+
+
+.MP_CartItemBox:hover{
+    background-color: #FFF7ED;
+    border: 2px solid #F54A00;
 }
 
 .MP_CartItemRemove{
@@ -368,13 +408,24 @@
     margin: 12px 12px 0px 12px;
     color: white;
 
+    border: 1px solid #FFEDD4;
     border-radius: 12px;
     background: linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
 
     height: 48px;
+    box-sizing: border-box;
+
+    transition-property: scale;
+    transition-duration: 0.025s;
+
+    cursor: pointer;
 }
 
-
+.MP_OrderButton:hover{    
+    scale: 1.05;
+    background: linear-gradient(90deg, #F54B00 0%, #E27000 100%);
+    font-weight: 500;
+}
 
 
 
