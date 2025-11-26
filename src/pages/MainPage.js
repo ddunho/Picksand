@@ -1,12 +1,10 @@
 import '../css/MainPage.css'
-import Header from '../components/Header.js'
 
 
 function MainPage() {
 
     return(
         <div className='MP_noSelect'>
-            <Header></Header>
 
             <main className='MP_main MP_HorizontalContainer'>
 
