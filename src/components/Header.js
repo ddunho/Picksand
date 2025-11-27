@@ -4,6 +4,8 @@ import LoginForm from "../pages/LoginForm.js";
 import "../css/SignupModal.css";
 import { useState } from "react";
 import SignupForm from "../pages/SignupForm.js";
+import { Link } from "react-router-dom";
+
 
 const HeaderWrapper = styled.div`
     display : flex;
@@ -23,9 +25,12 @@ const HeaderWrapper = styled.div`
         height : 104px;
     }
 
-    & > div > div:first-child{
+    & > div > a{
         display : flex;
         gap : 4px;
+        cursor : pointer;
+        text-decoration : none;
+
         & > img{
             width : 60px;
             height : 60px;
@@ -79,13 +84,13 @@ function Header(){
         <header>
             <HeaderWrapper>
                 <div>
-                    <div>
+                    <Link to="/">
                         <img src="/images/sandwichlogo.png" alt="로고"></img>
                         <div>
                             <p>픽샌</p>
                             <p>원하는 재료로 직접 만들어 보세요</p>
                         </div>
-                    </div>
+                    </Link>
                     <div className="logincontainer">
                     <button onClick={handleIsLogin}>
                         <p>로그인</p>
