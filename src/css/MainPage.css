@@ -4,12 +4,12 @@
     background-color: #FEFAEA;
     justify-content: space-between;
     box-sizing: border-box;
-    gap:33px;
+    gap:32px;
 
     min-width: 100vw;
-    min-height: calc(100vh - 104px);
+    min-height: calc(100vh - 208px);
 
-    padding: 50px 50px 50px 50px;
+    padding: 32px 50px 32px 50px;
 }
 
 .MP_HorizontalContainer {
@@ -50,10 +50,7 @@
     border: 1px solid #FFEDD4;
 
     padding: 25px 25px 25px 25px;
-    height: calc(100vh - 104px - 200px);
-}
-
-.MP_IngredientsContainer{
+    height: calc(100vh - 104px - 224px);
 }
 
 .MP_IngredientTypeList{
@@ -67,8 +64,6 @@
     margin-bottom: 12px;
 }
 
-.MP_IngredientsTypeContainer{
-}
 
 .MP_IngredientsHead{
     align-items: center;
@@ -135,24 +130,73 @@
     padding: 12px;
     box-sizing: border-box;
     
-    min-width: 34%;
+    min-width: max(34%,125px);
 
-    transform-origin: left;
     transition-duration: 0.1s;
     transition-property: transform;
     
     cursor: pointer;
+    container-type: inline-size;
+    container-name: ingredientCard;;
 }
-
+@container ingredientCard (max-width: 120px) {
+    .MP_TypeAddBtn {
+        opacity: 0 !important;
+    }
+}
 
 .MP_IngredientBox:hover{
     background-color: #FFF7ED;
     border: 2px solid #FFBD75;
-    transform: scale(1.05); /* 스케일 적용 */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    padding: 11px;
+}
+
+.MP_SoldOut{
+    position: relative;
+    border: 1px dotted #FFBD75;
+    pointer-events: none;
+
+}
+
+.MP_SoldOut::after{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    left:0px;
+
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+
+    background: linear-gradient(45deg,
+    rgba(255, 0, 0, 0.33) 25%, transparent 0, transparent 50%,
+    rgba(255, 0, 0, 0.33) 0, rgba(255, 0, 0, 0.33) 75%, transparent 0);
+    -webkit-background-size:25px 25px;
+    background-size: 25px 25px;
+
+    content:"- SOLD OUT -";
+
+    font-size: 18px;
+    font-style: italic;
+    font-weight: bold;
+    color:#7C290C;
+
+    background-color: #ffffff90;
+}
+
+.MP_SoldOut *{
+    color : grey;
+}
+.MP_SoldOut .MP_TypeAddBtn{
+    display: none;
 }
 
 .MP_IngredientBox:hover .MP_TypeAddBtn{
     background-color: #FFD7A8;
+    right:11px;
 }
 
 
@@ -189,9 +233,6 @@
     border: 2px solid #DCC7A1;
 }
 
-.MP_TypeTextBox{
-}
-
 .MP_TypeAddBtn{
     background-color: #FFEDD4;
     border-radius: 999px;
@@ -207,6 +248,10 @@
 
     position: absolute;
     right:12px;
+
+    opacity: 1;
+    transition-duration: 0.25s;
+    transition-property: opacity;
 }
 .MP_TypeAddBtn_InnerText{
     position: absolute;
@@ -224,9 +269,11 @@
     font-weight:500;
 }
 
-
-
 .MP_SandwichContainer{
+    
+
+    position: relative;
+    overflow:hidden;
 }
 
 .MP_SandwichTop{
@@ -256,6 +303,7 @@
     scale: 1.2;
     background-color: #FFF7ED;
     border: 1px solid #FFBD75;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -265,10 +313,12 @@
 }
 
 .MP_SandwichMain{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
     width: 100%;
     height: 100%;
-
-
 }
 
 .MP_SandwichMain_emptyDisplay{
@@ -359,6 +409,11 @@
 .MP_CartItemBox:hover{
     background-color: #FFF7ED;
     border: 2px solid #F54A00;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    padding: 11px;
+}
+.MP_CartItemBox:hover .MP_CartItemRemove{
+    right: 11px;
 }
 
 .MP_CartItemRemove{
@@ -393,9 +448,6 @@
     font-weight:500;
 }
 
-.MP_CartBottom{
-}
-
 .MP_ingredient_total{
     padding: 12px;
     justify-content: space-between;
@@ -416,7 +468,7 @@
     box-sizing: border-box;
 
     transition-property: scale;
-    transition-duration: 0.025s;
+    transition-duration: 0.04s;
 
     cursor: pointer;
 }
@@ -425,9 +477,63 @@
     scale: 1.05;
     background: linear-gradient(90deg, #F54B00 0%, #E27000 100%);
     font-weight: 500;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 
+
+.MP_Footer{
+    
+    position: fixed;
+    align-items: center;
+    justify-content: space-around;
+    left:0px;
+    bottom: 0px;
+    right:0px;
+
+    height: 104px;
+
+    padding: 0px 50px 0px 50px;
+
+    background-color : #FFFEFB;
+}
+
+.MP_FooterText_Large{
+    font-size: 24px;
+}
+
+.MP_FooterText_Normal{
+    font-size: 18px;
+
+    max-width: 220px;
+}
+
+.MP_Footer_Box{
+    gap: 4px;
+
+    border: 1px solid #FFEDD4;
+    background-color: #FEFAEA;
+
+    padding: 12px;
+    box-sizing: border-box;
+}
+.MP_Footer_Box:hover{
+    background-color: #FFF7ED;
+    border: 2px solid #FFBD75;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+
+    padding: 11px;
+}
+
+.MP_Footer_Img{
+    width: 60px;
+    height: 60px;
+}
+.MP_Footer_TextBox{
+    justify-content: center;
+    gap: 4px;
+
+}
 
 .MP_noSelect {
     -webkit-user-select: none; /* Chrome, Safari */
@@ -435,3 +541,9 @@
     -ms-user-select: none;     /* IE10+ */
     user-select: none;         /* 표준 */
 }
+
+.MP_noPointerEv{
+    pointer-events: none;
+}
+
+
