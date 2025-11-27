@@ -172,8 +172,8 @@
     border-radius: 12px;
 
     background: linear-gradient(45deg,
-    rgba(255, 0, 0, 0.33) 25%, transparent 0, transparent 50%,
-    rgba(255, 0, 0, 0.33) 0, rgba(255, 0, 0, 0.33) 75%, transparent 0);
+    #f54a0080 25%, transparent 0, transparent 50%,
+    #f54a0080 0, #f54a0080 75%, transparent 0);
     -webkit-background-size:25px 25px;
     background-size: 25px 25px;
 
@@ -279,6 +279,9 @@
 .MP_SandwichTop{
     align-items: center;
     justify-content: space-between;
+    background-color: #fffefb50;
+
+    z-index: 50;
 }
 
 .MP_SandwichTopButtonBox{
@@ -287,6 +290,7 @@
 }
 
 .MP_SandwichTopBUttonIconBox{
+    background-color: #fffefb;
     border: 1px solid #FFEDD4;
     border-radius: 8px;
     box-sizing: border-box;
@@ -295,7 +299,6 @@
     
     cursor: pointer;
 
-    
     transition-duration: 0.025s;
 }
 
