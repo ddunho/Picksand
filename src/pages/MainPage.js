@@ -1,7 +1,141 @@
 import '../css/MainPage.css'
+import { useState, useRef, useEffect } from 'react';
+import { useSpring, animated } from '@react-spring/web'
 
+function DropIngredient({item, index}) {
+
+  const xAlter = useRef(Math.random() * 30 - 15).current; 
+  let yAlter = 75 - (index * 25);
+
+  const styles = useSpring({
+    from: { opacity: 0, x: xAlter, y: -750},
+    to: { opacity: 1, x : xAlter, y: yAlter},
+    delay: 0 + (item.addDelay ?? 0), 
+    config: { mass: 1, tension: 270, friction: 26, bounce: 4 }, // 스프링 물리 설정
+  })
+
+  return (
+    <animated.img
+      src={`${process.env.PUBLIC_URL}/images/sandwichimg/${item.img}`}
+      alt={item.name}
+      style={{ ...styles, position: "absolute", zIndex: index}} 
+      className={'MP_noPointerEv'}
+    />
+  );
+}
+
+function CartIngredient({item, index, handleRemoveIngredient}) {
+
+  return (
+        <div className={`MP_CartItemBox MP_HorizontalContainer 
+            ${item.uid === 'Ind_uid:first' ? 'MP_noPointerEv' : ''}
+            ${item.uid === 'Ind_uid:last' ? 'MP_noPointerEv' : ''}`}
+            onClick={() => handleRemoveIngredient(item)}>
+
+            <div className='MP_CartItemIcon'></div>
+            <div className='MP_CartItemTextBox MP_VerticalContainer'>
+                <div className='MP_NormalText MP_textColor1'>{item.name} {index}</div>
+                <div className='MP_NormalText MP_textColor2'>1,500원</div>
+            </div>
+            {(item.uid !== 'Ind_uid:first' && item.uid !== 'Ind_uid:last') && 
+                <div className='MP_CartItemRemove'>X</div>}
+        </div>
+  );
+}
 
 function MainPage() {
+
+    const [index,setIndex] = useState("index");
+    const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const lastSelectedAry = useRef([[],[],[],[],[]]);
+
+    useEffect(()=>{
+        setIndex(0);
+    },[])
+
+    function addToLastSelected()
+    {
+        lastSelectedAry.current.push(selectedIngredients.slice());
+    }
+
+    function handleAddIngredient(ingredient) {
+
+        if(selectedIngredients.length === 0)
+        {
+            setSelectedIngredients(prev => [...prev, ind[0]]);
+        }
+
+        if(ingredient.uid === '')
+        {
+            ingredient.addDelay = 150;
+            ingredient.uid = 'Ind_uid'+index;
+        }
+
+        setIndex(index+1);
+
+        //
+        addToLastSelected();
+        setSelectedIngredients(prev => [...prev, ingredient]);
+    };
+
+    function handleUndoIngredient() {
+
+        setSelectedIngredients([...lastSelectedAry.current.pop()]);
+    }
+
+    function handleResetIngredient() {
+
+        if(selectedIngredients.length === 0)
+        {
+            return;
+        }
+        
+        //
+        addToLastSelected();
+        setSelectedIngredients([]);
+    }
+
+    function handleRemoveIngredient(item) {
+
+        if(item.uid === 'Ind_uid:first' 
+            || item.uid === 'Ind_uid:last')
+        {
+            return;
+        }
+
+        //
+
+        let newAry = [...selectedIngredients];
+
+        for(let i = 0; i < newAry.length; i++)
+        {
+            if(newAry[i].uid === item.uid)
+            {
+                newAry.splice(i, 1);
+                break;
+            }
+        }
+
+        if(newAry.length === 1)
+        {
+            handleResetIngredient();
+        }
+        else
+        {
+            addToLastSelected();
+            setSelectedIngredients(newAry);
+        }
+    }
+
+    const ind = [
+        { uid : 'Ind_uid:first', id: 0, name: "빵", img: "Bread.png" },
+        { uid : '', id: 1, name: "양상추", img: "Lettuce.png" },
+        { uid : '', id: 2, name: "올리브", img: "Olive.png" },
+        { uid : '', id: 3, name: "피클", img: "Pickle.png" },
+        { uid : '', id: 4, name: "토마토", img: "Tomato.png"},
+        { uid : 'Ind_uid:last', id: 5, name: "빵", img: "Bread.png" , addDelay: 500},
+    ];
+
 
     return(
         <div className='MP_noSelect'>
@@ -21,7 +155,8 @@ function MainPage() {
                                 <div className='MP_NormalText MP_textColor3'>2가지</div>
                             </div>
                             <div className='MP_IngredientList'>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
+                                <div className='MP_IngredientBox MP_HorizontalContainer'
+                                    onClick={() => handleAddIngredient(ind[1])}>
                                     <div className='MP_TypeImageBox MP_typeColor_Bread1'></div>
                                     <div className='MP_TypeTextBox MP_VerticalContainer'>
                                         <div className='MP_NormalText MP_textColor1'>호밀빵</div>
@@ -32,7 +167,7 @@ function MainPage() {
                                     </div>
                                 </div>
                                 
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
+                                <div className='MP_IngredientBox MP_HorizontalContainer MP_SoldOut '>
                                     <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
                                     <div className='MP_TypeTextBox MP_VerticalContainer'>
                                         <div className='MP_NormalText MP_textColor1'>화이트빵</div>
@@ -43,7 +178,8 @@ function MainPage() {
                                     </div>
                                 </div>
                                 
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
+                                <div className='MP_IngredientBox MP_HorizontalContainer'
+                                    onClick={() => handleAddIngredient(ind[3])}>
                                     <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
                                     <div className='MP_TypeTextBox MP_VerticalContainer'>
                                         <div className='MP_NormalText MP_textColor1'>화이트빵</div>
@@ -52,8 +188,6 @@ function MainPage() {
                                     <div className='MP_TypeAddBtn'>
                                         <div className='MP_TypeAddBtn_InnerText'>+</div>
                                     </div>
-                                </div>
-                                <div className='MP_IngredientBox_empty'>
                                 </div>
                             </div>
                         </div>
@@ -184,29 +318,40 @@ function MainPage() {
                 </div>
 
                 <div className='MP_SandwichContainer MP_MainContainers MP_VerticalContainer'>
+              
                     <div className='MP_SandwichTop MP_HorizontalContainer'>
+
                         <div className='MP_LargeText MP_textColor1'>🥪 샌드위치 미리보기</div>
 
                         <div className='MP_SandwichTopButtonBox'>
-                            <div className='MP_SandwichTopBUttonIconBox'>
+                            <div className='MP_SandwichTopBUttonIconBox'
+                                    onClick={() => handleUndoIngredient()}>
                                 <img className='MP_SandwichTopButtonIcon' src={`${process.env.PUBLIC_URL}/images/BTN_undo.png`} alt='BTN_undo.png'/>
                             </div>
-                            <div className='MP_SandwichTopBUttonIconBox'>
+                            <div className='MP_SandwichTopBUttonIconBox'
+                                    onClick={() => handleResetIngredient()}>
                                 <img className='MP_SandwichTopButtonIcon' src={`${process.env.PUBLIC_URL}/images/BTN_refresh.png`} alt='BTN_refresh.png'/>
                             </div>
                         </div>
                     </div>
-
+     
                     <div className='MP_SandwichMain'>
-                        <div className='MP_SandwichMain_emptyDisplay MP_VerticalContainer'>
+                        {selectedIngredients.map((element, index) => (
+                            <DropIngredient key={index+'_SandMain'} item={element} index={index} />
+                        ))}
+
+                        {selectedIngredients.length === 0 && (
+                            <div className='MP_SandwichMain_emptyDisplay MP_VerticalContainer'>
                             <img src={`${process.env.PUBLIC_URL}/images/empty_sandwich.png`} alt='empty_sandwich.png'/>
                             <div className='MP_LargeText MP_textColor3'>
                                 재료를 선택해서<br/>
                                 샌드위치를 만들어보세요!
                             </div>
-                        </div>
-
+                            </div>
+                        )}
                     </div>
+
+
                 </div>
 
                 <div className='MP_CartContainer MP_MainContainers MP_VerticalContainer'>
@@ -216,99 +361,12 @@ function MainPage() {
                         </div>
 
                         <div className='MP_CartList MP_VerticalContainer'>
-                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>
-                                                        <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>                            <div className='MP_CartItemBox MP_HorizontalContainer'>
-                                <div className='MP_CartItemIcon'></div>
-                                <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                                    <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                    <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                </div>
-                                <div className='MP_CartItemRemove'>X</div>
-                            </div>
+                            
+                            {selectedIngredients.map((element, index) => (
+                                <CartIngredient key={index+'_Cart'} item={element} index={index}
+                                handleRemoveIngredient={handleRemoveIngredient}/>
+                            ))}
+
                         </div>
                     </div>              
                     <div className='MP_CartBottom MP_VerticalContainer'>
@@ -321,7 +379,8 @@ function MainPage() {
                             <div className='MP_LargeText MP_textColor3'>3,500원</div>
                         </div>
 
-                        <div className='MP_OrderButton'>
+                        <div className='MP_OrderButton'
+                            onClick={() => handleAddIngredient(ind[5])}>
                             <div className='MP_LargeText'>주문하기 (3,500원)</div>
                         </div>
                     </div>
@@ -329,7 +388,25 @@ function MainPage() {
 
             </main>
 
-            <footer></footer>
+            <div className='MP_Footer MP_HorizontalContainer'>
+                <div className='MP_Footer_Box MP_HorizontalContainer MP_Shop'>
+                    <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
+                    <div className='MP_Footer_TextBox MP_VerticalContainer'>
+                        <div className='MP_FooterText_Large MP_textColor1'>천호점</div>
+                        <div className='MP_FooterText_Normal MP_textColor2'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
+                    </div>
+                </div>
+
+                <div className='MP_FooterText_Large MP_textColor1'> → </div>
+
+                <div className='MP_Footer_Box MP_HorizontalContainer MP_User'>
+                    <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
+                    <div className='MP_Footer_TextBox MP_VerticalContainer'>
+                        <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
+                        <div className='MP_FooterText_Normal MP_textColor2'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
