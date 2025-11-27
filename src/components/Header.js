@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import "../css/modal.css";
+import "../css/LoginModal.css";
 import LoginForm from "../pages/LoginForm.js";
+import "../css/SignupModal.css";
 import { useState } from "react";
 import SignupForm from "../pages/SignupForm.js";
 
@@ -51,12 +52,12 @@ const HeaderWrapper = styled.div`
         padding:0; 
         overflow:visible; 
         cursor:pointer;
-        width : 60px;
-        height : 40px;
-        background-color : #FF8904;
+        width : 90px;
+        height : 36px;
+        background : linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
         opacity : 0.9;
         & > p{
-            color : #7C290C;
+            color : white;
         }
     }
 `
@@ -66,8 +67,8 @@ function Header(){
     const [isSignup, setIsSignup] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
 
-    const handleIsLogin = () => {setIsLogin(true)}
-    const handleIsSignup = () => {setIsSignup(true)}
+    const handleIsLogin = () => {setIsLogin(prev => !prev); setIsSignup(false)}
+    const handleIsSignup = () => {setIsLogin(false); setIsSignup(prev => !prev)}
     const handleOverlay = () => {
         setIsLogin(false);
         setIsSignup(false)
@@ -97,12 +98,16 @@ function Header(){
             </HeaderWrapper>
             {isLogin &&
                 <div className="loginmodal">
-                    <LoginForm></LoginForm>
+                    <LoginForm
+                        openLogin = {handleIsLogin}
+                        openSignup = {handleIsSignup}
+                    ></LoginForm>
                 </div>
             }
             {isSignup &&
-                <div className="loginmodal">
-                    <SignupForm></SignupForm>
+                <div className="signupmodal">
+                    <SignupForm
+                    openSignup={handleIsSignup}></SignupForm>
                 </div>
             }
             {(isLogin || isSignup) &&
