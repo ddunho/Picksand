@@ -6,7 +6,6 @@ function Signup(){
         <main>
 
             <div className="signupwrapper">
-                <Link to="/"><img src="/images/goback.png" alt="뒤로가기"></img>메인 페이지로 이동하기</Link>
                 <div className="signup">
                     <div className="signupheader">
                         <img src="/images/sandwichlogo.png" alt="로고"></img>
@@ -32,6 +31,9 @@ function Signup(){
                         </div>
                         <input type="text" placeholder="주소를 입력해 주세요." />
                         <button type="submit">확인</button>
+                        <div>
+                            <Link to="/">홈으로 이동하기→</Link>
+                        </div>
                     </form>
                     </div>
                 </div>
