@@ -37,7 +37,7 @@ function ItemMange() {
                     <div className='itemlist2'>
                         <p>치즈</p>
                         <p className='itemcount'>수량/502개</p>
-                        <label>
+                        <label className='mlabel'>
                             품절여부
                             <input type='checkbox' className='checkbox' value={true} />
                         </label>
@@ -46,7 +46,7 @@ function ItemMange() {
                     <div className='itemlist2'>
                         <p>베이컨</p>
                         <p className='itemcount'>수량/856개</p>
-                        <label>
+                        <label className='mlabel'>
                             품절여부
                             <input type='checkbox' className='checkbox' value={true} />
                         </label>
@@ -58,7 +58,7 @@ function ItemMange() {
                 </div>
                 <div className="mfoot">
                     <div>
-                        <img src="/images/sandwichlogo.png" alt="로고"></img>
+                        <img className="mimg" src="/images/sandwichlogo.png" alt="로고"></img>
                         <p>픽샌 천호점</p>
                     </div>
                     <button onClick={change}>{message[index]}</button>
