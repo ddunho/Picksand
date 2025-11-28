@@ -69,7 +69,7 @@ function UserInfo(){
                         <div>
                             <div>
                                 <div className="ordernumber">
-                                    <p>ORDER-004</p>
+                                    <p>주문-004</p>
                                     <p>2025-11-25</p>
                                 </div>
                                 <div className="ordercomponent">
@@ -87,7 +87,7 @@ function UserInfo(){
                         <div>
                             <div>
                                 <div className="ordernumber">
-                                    <p>ORDER-003</p>
+                                    <p>주문-003</p>
                                     <p>2025-11-25</p>
                                 </div>
                                 <div className="ordercomponent">
@@ -105,7 +105,7 @@ function UserInfo(){
                         <div>
                             <div>
                                 <div className="ordernumber">
-                                    <p>ORDER-002</p>
+                                    <p>주문-002</p>
                                     <p>2025-11-25</p>
                                 </div>
                                 <div className="ordercomponent">
@@ -123,7 +123,7 @@ function UserInfo(){
                         <div>
                             <div>
                                 <div className="ordernumber">
-                                    <p>ORDER-001</p>
+                                    <p>주문-001</p>
                                     <p>2025-11-25</p>
                                 </div>
                                 <div className="ordercomponent">

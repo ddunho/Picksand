@@ -17,12 +17,23 @@ const HeaderWrapper = styled.div`
     background-color : #FFFEFB;
     position : relative;
 
+    @media(max-width : 426px){
+        padding : 0px 8px;
+        box-sizing : border-box;
+        height : 60px;
+    }
+
     & > div{
         display : flex;
         justify-content : space-between;
         align-items : center;
         width : calc(100vw - 100px);
         height : 104px;
+
+        @media (max-width : 426px){
+            width : 100%;
+            height : 60px;
+        }
     }
 
     & > div > a{
@@ -34,6 +45,11 @@ const HeaderWrapper = styled.div`
         & > img{
             width : 60px;
             height : 60px;
+
+            @media (max-width : 426px){
+                width : 24px;
+                height : 24px;
+            }
         }
 
         & > div{
@@ -43,11 +59,21 @@ const HeaderWrapper = styled.div`
                 font-size : 24px;
                 color : #7C290C;
                 margin-bottom : 4px;
+
+                @media (max-width : 426px){
+                    font-size : 16px;
+                }
             }
 
             & > p:last-child{
                 font-size : 18px;
                 color : #F54A00;
+
+                @media (max-width : 426px){
+                    font-size : 12px;
+                    margin-left : -26px;
+                }
+
             }
         }
 }
@@ -61,6 +87,13 @@ const HeaderWrapper = styled.div`
         height : 36px;
         background : linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
         opacity : 0.9;
+
+        @media (max-width : 426px){
+            width : 50px;
+            height : 30px;
+            font-size : 12px;
+        }
+
         & > p{
             color : white;
         }
@@ -76,6 +109,14 @@ const HeaderWrapper = styled.div`
         height : 36px;
         background : linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
         opacity : 0.9;
+
+        @media (max-width : 426px){
+            width : 50px;
+            height : 30px;
+            font-size : 12px;
+        }
+
+
         & > p{
             color : white;
         }

@@ -84,6 +84,11 @@
     gap: 2px;
 }
 
+.infocomponent > img{
+    width: 24px;
+    height: 24px;
+}
+
 .infocomponent > p{
     color: #F54A00;
 }
@@ -196,5 +201,137 @@
     background: inherit;
     background-color: #C6F0D6;
     color: #3CA366;
+}
+
+@media (max-width: 768px){
+    .myinfo{
+        height: 180px;
+    }
+
+    .infocomponent > p{
+        font-size: 12px;
+    }
+
+    .infocomponent > img{
+        width: 16px;
+        height: 16px;
+    }
+
+    .myinfodetail > div > input{
+        height: 24px;
+    }
+
+    .myinfodetail{
+        gap: 16px;
+    }
+
+    .ordercomponent{
+        gap: 4px;
+    }
+    .ordercomponent > button{
+        width: 50px;
+        height: 24px;
+        font-size: 12px;
+    }
+
+    .deliverstatusing > p{
+        font-size: 12px;
+    }
+    .deliverstatusing > button{
+        width: 50px;
+        height: 24px;
+        font-size: 12px;
+    }
+
+    .deliverstatus > p{
+        font-size: 12px;
+    }
+
+    .deliverstatus > button{
+        width: 58px;
+        height: 24px;
+        font-size: 12px;
+    }
+
+}
+
+@media (max-width : 426px){
+
+    .userinfomain{
+        padding: 12px 8px 12px 8px;
+    }
+
+    .userinfotitle > p{
+        font-size: 18px;
+    }
+    .userinfotitle > div > p{
+        font-size: 12px;
+        line-height: 1.2; 
+        width: 65%;  
+    }
+
+    .userinfotitle > div > button{
+        width: 80px;
+        height: 20px;
+        font-size: 10px;
+    }
+
+    .userinfotitle > div > button > img{
+        width: 12px;
+        height: 12px;
+    }
+
+    .orderinfo > p{
+        font-size: 18px;
+    }
+
+    .ordernumber > p{
+        font-size: 8px;
+    }
+
+    .orderlist > div > div{
+        gap: 4px;
+    }
+
+    .ordercomponent > button{
+        width: 40px;
+        height: 20px;
+        font-size: 8px;
+    }
+
+    .ordercomponent{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2px;
+    }
+
+    .deliverstatusing{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .deliverstatusing > p{
+        font-size: 12px;
+    }
+
+    .deliverstatusing > button{
+        width: 50px;
+        height: 20px;
+        font-size: 12px;
+    }
+
+    .deliverstatus{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .deliverstatus > p{
+        font-size: 12px;
+    }
+    .deliverstatus > button{
+        width: 58px;
+        height: 20px;
+        font-size: 12px;
+    }
 }
 
