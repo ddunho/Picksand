@@ -182,3 +182,15 @@
 {
     background-color: #FFFEFB;
 }
+
+.GGMap_OverlayView
+{
+    width: 80px;
+    height: 40px;
+
+    background-color: #FFFEFB;
+
+    transform-origin: center;
+
+    z-index: 99;
+}

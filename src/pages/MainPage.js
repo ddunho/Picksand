@@ -196,7 +196,7 @@ function MainPage() {
                                 </div>
                                 
                                 <div className='MP_IngredientBox MP_HorizontalContainer'
-                                    onClick={() => handleAddIngredient(ind[3])}>
+                                    onClick={() => handleAddIngredient(ind[2])}>
                                     <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
                                     <div className='MP_TypeTextBox MP_VerticalContainer'>
                                         <div className='MP_NormalText MP_textColor1'>화이트빵</div>
@@ -216,7 +216,8 @@ function MainPage() {
                             </div>
                             
                             <div className='MP_IngredientList'>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
+                                <div className='MP_IngredientBox MP_HorizontalContainer'
+                                    onClick={() => handleAddIngredient(ind[3])}>
                                     <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
                                     <div className='MP_TypeTextBox MP_VerticalContainer'>
                                         <div className='MP_NormalText MP_textColor1'>화이트빵</div>
@@ -236,7 +237,8 @@ function MainPage() {
                             </div>
                             
                             <div className='MP_IngredientList'>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
+                                <div className='MP_IngredientBox MP_HorizontalContainer'
+                                    onClick={() => handleAddIngredient(ind[4])}>
                                     <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
                                     <div className='MP_TypeTextBox MP_VerticalContainer'>
                                         <div className='MP_NormalText MP_textColor1'>화이트빵</div>

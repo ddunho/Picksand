@@ -1,132 +1,76 @@
-import { GoogleMap, Marker, InfoWindow, LoadScript } from "@react-google-maps/api";
+import { GoogleMap, InfoWindow, LoadScript } from "@react-google-maps/api";
 import { useEffect, useState, useRef } from "react";
 import '../css/GGMap.css';
 
   const libraries = ["places"];
-export default function FoodPlaceSelector() {
-
-    //const defaultPlaceId = "ChIJY2dm7EZvZDURcQ0PwHQ5Mn4"; // 하이미디어 천호점
-    const defaultlatlng = { lat: 37.5381679, lng: 127.1262834 };
-    const defaultPlaceDetails = {
-    name: "하이미디어 천호점",
-    formatted_address: "서울특별시 강동구 천호동 ...",
-    rating: 4.3,
-    geometry: { location: { lat: () => 37.5381679, lng: () => 127.1262834 } },
-    photos: [], // 필요하면 미리 설정 가능
-    place_id: null//defaultPlaceId
-    };
+export default function GGMap() {
 
   const mapRef = useRef(null);
   const markersRef = useRef([]);
   const addrListRef = useRef(false);
   const toggleListBtnRef = useRef(null);
 
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const [selectedMarker, setSelectedMarker] = useState(defaultlatlng);
-  const [placeDetails, setPlaceDetails] = useState(defaultPlaceDetails);
   const [center, setCenter] = useState(null);
 
   const containerStyle = { width: "100%", height: "500px" };
 
   useEffect(()=>{
-    setCenter(defaultlatlng);
+    setCenter({ lat: 37.5381679, lng: 127.1262834 });
   },[])
 
-  useEffect(() => {
-  if (!mapRef.current) return;
+  const PlaceTemplate = {
+    name: "현위치",
+    formatted_address: "서울 강동구 천호대로 1027 동원천호빌딩 5층",
+    rating: 4.5,
+    place_id: "mock_place_id_001",
 
-  // 기존 마커 제거
-  markersRef.current.forEach(marker => marker.setMap(null));
-  markersRef.current = [];
+    geometry: {
+      location: {
+        lat: () => 37.5381679,
+        lng: () => 127.1262834
+      }
+    }
+  };
 
-  // 새 마커 생성
-  results.forEach(place => {
+  function tempMarker()
+  {
     const marker = new window.google.maps.Marker({
       position: {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
+        lat: 37.5381679,
+        lng: 127.1262834
       },
       map: mapRef.current,
-      title: place.name,
+      title: "현위치",
     });
 
     marker.addListener("click", () => {
-      setSelectedPlace(place);
-      setCenter({ lat:place.geometry.location.lat(), lng:place.geometry.location.lng() });
+      setSelectedPlace(PlaceTemplate);
+      setCenter({ lat: 37.5381679, lng:127.1262834 });
     });
 
     markersRef.current.push(marker);
-  });
-}, [results]);
+    setSelectedPlace(PlaceTemplate);
 
-
-  function SearchResultBox()
-  {
-    return(
-      <>
-      {results.map((place, i) => (
-        <div
-          key={i}
-          style={{ marginBottom: "12px", borderBottom: "1px solid #ccc", paddingBottom: "8px", cursor: "pointer" }}
-          onClick={() => {
-            setSelectedPlace(place);
-            setSelectedMarker({
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng(),
-            });
-            setCenter({lat: place.geometry.location.lat(), lng: place.geometry.location.lng()});
-          }}
-        >
-          <b>⭐ {place.rating || "N/A"} {place.name}</b>
-          <div>{place.formatted_address}</div>
-        </div>
-      ))}
-      </>
-    )
+    console.log("Marker temp!");
+    console.log(marker);
   }
+
+
 
 
   const handleLoad = (map) => {
     
-  if (!defaultPlaceDetails.place_id) {
+    console.log("LOADED!");
+
     mapRef.current = map;
-    setCenter(defaultlatlng);
-    return;
-  }
+    //const service = new window.google.maps.places.PlacesService(map);
 
-    const service = new window.google.maps.places.PlacesService(map);
-
-    // 초기 place_id 정보 가져오기
-    service.getDetails(
-      {
-        placeId: defaultPlaceDetails.place_id,//defaultPlaceId,
-        fields: ["name", "geometry", "formatted_address", "rating", "photos", "place_id"],
-      },
-      (place, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-          setPlaceDetails(place);
-          setSelectedMarker({
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-          });
-          setCenter({lat:selectedMarker.lat, lng:selectedMarker.lng});
-        }
-      }
-    );
-  };
-
-  const searchPlace = () => {
-    const service = new window.google.maps.places.PlacesService(document.createElement("div"));
-    service.textSearch({ query }, (res, status) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-        setResults(res);
-      }
-    });
+    tempMarker();
   };
 
   function toggleAddrList() {
+    //tempMarker();
     addrListRef.current.classList.toggle('GGMap_addrList_Closed');
     toggleListBtnRef.current.classList.toggle('GGMap_RightDDBtn_Closed')
   }
@@ -143,9 +87,11 @@ export default function FoodPlaceSelector() {
                 position =   {{lat: selectedPlace.geometry.location.lat(),
                               lng: selectedPlace.geometry.location.lng(),}}
                               zIndex={99}
-                key={selectedPlace.place_id} // 이 부분을 추가
+                              
+                key={selectedPlace.place_id + Math.random() * 3} // 이 부분을 추가
                 options={{
-                  pixelOffset: new window.google.maps.Size(0, -30) // X축 0, Y축 -30만큼 위로 이동
+                  pixelOffset: new window.google.maps.Size(0, -30), // X축 0, Y축 -30만큼 위로 이동
+
                 }}>
                                 
                 <div>             
@@ -180,7 +126,7 @@ export default function FoodPlaceSelector() {
                 <div className='GGMap_addrListContainer GGMap_Vertical_Container'>
 
 
-                  <div className='GGMap_addrList' ref={addrListRef}>
+                  <div className='GGMap_addrList GGMap_addrList_Closed' ref={addrListRef}>
                     <div className='GGMap_addrBox GGMap_Vertical_Container'>
                       <div className='GGMap_addrNameText'>집</div>
                       <div className="GGMap_addrLine"></div>
@@ -212,7 +158,7 @@ export default function FoodPlaceSelector() {
                       <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
                     </div>
 
-                    <button className="GGMap_RightDDBtn GGMap_RightDDBtn_Open" 
+                    <button className="GGMap_RightDDBtn GGMap_RightDDBtn_Closed" 
                       ref={toggleListBtnRef} onClick={toggleAddrList}>
                     </button>
                   </div>
@@ -257,26 +203,6 @@ export default function FoodPlaceSelector() {
                   </div>
               </div>
 
-              <SearchResultBox style={{ marginTop: "16px" }}>
-              </SearchResultBox>
-
-              {selectedPlace && (
-                <div style={{ marginTop: "16px", padding: "8px", border: "1px solid #888" }}>
-                  <h4>{selectedPlace.name}</h4>
-                  <div>주소: {selectedPlace.formatted_address}</div>
-                  <div>평점: {selectedPlace.rating || "N/A"}</div>
-                  <div>위도: {selectedPlace.geometry.location.lat()}</div>
-                  <div>경도: {selectedPlace.geometry.location.lng()}</div>
-                  <a
-                    href={`https://www.google.com/maps/place/?q=place_id:${selectedPlace.place_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ marginTop: "8px", display: "inline-block", color: "#4285F4" }}
-                  >
-                    구글 지도에서 보기
-                  </a>
-                </div>
-              )}
             </div>
           </div>
         </div>

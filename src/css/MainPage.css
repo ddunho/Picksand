@@ -53,6 +53,50 @@
     height: calc(100vh - 104px - 224px);
 }
 
+@media (max-width: 426px) {
+
+    .MP_main {
+        background-color: #FEFAEA;
+        justify-content: space-between;
+        box-sizing: border-box;
+
+        min-width: 100vw;
+        min-height: calc(100vh - 104);
+
+        padding: 16px;
+    }
+
+    .MP_MainContainers{
+        flex: 1;    
+        border-radius: 12px;
+        background-color: #FFFEFB;
+        border: 1px solid #FFEDD4;
+
+        padding: 12px;
+        height: calc(100vh - 64px - 120px);
+    }
+
+    .MP_IngredientsContainer
+    {
+        display: none;
+        position: absolute;
+        left: 0;
+
+        z-index: 66;
+    }
+
+    .MP_CartContainer
+    {
+        display: none;
+    }
+
+    .MP_Footer
+    {
+        display: none;
+    }
+}
+
+
 .MP_IngredientTypeList{
 
     overflow-y: auto;
@@ -575,6 +619,8 @@
 .MP_GPSPopup{
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    border: 1px solid #FFEDD4;
+    box-sizing: border-box;
     
     width: 80%;
     height: 80%;
