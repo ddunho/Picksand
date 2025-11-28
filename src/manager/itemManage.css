@@ -1,0 +1,64 @@
+
+.itemlist{
+    display: flex;
+    flex-direction: column;   
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    width: 90%;
+    height: auto;
+    padding: 10px 0px 10px 0px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: rgba(245, 74, 0, 0.6);
+}
+
+.itemlist2{
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: space-between;
+    gap: 20px;
+    width: 97%;
+    height: 75px;
+    border-radius: 10px;
+    background-color: #2A2C2C;
+    color: #ffffff;
+    padding: 10px 25px 10px 25px;
+    box-sizing: border-box;
+    font-size: 22px;
+}
+
+label{
+display: flex;
+    align-items: center;
+}
+
+.checkbox{
+    accent-color: #ffffff;
+  width: 20px;
+  height: 20px;
+}
+
+.savebutton{
+    width: 90%;
+    display: flex;
+    justify-content: end;
+}
+.itemsave{
+    width: 15%;
+    height: 70px;
+    font-size: 25px;
+    border-radius: 12px;
+    background: linear-gradient(to right, #FF6B00, #FE9800);
+    margin-top: 15px;
+    margin-right: 10px;
+    box-shadow: 0 4px 10px rgba(245, 74, 0, 0.6);
+}
+
+.itemcount{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+

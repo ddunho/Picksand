@@ -1,0 +1,120 @@
+.reviewmain{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    
+    margin-top: 10px;
+    border-radius: 10px;
+    padding-top: 20px;
+    box-sizing: border-box;
+    width: 980px;
+    min-height: 1050px;
+    height: auto;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.reviewhead{
+    width: 90%;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 18px;
+    background-color: #DEA88B;
+    border-radius: 15px;
+    font-size: 20px;
+    color: #ffffff;
+    margin-bottom: 100px;
+}
+.reviewmain>p{
+    font-size: 20px;
+    position: relative;
+    bottom: 10px;
+    right: 470px;
+    color: #000000;
+    
+}
+
+.reviewhead2{
+    width: 90%;
+    height: 110px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 18px;
+    color: #DEA88B;
+
+}
+
+.reviewhead2>div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.review{
+    width: 90%;
+    min-height: 200px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.reviewcard{
+    width: 100%;
+    min-height: 250px;
+    height: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #DEA88B;
+    border-radius: 15px;
+    
+}
+
+.reviewcard2{
+    width: 95%;
+    min-height: 170px;
+    height: auto;
+    padding: 10px 0px 0px 15px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    gap: 15px;
+    font-size: 18px;
+    color: #000000;
+}
+
+.reviewcard2 :nth-child(3){
+    margin-top: 20px;
+}
+
+.spoint{
+    width: 95%;
+    display: flex;
+    gap: 5px;
+    align-items: center; 
+    margin-bottom: 10px;
+}
+
+.spoint>p{
+    color: #ffffff;
+    font-size: 24px;
+}
