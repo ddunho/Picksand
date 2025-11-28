@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function Review(){
 const navigate = useNavigate();
     return(
-    
+    <div className="mmainpage">
         <div className='reviewmain'>
             <p
             style={{ cursor: "pointer"}}
@@ -49,7 +49,7 @@ const navigate = useNavigate();
                 </div>
             </div>
         </div>
-    
+    </div>
     );
 }
 
