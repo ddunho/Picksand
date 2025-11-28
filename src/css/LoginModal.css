@@ -12,6 +12,11 @@
     overflow: hidden;
 }
 
+.headermainlogo:hover{
+    transform: scale(1.03);
+    transition: transform 0.3s ease;
+}
+
 .overlay{
     position: fixed;
     width: 100%;
@@ -75,6 +80,18 @@
     margin-top: 24px;
     color: white;
 }
+
+.loginbutton:hover{
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+.signupbutton:hover{
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+
 
 .loginform > p{
     color: black;

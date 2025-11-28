@@ -117,7 +117,7 @@ function Header(){
         <header>
             <HeaderWrapper>
                 <div>
-                    <Link to="/">
+                    <Link to="/" className="headermainlogo">
                         <img src="/images/sandwichlogo.png" alt="로고"></img>
                         <div>
                             <p>픽샌</p>
@@ -125,11 +125,11 @@ function Header(){
                         </div>
                     </Link>
                     <div className="logincontainer">
-                    <button onClick={handleIsLogin}>
-                        <p>로그인</p>
-                    </button>
+                        <button onClick={handleIsLogin} className="loginbutton">
+                            <p>로그인</p>
+                        </button>
                     <Link to="/signup">
-                        <button>
+                        <button className="signupbutton">
                             <p>회원가입</p>
                         </button>
                     </Link>
