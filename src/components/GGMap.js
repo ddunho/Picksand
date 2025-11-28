@@ -18,6 +18,8 @@ export default function FoodPlaceSelector() {
 
   const mapRef = useRef(null);
   const markersRef = useRef([]);
+  const addrListRef = useRef(false);
+  const toggleListBtnRef = useRef(null);
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -26,12 +28,12 @@ export default function FoodPlaceSelector() {
   const [placeDetails, setPlaceDetails] = useState(defaultPlaceDetails);
   const [center, setCenter] = useState(null);
 
-
   const containerStyle = { width: "100%", height: "500px" };
 
   useEffect(()=>{
     setCenter(defaultlatlng);
   },[])
+
   useEffect(() => {
   if (!mapRef.current) return;
 
@@ -124,6 +126,11 @@ export default function FoodPlaceSelector() {
     });
   };
 
+  function toggleAddrList() {
+    addrListRef.current.classList.toggle('GGMap_addrList_Closed');
+    toggleListBtnRef.current.classList.toggle('GGMap_RightDDBtn_Closed')
+  }
+
 
   return (
     <LoadScript googleMapsApiKey="AIzaSyDg6UKtr7Lv-i9XmSebhBf5NTWUnARcZLw" libraries={libraries}>
@@ -171,25 +178,45 @@ export default function FoodPlaceSelector() {
                     </div>
                 </div>
                 <div className='GGMap_addrListContainer GGMap_Vertical_Container'>
-                  <button className="GGMap_RightDDBtn GGMap_RightDDBtn_Open" onClick={searchPlace}>
-                    ▼ 다른 위치 지정 ▼
-                  </button>
 
-                  <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                    <div className='GGMap_addrNameText'>집</div>
-                    <div className="GGMap_addrLine"></div>
-                    <div className='GGMap_addrDetailText'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
+
+                  <div className='GGMap_addrList' ref={addrListRef}>
+                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
+                      <div className='GGMap_addrNameText'>집</div>
+                      <div className="GGMap_addrLine"></div>
+                      <div className='GGMap_addrDetailText'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
+                    </div>
+                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
+                      <div className='GGMap_addrNameText'>직장</div>
+                      <div className="GGMap_addrLine"></div>
+                      <div className='GGMap_addrDetailText'>서울특별시 강동구 동남로 892 (상일동)</div>
+                    </div>
+                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
+                      <div className='GGMap_addrNameText'>학원</div>
+                      <div className="GGMap_addrLine"></div>
+                      <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
+                    </div>
+                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
+                      <div className='GGMap_addrNameText'>학원</div>
+                      <div className="GGMap_addrLine"></div>
+                      <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
+                    </div>
+                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
+                      <div className='GGMap_addrNameText'>학원</div>
+                      <div className="GGMap_addrLine"></div>
+                      <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
+                    </div>
+                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
+                      <div className='GGMap_addrNameText'>학원</div>
+                      <div className="GGMap_addrLine"></div>
+                      <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
+                    </div>
+
+                    <button className="GGMap_RightDDBtn GGMap_RightDDBtn_Open" 
+                      ref={toggleListBtnRef} onClick={toggleAddrList}>
+                    </button>
                   </div>
-                  <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                    <div className='GGMap_addrNameText'>직장</div>
-                    <div className="GGMap_addrLine"></div>
-                    <div className='GGMap_addrDetailText'>서울특별시 강동구 동남로 892 (상일동)</div>
-                  </div>
-                  <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                    <div className='GGMap_addrNameText'>학원</div>
-                    <div className="GGMap_addrLine"></div>
-                    <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
-                  </div>
+                  
                 </div>
               </div>
               

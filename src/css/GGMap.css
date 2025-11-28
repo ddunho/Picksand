@@ -47,6 +47,7 @@
     box-sizing: border-box;
     background-color: #FFFEFB;
 
+    gap:12px;
     overflow-y: scroll;
     justify-content: space-between;
 }
@@ -54,6 +55,40 @@
 .GGMap_addrListContainer
 {
     background-color: #FFFEFB;
+}
+
+.GGMap_addrList
+{
+}
+.GGMap_addrList_Closed
+{
+    flex-direction: column;
+}
+
+.GGMap_addrBox,
+.GGMap_addrNameText,
+.GGMap_addrDetailText
+{
+    transform-origin: top;
+
+    transition: 
+        opacity 0.2s ease,
+        max-height 0.2s ease,
+        padding 0.2s ease,
+        border-width 0.2s ease;
+}
+
+.GGMap_addrList_Closed .GGMap_addrBox,
+.GGMap_addrList_Closed .GGMap_addrNameText,
+.GGMap_addrList_Closed .GGMap_addrDetailText
+{
+    pointer-events: none;
+
+    opacity: 0;
+    padding: 0px;
+    max-height: 0;
+
+    border-width: 0px;
 }
 
 .GGMap_RightDDBtn
@@ -78,8 +113,21 @@
 
     color : #F54A00;
 }
-.GGMap_RightDDBtn_Open{
-    border-radius: 0px;
+
+.GGMap_RightDDBtn:hover:not(.GGMap_RightDDBtn_Closed)
+{
+    padding-bottom: 6px;
+    padding-top: 0px;
+}
+
+.GGMap_RightDDBtn::after
+{
+    content:"▲ 다른 위치 지정 ▲";
+}
+
+.GGMap_RightDDBtn_Closed::after
+{
+    content:"▼ 다른 위치 지정 ▼";
 }
 
 .GGMap_addrBox
@@ -93,9 +141,9 @@
 .GGMap_addrBox:hover
 {
     background-color: #FFF7ED;
-    border: 2px solid #FFBD75;
+    border: 1px solid #FFBD75;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    padding: 7px;
+    padding: 8px;
 }
 
 .GGMap_addrBox:hover .GGMap_addrNameText::before
