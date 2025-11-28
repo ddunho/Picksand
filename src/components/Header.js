@@ -100,7 +100,10 @@ function Header(){
         setIsSignup(false)
     }
     
-    if (location.pathname === "/signup") {
+    if (location.pathname === "/signup","/OrderList","/ItemManage","Review") {
+    return null;
+  }
+  if (location.pathname === "/OrderList","/ItemManage") {
     return null;
   }
 

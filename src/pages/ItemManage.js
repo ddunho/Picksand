@@ -1,4 +1,4 @@
-import './itemManage.css'
+import '../css/itemManage.css'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,7 +27,7 @@ function ItemMange(){
         <div className='mname2'>
             <p
                 style={{ cursor: "pointer"}}
-                onClick={() => navigate("/")}>
+                onClick={() => navigate("/OrderList")}>
                주문목록
             </p>
         </div>

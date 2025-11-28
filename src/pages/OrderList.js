@@ -1,4 +1,4 @@
-import './OrderList.css'
+import '../css/OrderList.css'
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 function OrderList(){

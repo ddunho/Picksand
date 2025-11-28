@@ -1,4 +1,4 @@
-import './Review.css'
+import '../css/Review.css'
 import { FaStar } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +10,9 @@ const navigate = useNavigate();
             <p
             style={{ cursor: "pointer"}}
                 onClick={() => navigate("/")}
-            >←</p>
+            >
+                ←
+            </p>
             <div className='reviewhead'>
                 별점 리뷰
                 <div className='reviewhead2'>
