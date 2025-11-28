@@ -1,6 +1,7 @@
 import '../css/Review.css'
 import { FaStar } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import { HiArrowLeft } from "react-icons/hi";
 
 function Review(){
 const navigate = useNavigate();
@@ -11,7 +12,7 @@ const navigate = useNavigate();
             style={{ cursor: "pointer"}}
                 onClick={() => navigate("/")}
             >
-                ←
+                <HiArrowLeft />
             </p>
             <div className='reviewhead'>
                 별점 리뷰
@@ -24,7 +25,37 @@ const navigate = useNavigate();
                 </div>
             </div>
             <div className='review'>
-                
+
+                <div className='reviewcard'>
+                    <div className='spoint'>
+                        <FaStar color="gold" size={35} />
+                            <p>0.5</p>
+                            <p>1.0</p>
+                            <p>1.5</p>
+                            <p>2.0</p>
+                            <p>2.5</p>
+                            <p>3.0</p>
+                            <p>3.5</p>
+                            <p>4.0</p>
+                            <p>4.5</p>
+                            <p>5.0</p>
+                    </div>
+                    
+                    <input className='reviewtxt' 
+                    type='text' 
+                    placeholder='리뷰내용을 작성해주세요' 
+                    name='Review'
+                    style={{ 
+                        textAlign: "start",
+                        paddingBottom: "130px",
+                        boxSizing: "border-box"
+                     }}
+                     />
+                        
+                        
+                    
+                </div>
+
                 <div className='reviewcard'>
                     <div className='spoint'>
                         <FaStar color="gold" size={35} />

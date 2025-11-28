@@ -2,7 +2,7 @@ import '../css/itemManage.css'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function ItemMange() {
+function ItemManage() {
     const navigate = useNavigate();
     const message = [
         "OPEN",
@@ -68,4 +68,4 @@ function ItemMange() {
     );
 }
 
-export default ItemMange;
+export default ItemManage;
