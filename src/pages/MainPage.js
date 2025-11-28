@@ -47,10 +47,16 @@ function MainPage() {
 
     const [index,setIndex] = useState("index");
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const lastSelectedAry = useRef([[],[],[],[],[]]);
 
     useEffect(()=>{
         setIndex(0);
     },[])
+
+    function addToLastSelected()
+    {
+        lastSelectedAry.current.push(selectedIngredients.slice());
+    }
 
     function handleAddIngredient(ingredient) {
 
@@ -67,34 +73,14 @@ function MainPage() {
 
         setIndex(index+1);
 
+        //
+        addToLastSelected();
         setSelectedIngredients(prev => [...prev, ingredient]);
     };
 
     function handleUndoIngredient() {
 
-        console.log(selectedIngredients.length);
-
-        if(selectedIngredients.length === 0)
-        {
-            return;
-        }
-        
-
-        if(selectedIngredients.length === 2)
-        {
-            handleResetIngredient();
-
-            return;
-        }
-
-        let newAry = [];
-
-        for(let i = 0; i < selectedIngredients.length - 1; i++)
-        {
-            newAry.push(selectedIngredients[i]);
-        }
-
-        setSelectedIngredients(prev => newAry);
+        setSelectedIngredients([...lastSelectedAry.current.pop()]);
     }
 
     function handleResetIngredient() {
@@ -104,7 +90,9 @@ function MainPage() {
             return;
         }
         
-        setSelectedIngredients(prev => []);
+        //
+        addToLastSelected();
+        setSelectedIngredients([]);
     }
 
     function handleRemoveIngredient(item) {
@@ -134,7 +122,8 @@ function MainPage() {
         }
         else
         {
-            setSelectedIngredients(prev => newAry);
+            addToLastSelected();
+            setSelectedIngredients(newAry);
         }
     }
 
