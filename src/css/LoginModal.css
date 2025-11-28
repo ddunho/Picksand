@@ -40,6 +40,7 @@
     color: white;
     border-radius: 16px 16px 0px 0px;
 }
+
 .loginheader > img{
     width: 16px;
     height: 16px;
@@ -128,6 +129,11 @@
 .notuser > p:last-child{
     color: #FF8904;
     cursor: pointer;
+}
+
+.notuser > p:last-child > a{
+    text-decoration: none;
+    color: #FF8904;
 }
 
 

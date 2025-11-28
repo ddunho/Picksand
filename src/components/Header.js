@@ -4,7 +4,7 @@ import LoginForm from "../pages/LoginForm.js";
 import "../css/SignupModal.css";
 import { useState } from "react";
 import SignupForm from "../pages/SignupForm.js";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 const HeaderWrapper = styled.div`
@@ -51,6 +51,21 @@ const HeaderWrapper = styled.div`
             }
         }
 }
+    & > div > div > a > button{
+        border-radius:8px;
+        border : none;
+        padding:0; 
+        overflow:visible; 
+        cursor:pointer;
+        width : 90px;
+        height : 36px;
+        background : linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
+        opacity : 0.9;
+        & > p{
+            color : white;
+        }
+    }
+
     & > div > div > button{
         border-radius:8px;
         border : none;
@@ -65,10 +80,16 @@ const HeaderWrapper = styled.div`
             color : white;
         }
     }
+
+    & > div > div > a{
+        
+    }
 `
 
 function Header(){
 
+    
+    const location = useLocation();
     const [isSignup, setIsSignup] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
 
@@ -79,6 +100,9 @@ function Header(){
         setIsSignup(false)
     }
     
+    if (location.pathname === "/signup") {
+    return null;
+  }
 
     return(
         <header>
@@ -95,9 +119,11 @@ function Header(){
                     <button onClick={handleIsLogin}>
                         <p>로그인</p>
                     </button>
-                    <button onClick={handleIsSignup}>
-                        <p>회원가입</p>
-                    </button>
+                    <Link to="/signup">
+                        <button>
+                            <p>회원가입</p>
+                        </button>
+                    </Link>
                     </div>
                 </div>
             </HeaderWrapper>

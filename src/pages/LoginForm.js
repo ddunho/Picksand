@@ -1,4 +1,6 @@
-function LoginForm({openLogin, openSignup}) {
+import { Link } from "react-router-dom";
+
+function LoginForm({openLogin}) {
 
   
 
@@ -23,8 +25,8 @@ function LoginForm({openLogin, openSignup}) {
           <p>계정이 없으신가요?</p> 
           <p onClick={()=>{
             openLogin();
-            openSignup();
-          }}>회원가입
+          }}>
+            <Link to="/signup">회원가입</Link>
           </p>
         </div>
         </div>
