@@ -1,0 +1,136 @@
+.GGMap_Horizontal_Container
+{
+    display: flex;
+}
+.GGMap_Vertical_Container
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.GGMap_MainContainer
+{
+    width: 100%;
+    height: 100%;
+
+    padding: 12px;
+}
+.GGMap_InnerContainer
+{
+    width: calc(100% - 24px);
+    height: calc(100% - 24px);
+
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+.GGMap_Left
+{
+    height: calc(100%) !important;
+
+    border-radius: 12px 0px 0px 12px;
+}
+
+.GGMap_Right
+{
+    min-width: 350px !important;
+    padding-left: 12px;
+}
+
+.GGMap_RightInner
+{
+    border-radius: 12px;
+    height: 100%;
+
+    padding: 12px;
+    box-sizing: border-box;
+    background-color: #FFFEFB;
+
+    overflow-y: scroll;
+    justify-content: space-between;
+}
+
+.GGMap_addrListContainer
+{
+    background-color: #FFFEFB;
+}
+
+.GGMap_RightDDBtn
+{
+    border: 1px solid #FFEDD4;
+    border-radius: 0px 0px 12px 12px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 36px;
+    
+    color : #7C290C;
+    background-color: #FEFAEA;
+
+    transition: all 0.2s ease;
+}
+.GGMap_RightDDBtn:hover{
+    background-color: #FFF7ED;
+    border: 2px solid #FFBD75;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+
+    padding-top: 6px;
+
+    color : #F54A00;
+}
+.GGMap_RightDDBtn_Open{
+    border-radius: 0px;
+}
+
+.GGMap_addrBox
+{
+    border: 1px solid #FFEDD4;
+    box-sizing: border-box;
+    width: 100%;
+
+    padding: 8px;
+}
+.GGMap_addrBox:hover
+{
+    background-color: #FFF7ED;
+    border: 2px solid #FFBD75;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    padding: 7px;
+}
+
+.GGMap_addrBox:hover .GGMap_addrNameText::before
+{
+    content: "▶ ";
+}
+
+.GGMap_addrTopBox
+{
+    justify-content: space-between;
+    align-items: center
+}
+
+.GGMap_addrNameText
+{
+    font-size: 16px;
+    color : #7C290C;
+    margin-bottom: 6px;
+}
+
+.GGMap_addrDistanceText
+{
+    font-size: 14px;
+    color : #7C290C;
+    margin-bottom: 6px;
+}
+
+.GGMap_addrDetailText
+{
+    font-size: 14px;
+}
+
+
+
+.GGMap_shopListContainer
+{
+    background-color: #FFFEFB;
+}

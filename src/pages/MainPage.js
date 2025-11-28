@@ -1,4 +1,6 @@
 import '../css/MainPage.css'
+import GGMap from '../components/GGMap';
+
 import { useState, useRef, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web'
 
@@ -47,7 +49,9 @@ function MainPage() {
 
     const [index,setIndex] = useState("index");
     const [selectedIngredients, setSelectedIngredients] = useState([]);
-    const lastSelectedAry = useRef([[],[],[],[],[]]);
+
+    const lastSelectedAry = useRef([[],[],[]]);
+    const GGMapRef = useRef(null);
 
     useEffect(()=>{
         setIndex(0);
@@ -127,6 +131,18 @@ function MainPage() {
         }
     }
 
+    function handleGPStoggle(input) {
+        
+        if(input)
+        {
+            GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
+        }
+        else
+        {
+            GGMapRef.current.classList.add('MP_GPSPopupDisabled');
+        }
+    }
+
     const ind = [
         { uid : 'Ind_uid:first', id: 0, name: "빵", img: "Bread.png" },
         { uid : '', id: 1, name: "양상추", img: "Lettuce.png" },
@@ -135,6 +151,7 @@ function MainPage() {
         { uid : '', id: 4, name: "토마토", img: "Tomato.png"},
         { uid : 'Ind_uid:last', id: 5, name: "빵", img: "Bread.png" , addDelay: 500},
     ];
+
 
 
     return(
@@ -389,7 +406,8 @@ function MainPage() {
             </main>
 
             <div className='MP_Footer MP_HorizontalContainer'>
-                <div className='MP_Footer_Box MP_HorizontalContainer MP_Shop'>
+                <div className='MP_Footer_Box MP_HorizontalContainer MP_Shop'
+                            onClick={() => handleGPStoggle(true)}>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>천호점</div>
@@ -405,6 +423,16 @@ function MainPage() {
                         <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
                         <div className='MP_FooterText_Normal MP_textColor2'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
                     </div>
+                </div>
+            </div>
+
+
+            <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
+                <div className='MP_GPSPopup'>
+                    <GGMap></GGMap>
+                </div>
+                <div className='MP_GPSPopupBackground'
+                            onClick={() => handleGPStoggle(false)}>
                 </div>
             </div>
         </div>
