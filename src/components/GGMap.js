@@ -5,6 +5,8 @@ import '../css/GGMap.css';
   const libraries = ["places"];
 export default function GGMap() {
 
+  const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+
   const mapRef = useRef(null);
   const markersRef = useRef([]);
   const addrListRef = useRef(false);
@@ -17,6 +19,7 @@ export default function GGMap() {
 
   useEffect(()=>{
     setCenter({ lat: 37.5381679, lng: 127.1262834 });
+    console.log(process.env.REACT_APP_GOOGLE_API_KEY + "OK?");
   },[])
 
   const PlaceTemplate = {
@@ -77,7 +80,7 @@ export default function GGMap() {
 
 
   return (
-    <LoadScript googleMapsApiKey="AIzaSyDg6UKtr7Lv-i9XmSebhBf5NTWUnARcZLw" libraries={libraries}>
+    <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
       <div className="GGMap_MainContainer">
         <div className="GGMap_InnerContainer GGMap_Horizontal_Container">
           <GoogleMap mapContainerClassName="GGMap_Left" mapContainerStyle={containerStyle} center={center} zoom={18} onLoad={handleLoad}>
