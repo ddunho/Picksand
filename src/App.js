@@ -8,6 +8,7 @@ import Signup from './pages/Signup.js';
 import ItemManage from './pages/ItemManage.js';
 import OrderList from './pages/OrderList.js';
 import Review from './pages/Review.js';
+import OrderPay from './pages/OrderPay.js';
 function App() {
   
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="/OrderList" element={<OrderList />} />
             <Route path="/ItemManage" element={<ItemManage />} />
             <Route path='/Review' element={<Review />} />
+            <Route path='/orderpay' element={<OrderPay/>}/>
           </Routes>
       </BrowserRouter>
     </GlobalProvider>
