@@ -2,10 +2,12 @@ import { GoogleMap, InfoWindow, LoadScript } from "@react-google-maps/api";
 import { useEffect, useState, useRef } from "react";
 import '../css/GGMap.css';
 
-  const libraries = ["places"];
+const libraries = ["places"];
+
 export default function GGMap() {
 
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+  const mapId = process.env.REACT_APP_GOOGLE_MAP_ID;
 
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -35,9 +37,11 @@ export default function GGMap() {
     }
   };
 
-  function tempMarker()
+  async function tempMarker()
   {
-    const marker = new window.google.maps.Marker({
+    const { AdvancedMarkerElement } = await window.google.maps.importLibrary("marker");
+
+    const marker = new AdvancedMarkerElement({
       position: {
         lat: 37.5381679,
         lng: 127.1262834
@@ -54,8 +58,7 @@ export default function GGMap() {
     markersRef.current.push(marker);
     setSelectedPlace(PlaceTemplate);
 
-    console.log("Marker temp!");
-    console.log(marker);
+    //console.log(marker);
   }
 
 
@@ -82,7 +85,7 @@ export default function GGMap() {
     <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
       <div className="GGMap_MainContainer">
         <div className="GGMap_InnerContainer GGMap_Horizontal_Container">
-          <GoogleMap mapContainerClassName="GGMap_Left" mapContainerStyle={containerStyle} center={center} zoom={18} onLoad={handleLoad}>
+          <GoogleMap mapContainerClassName="GGMap_Left" mapContainerStyle={containerStyle} center={center} zoom={18} onLoad={handleLoad}  options={{ mapId: mapId }}>
                     
             {selectedPlace && (
               <InfoWindow style={{ marginTop: "16px", padding: "8px", border: "1px solid #888"}}
