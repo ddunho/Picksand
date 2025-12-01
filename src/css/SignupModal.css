@@ -20,7 +20,9 @@
 }
 
 .signupwrapper{
-    padding: 16px 35% 16px 35%;
+    display: flex;
+    align-items: center;
+    padding: 0px 35%;
     box-sizing: border-box;
     background-color: #FEFAEA;
     min-height: 100vh;
