@@ -21,13 +21,6 @@ function UserInfo(){
                         <div>
                             <div className="infocomponent">
                                 <img src="/images/identity.png" alt="이름"></img>
-                                <p>이름</p>
-                            </div>
-                            <input></input>
-                        </div>
-                        <div>
-                            <div className="infocomponent">
-                                <img src="/images/identity.png" alt="이름"></img>
                                 <p>아이디</p>
                             </div>
                             <input></input>
@@ -36,13 +29,6 @@ function UserInfo(){
                             <div className="infocomponent">
                                 <img src="/images/identity.png" alt="이름"></img>
                                 <p>닉네임</p>
-                            </div>
-                            <input></input>
-                        </div>
-                        <div>
-                            <div className="infocomponent">
-                                <img src="/images/lock.png" alt="이름"></img>
-                                <p>비밀번호</p>
                             </div>
                             <input></input>
                         </div>

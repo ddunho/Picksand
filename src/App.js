@@ -9,6 +9,7 @@ import ItemManage from './pages/ItemManage.js';
 import OrderList from './pages/OrderList.js';
 import Review from './pages/Review.js';
 import OrderPay from './pages/OrderPay.js';
+import FindId from './pages/FindId.js';
 function App() {
   
 
@@ -27,6 +28,7 @@ function App() {
             <Route path="/ItemManage" element={<ItemManage />} />
             <Route path='/Review' element={<Review />} />
             <Route path='/orderpay' element={<OrderPay/>}/>
+            <Route path='/findid' element={<FindId/>}/>
           </Routes>
       </BrowserRouter>
     </GlobalProvider>

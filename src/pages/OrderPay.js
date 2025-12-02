@@ -1,10 +1,34 @@
+import { useEffect, useState } from "react";
 import "../css/OrderPay.css";
 
+
 function OrderPay(){
+    const [showAddress, setShowAddress] = useState(true);
+
+
+    const innerWidth = window.innerWidth;
+
+    useEffect(()=>{
+        if(window.innerWidth > 426){
+            setShowAddress(true);
+        }else{
+            setShowAddress(false);
+        }
+    },[innerWidth])
+
+    const handleAddress = () => {
+        setShowAddress(prev => !prev)
+    }
+
+
+
     return(
         <main>
             <div className="orderpaywrapper">
-                <p>주문 및 결제</p>
+                <div>
+                    <p>주문 및 결제</p>
+                    <div onClick={handleAddress}>배송지 확인</div>
+                </div>
                 <div className="orderaddresscontainer">
                     <div className="orderwrapper">
                         <div className="ordertitle">
@@ -13,22 +37,6 @@ function OrderPay(){
                                 <p>주문상품</p>
                             </div>
                             <button>3개</button>
-                        </div>
-                        <div className="ordercontent">
-                            <p>커스텀 샌드위치</p>
-                            <p>베이컨,양상추,토마토,마요네즈</p>
-                            <div className="orderquantity">
-                                <div className="quantitycontainer">
-                                    <p>1</p>
-                                    <p className="quantityminus">-</p>
-                                    <p className="quantityplus">+</p>
-                                </div>
-                                <div>
-                                    <p>6,500원 x 2</p>
-                                    <p>13,000원</p>
-                                </div>
-                            </div>
-                            <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
                         </div>
                         <div className="ordercontent">
                             <p>커스텀 샌드위치</p>
@@ -82,26 +90,33 @@ function OrderPay(){
                                 <p>총 결제 금액</p>
                                 <p>26,500원</p>
                             </div>
+
+                        <button className="finalorderbutton" onClick={()=>{if(window.confirm("정말로 주문하시겠습니까?")){
+                            alert("주문 완료");
+                        }}}>
+                        주문하기
+                        </button>
                     </div>
-                    <div className="addresswrapper">
+                    {showAddress &&
+                    <div className={`addresswrapper ${showAddress ? "open" : "close"}`}>
+                        <div className="deliverinfo">
                         <div className="addresstitle">
                             <img src="/images/place.png" alt="위치"></img>
                             <p>배송지 정보</p>
                         </div>
 
+                        <p>닉네임</p>
+                            <input placeholder="닉네임을 입력해 주세요."></input>
+                        </div>
+
                         <div className="deliverinfo">
-                            <p>받는 분 이름</p>
+                            <p>받으시는 분 성함</p>
                             <input placeholder="이름을 입력해 주세요."></input>
                         </div>
 
                         <div className="deliverinfo">
-                            <p>연락처</p>
+                            <p>휴대폰 번호</p>
                             <input placeholder="010-1234-5678"></input>
-                        </div>
-
-                        <div className="deliverinfo">
-                            <p>이메일</p>
-                            <input placeholder="example@email.com"></input>
                         </div>
 
                         <div className="deliverinfo">
@@ -110,17 +125,16 @@ function OrderPay(){
                             <input placeholder="상세주소"></input>
                         </div>
 
-                        <div className="deliverinfo">
-                            <p>배송 메시지</p>
+                        <div className="deliverrequest">
+                            <p>배송 요청 사항</p>
                             <textarea cols="30" rows="3" className="delivermessage"></textarea>
-                        </div>
+                        </div>  
 
-                        <button className="finalorderbutton">
-                        주문하기
-                        </button>
-
-                        
+                        <button className="checkdeliverspot" onClick={handleAddress}>
+                            배송지 정보를 확인하였습니다. 
+                        </button>            
                     </div>
+}
                 </div>
             </div>
         </main>
