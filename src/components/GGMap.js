@@ -4,7 +4,7 @@ import '../css/GGMap.css';
 
 const libraries = ["places"];
 
-export default function GGMap(handleGPStoggle) {
+export default function GGMap({handleGPStoggle}) {
 
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
   const mapId = process.env.REACT_APP_GOOGLE_MAP_ID;
@@ -207,7 +207,7 @@ export default function GGMap(handleGPStoggle) {
                     <div className="GGMap_addrLine"></div>
                     <div className='GGMap_addrDetailText'>서울특별시 광진구 천호대로 지하550 (능동 275-5)</div>
                   </div>
-              </div>
+                </div>
               </div>
 
             </div>

@@ -11,7 +11,7 @@ function DropIngredient({item, index}) {
 
   const styles = useSpring({
     from: { opacity: 0, x: xAlter, y: -750},
-    to: { opacity: 1, x : xAlter, y: yAlter},
+    to: { opacity: 1, x : xAlter, y: 0},
     delay: 0 + (item.addDelay ?? 0), 
     config: { mass: 1, tension: 270, friction: 26, bounce: 4 }, // 스프링 물리 설정
   })
@@ -20,8 +20,8 @@ function DropIngredient({item, index}) {
     <animated.img
       src={`${process.env.PUBLIC_URL}/images/sandwichimg/${item.img}`}
       alt={item.name}
-      style={{ ...styles, position: "absolute", zIndex: index}} 
-      className={'MP_noPointerEv'}
+      style={{ ...styles, position: "relative", zIndex: index}} 
+      className={'MP_noPointerEv MP_SandwichImg'}
     />
   );
 }
@@ -49,9 +49,15 @@ function MainPage() {
 
     const [index,setIndex] = useState("index");
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [mobileCurrentSelectedIndBTN, setMobileCurrentSelectedIndBTN] = useState();
 
     const lastSelectedAry = useRef([[],[],[]]);
     const GGMapRef = useRef(null);
+    const IngredientsContainerRef = useRef(null);
+    const MobileIngredientsContainerRef = useRef(null);
+    const LeftBackCoverRef = useRef(null);
+    const SandwichContainerRef = useRef(null);
+    const CartContainerRef = useRef(null);
 
     useEffect(()=>{
         setIndex(0);
@@ -60,6 +66,72 @@ function MainPage() {
     function addToLastSelected()
     {
         lastSelectedAry.current.push(selectedIngredients.slice());
+    }
+
+    function handleMobileTypeSelect(e, input) {
+
+        if(mobileCurrentSelectedIndBTN)
+        {
+            mobileCurrentSelectedIndBTN.classList.remove('MP_Mobile_IngredientTypeBTN_selected');
+        }
+
+        setMobileCurrentSelectedIndBTN(e.currentTarget);
+
+        e.currentTarget.classList.add('MP_Mobile_IngredientTypeBTN_selected');
+
+        IngredientsContainerRef.current.classList.add('MP_IngredientsContainer_SomeSelected');
+        MobileIngredientsContainerRef.current.classList.add('MP_Mobile_IngredientsContainer_Opened');
+        LeftBackCoverRef.current.classList.add('MP_Mobile_LeftBackCover_Act');
+
+        SandwichContainerRef.current.classList.add('MP_SandwichContainer_Half')
+
+        IngredientsContainerRef.current.classList.remove('MP_BreadTypeHead');
+        IngredientsContainerRef.current.classList.remove('MP_VegetableTypeHead');
+        IngredientsContainerRef.current.classList.remove('MP_CheeseTypeHead');
+        IngredientsContainerRef.current.classList.remove('MP_MeatTypeHead');
+        IngredientsContainerRef.current.classList.remove('MP_SourceTypeHead');
+
+        switch(input)
+        {
+            case 0 : 
+                IngredientsContainerRef.current.classList.add('MP_BreadTypeHead');
+                break;
+            case 1 :
+                IngredientsContainerRef.current.classList.add('MP_VegetableTypeHead');
+                break;
+            case 2 :
+                IngredientsContainerRef.current.classList.add('MP_CheeseTypeHead');
+                break;
+            case 3 :
+                IngredientsContainerRef.current.classList.add('MP_MeatTypeHead');
+                break;
+            case 4 :
+                IngredientsContainerRef.current.classList.add('MP_SourceTypeHead');
+                break;
+        }
+
+    }
+
+    function handleMobileIndClose() {
+
+        if(!mobileCurrentSelectedIndBTN)
+        {
+            return;
+        }
+
+        mobileCurrentSelectedIndBTN.classList.remove('MP_Mobile_IngredientTypeBTN_selected')
+        IngredientsContainerRef.current.classList.remove('MP_IngredientsContainer_SomeSelected');
+
+        MobileIngredientsContainerRef.current.classList.remove('MP_Mobile_IngredientsContainer_Opened');
+        LeftBackCoverRef.current.classList.remove('MP_Mobile_LeftBackCover_Act');
+        
+        SandwichContainerRef.current.classList.remove('MP_SandwichContainer_Half')
+
+        IngredientsContainerRef.current.classList.remove('MP_BreadTypeHead');
+        IngredientsContainerRef.current.classList.remove('MP_VegetableTypeHead');
+        IngredientsContainerRef.current.classList.remove('MP_CheeseTypeHead');
+        IngredientsContainerRef.current.classList.remove('MP_MeatTypeHead');
+        IngredientsContainerRef.current.classList.remove('MP_SourceTypeHead');
     }
 
     function handleAddIngredient(ingredient) {
@@ -83,6 +155,11 @@ function MainPage() {
     };
 
     function handleUndoIngredient() {
+
+        if(lastSelectedAry.current.length < 1)
+        {
+            return;
+        }
 
         setSelectedIngredients([...lastSelectedAry.current.pop()]);
     }
@@ -143,6 +220,10 @@ function MainPage() {
         }
     }
 
+    function handleMobileCartToggle() {
+        CartContainerRef.current.classList.toggle('MP_CartContainer_Closed')
+    }
+
     const ind = [
         { uid : 'Ind_uid:first', id: 0, name: "빵", img: "Bread.png" },
         { uid : '', id: 1, name: "양상추", img: "Lettuce.png" },
@@ -159,10 +240,11 @@ function MainPage() {
 
             <main className='MP_main MP_HorizontalContainer'>
 
-                <div className='MP_IngredientsContainer MP_MainContainers MP_VerticalContainer'>
+<div className='MP_Mobile_IngredientsContainer' ref={MobileIngredientsContainerRef}>
+                <div className='MP_IngredientsContainer MP_MainContainers MP_VerticalContainer' ref={IngredientsContainerRef}>
                     <div className='MP_IngredientsTop MP_VerticalContainer'>
                         <div className='MP_LargeText MP_textColor1'>🥗 재료 선택</div>
-                        <div className='MP_NormalText MP_textColor2'>원하는 재료를 클릭해서 추가하세요</div>
+                        <div className='MP_NormalText MP_textColor2'></div>
                     </div>
 
                     <div className='MP_IngredientTypeList'>
@@ -336,11 +418,31 @@ function MainPage() {
                     </div>
                 </div>
 
-                <div className='MP_SandwichContainer MP_MainContainers MP_VerticalContainer'>
+                <div className='MP_Mobile_LeftAside'>
+                    <div className='MP_Mobile_IngredientTypeBTNList'>
+                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_SourceTypeHead'
+                            onClick={(e) => handleMobileTypeSelect(e,4)}>🥫<br/><div>소<br/>스</div></div>
+                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_MeatTypeHead'
+                            onClick={(e) => handleMobileTypeSelect(e,3)}>🥓<br/><div>단<br/>백<br/>질</div></div>
+                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_CheeseTypeHead'
+                            onClick={(e) => handleMobileTypeSelect(e,2)}>🧀<br/><div>치<br/>즈</div></div>
+                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_VegetableTypeHead'
+                            onClick={(e) => handleMobileTypeSelect(e,1)}>🥬<br/><div>채<br/>소</div></div>
+                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_BreadTypeHead'
+                            onClick={(e) => handleMobileTypeSelect(e,0)}>🍞<br/><div>빵</div></div>
+                    </div>
+                </div>
+
+                <div className='MP_Mobile_LeftBackCover' ref={LeftBackCoverRef}
+                            onClick={() => handleMobileIndClose()}>
+
+                </div>
+</div>
+                <div className='MP_SandwichContainer MP_MainContainers MP_VerticalContainer' ref={SandwichContainerRef}>
               
                     <div className='MP_SandwichTop MP_HorizontalContainer'>
 
-                        <div className='MP_LargeText MP_textColor1'>🥪 샌드위치 미리보기</div>
+                        <div className='MP_SandwichTopText MP_LargeText MP_textColor1'></div>
 
                         <div className='MP_SandwichTopButtonBox'>
                             <div className='MP_SandwichTopBUttonIconBox'
@@ -355,14 +457,18 @@ function MainPage() {
                     </div>
      
                     <div className='MP_SandwichMain'>
-                        {selectedIngredients.map((element, index) => (
-                            <DropIngredient key={index+'_SandMain'} item={element} index={index} />
-                        ))}
+                        <div className='MP_SandwichImgPlace'>
+
+                            {selectedIngredients.map((element, index) => (
+                                <DropIngredient key={index+'_SandMain'} item={element} index={index} />
+                            ))}
+
+                        </div>
 
                         {selectedIngredients.length === 0 && (
                             <div className='MP_SandwichMain_emptyDisplay MP_VerticalContainer'>
                             <img src={`${process.env.PUBLIC_URL}/images/empty_sandwich.png`} alt='empty_sandwich.png'/>
-                            <div className='MP_LargeText MP_textColor3'>
+                            <div className='MP_SandwichMain_emptyText MP_LargeText MP_textColor3'>
                                 재료를 선택해서<br/>
                                 샌드위치를 만들어보세요!
                             </div>
@@ -373,7 +479,7 @@ function MainPage() {
 
                 </div>
 
-                <div className='MP_CartContainer MP_MainContainers MP_VerticalContainer'>
+                <div className='MP_CartContainer MP_MainContainers MP_VerticalContainer MP_CartContainer_Closed' ref={CartContainerRef}>
                     <div className='MP_CartTop'>
                         <div className='MP_CartTopText'>
                             <div className='MP_LargeText MP_textColor1'>🛒 장바구니</div>
@@ -389,11 +495,11 @@ function MainPage() {
                         </div>
                     </div>              
                     <div className='MP_CartBottom MP_VerticalContainer'>
-                        <div className='MP_ingredient_total MP_HorizontalContainer'>
+                        <div className='MP_cartAmount MP_ingredient_total MP_HorizontalContainer'>
                             <div className='MP_LargeText MP_textColor1'>총 재료</div>
                             <div className='MP_LargeText MP_textColor3'>8개</div>
                         </div>
-                        <div className='MP_ingredient_total MP_HorizontalContainer'>
+                        <div className='MP_cartPrice MP_ingredient_total MP_HorizontalContainer'>
                             <div className='MP_LargeText MP_textColor1'>총 금액</div>
                             <div className='MP_LargeText MP_textColor3'>3,500원</div>
                         </div>
@@ -417,7 +523,7 @@ function MainPage() {
                     </div>
                 </div>
 
-                <div className='MP_FooterText_Large MP_textColor1'> → </div>
+                <div className='MP_FooterText_Large MP_textColor1 MP_FooterArrow'> → </div>
 
                 <div className='MP_Footer_Box MP_HorizontalContainer MP_User'>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
@@ -426,16 +532,24 @@ function MainPage() {
                         <div className='MP_FooterText_Normal MP_textColor2'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
                     </div>
                 </div>
+
             </div>
 
 
             <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
                 <div className='MP_GPSPopup'>
-                    <GGMap></GGMap>
+                    <GGMap handleGPStoggle={handleGPStoggle}></GGMap>
                 </div>
                 <div className='MP_GPSPopupBackground'
                             onClick={() => handleGPStoggle(false)}>
                 </div>
+            </div>
+
+            <div className='MP_MobileFooterCartBTN'
+                            onClick={() => handleMobileCartToggle()}>
+
+                <div className='MP_MobileFooterCartBTN_emoji'>🛒</div> 
+                장바구니
             </div>
         </div>
     )
