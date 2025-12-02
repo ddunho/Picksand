@@ -118,25 +118,64 @@
 .spoint{
     width: 95%;
     display: flex;
-    gap: 5px;
-    align-items: center; 
+    gap: 10px;
+    align-items: center;
+    justify-content: center; 
     margin-bottom: 10px;
 }
 
-.spoint>p{
-    color: #ffffff;
-    font-size: 24px;
-}
+
 
 .reviewtxt{
     width: 95%;
     min-height: 170px;
     height: auto;
+    border: 3px solid #ffffff;
     border-radius: 15px;
+    resize: none;
     text-align: start;
+    padding-left: 10px;
+    padding-top: 10px;
+    box-sizing: border-box;
+    font-size: 14px;
 }
 
 .spoint>p{
+    background-color: #DEA88B;
+    color: #ffffff;
+    
+    font-size: 27px;
+    margin-right: 10px;
+    
+    
+
+}
+
+.spointbu{
+    width: 95%;
+    display: flex;
+    
+    align-items: center; 
+    margin-bottom: 10px;
+}
+
+
+
+.reviewcard>button{
+    
+    background-color: #DEA88B;
+    color: #ffffff ;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 10px;
+    
+}
+
+.selectspoint{
+    width: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: #DEA88B;
     color: #ffffff;
     border: 1px solid #ffffff;
@@ -145,9 +184,31 @@
     padding: 7px;
     box-sizing: border-box;
     border-radius: 10px;
-
+    margin-left: 5px;
 }
-.spoint>p:hover{
+
+.selectspoint:hover{
+    background-color: #ffffff;
+    color: #DEA88B;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     cursor: pointer;
 }
+
+.selectspoint.active{
+    background-color: #ffffff;
+    color: #DEA88B;
+}
+
+@media (max-width: 1100px){
+   .reviewmain{
+    width: 100%;
+    
+   }
+   
+   .selectspoint{
+    width: 5%;
+    height: 20px;
+    font-size: 10px;
+   }
+}
+
