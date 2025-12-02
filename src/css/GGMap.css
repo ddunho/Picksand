@@ -291,21 +291,33 @@
         border: 1px solid #FFEDD4;
     }
 
-    .GGMap_UserAddrList
+    .GGMap_RightDDBtn
     {
-        display: none;
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        scale: 0;
     }
-    .GGMap_UserAddrList_Open
+    .GGMap_RightDDBtn::after
     {
-        display: block;
+        content: "";
     }
 
-    .GGMap_ShopAddrList
+    .GGMap_RightDDBtn_Closed::after
     {
-        display: none;
+        content: "";
     }
-    .GGMap_ShopAddrList_Open
+
+    .GGMap_ShopAddrList_Closed .GGMap_addrBox,
+    .GGMap_ShopAddrList_Closed .GGMap_addrNameText,
+    .GGMap_ShopAddrList_Closed .GGMap_addrDetailText
     {
-        display: block;
+        pointer-events: none;
+
+        opacity: 0;
+        padding: 0px;
+        max-height: 0;
+
+        border-width: 0px;
     }
 }

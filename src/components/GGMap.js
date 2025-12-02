@@ -156,11 +156,11 @@ export default function GGMap({handleGPStoggle}) {
   }
 
   function toggleShopAddrList_Mobile() {
-    ShopAddrListRef.current.classList.toggle('GGMap_ShopAddrList_Open');
+    ShopAddrListRef.current.classList.toggle('GGMap_ShopAddrList_Closed');
   }
 
   function toggleUserAddrList_Mobile() {
-
+    toggleUserAddrList();
   }
 
 
@@ -204,7 +204,7 @@ export default function GGMap({handleGPStoggle}) {
           <div className="GGMap_Right">
             <div className="GGMap_RightInner GGMap_Vertical_Container">
               <div className='GGMap_RightTop'>
-                <div className='MP_Footer_Box MP_HorizontalContainer MP_User' onClick={toggleUserAddrList}>
+                <div className='MP_Footer_Box MP_HorizontalContainer MP_User' onClick={toggleUserAddrList_Mobile}>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
@@ -247,15 +247,15 @@ export default function GGMap({handleGPStoggle}) {
                     </div>
 
                     <button className="GGMap_RightDDBtn GGMap_RightDDBtn_Closed" 
-                      ref={toggleListBtnRef} onClick={toggleUserAddrList_Mobile}>
+                      ref={toggleListBtnRef} onClick={toggleUserAddrList}>
                     </button>
                   </div>
                   
                 </div>
               </div>
               
-              <div className='GGMap_shopListContainer' onClick={toggleShopAddrList_Mobile}>
-                <div className='MP_Footer_Box MP_HorizontalContainer MP_Shop'>
+              <div className='GGMap_shopListContainer'>
+                <div className='MP_Footer_Box MP_HorizontalContainer MP_Shop' onClick={toggleShopAddrList_Mobile}>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>천호점</div>
@@ -263,7 +263,7 @@ export default function GGMap({handleGPStoggle}) {
                     </div>
                 </div>
 
-                <div className='GGMap_ShopAddrList' ref={ShopAddrListRef}>
+                <div className='GGMap_ShopAddrList GGMap_ShopAddrList_Closed' ref={ShopAddrListRef}>
                   <div className='GGMap_addrBox GGMap_Vertical_Container'>
                     <div className='GGMap_addrTopBox GGMap_Horizontal_Container'>
                       <div className='GGMap_addrNameText'>천호점</div>
