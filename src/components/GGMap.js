@@ -11,8 +11,10 @@ export default function GGMap({handleGPStoggle}) {
 
   const mapRef = useRef(null);
   const markersRef = useRef([]);
-  const addrListRef = useRef(false);
   const toggleListBtnRef = useRef(null);
+
+  const UserAddrListRef = useRef(null);
+  const ShopAddrListRef = useRef(null);
 
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [center, setCenter] = useState(null);
@@ -23,7 +25,7 @@ export default function GGMap({handleGPStoggle}) {
     setCenter({ lat: 37.5381679, lng: 127.1262834 });
   },[])
 
-  const PlaceTemplate = {
+  const PlaceTemplate = [{
     name: "현위치",
     formatted_address: "서울 강동구 천호대로 1027 동원천호빌딩 5층",
     rating: 4.5,
@@ -35,30 +37,103 @@ export default function GGMap({handleGPStoggle}) {
         lng: () => 127.1262834
       }
     }
-  };
+  },
+  {
+    name: "천호점",
+    formatted_address: "서대한민국 서울특별시 강동구 천호대로 1024",
+    rating: 4.8,
+    place_id: "mock_place_id_002",
+
+    geometry: {
+      location: {
+        lat: () => 37.537869,
+        lng: () => 127.125649
+      }
+    }
+  },
+  {
+    name: "광나루점",
+    formatted_address: "대한민국 서울특별시 광진구 광장동 200-2",
+    rating: 4.4,
+    place_id: "mock_place_id_003",
+
+    geometry: {
+      location: {
+        lat: () => 37.5451255,
+        lng: () => 127.1035741
+      }
+    }
+  },
+  {
+    name: "한강 공원점",
+    formatted_address: "대한민국 서울특별시 강동구 선사로 83-66",
+    rating: 4.6,
+    place_id: "mock_place_id_004",
+
+    geometry: {
+      location: {
+        lat: () => 37.5476362,
+        lng: () => 127.1165831
+      }
+    }
+  },
+  {
+    name: "천호 위브점",
+    formatted_address: "대한민국 서울특별시 강동구 천호동 414",
+    rating: 4.7,
+    place_id: "mock_place_id_005",
+
+    geometry: {
+      location: {
+        lat: () => 37.539315,
+        lng: () => 127.127047
+      }
+    }
+  }];
 
   async function tempMarker()
   {
     const { AdvancedMarkerElement } = await window.google.maps.importLibrary("marker");
 
-    const marker = new AdvancedMarkerElement({
-      position: {
-        lat: 37.5381679,
-        lng: 127.1262834
-      },
-      map: mapRef.current,
-      title: "현위치",
-    });
+    for(let i = 0; i < PlaceTemplate.length; i ++)
+    {
+      const newMarker = new AdvancedMarkerElement({
+        position: {
+          lat: PlaceTemplate[i].geometry.location.lat(),
+          lng: PlaceTemplate[i].geometry.location.lng()
+        },
+        map: mapRef.current,
+        title: i === 0 ? "현위치" : "지점",
+        content: (() => {
+          const pin = document.createElement("div");
+          pin.style.width = i === 0 ? "34px" : "28px";
+          pin.style.height =  i === 0 ? "34px" : "28px";
+          pin.style.borderRadius = i === 0 ? "50%" : "0%";
+          pin.style.backgroundColor = "#ff543c"; // 원하는 색상
+          pin.style.border = "3px solid white";
+          pin.style.boxShadow = "0 0 6px rgba(0,0,0,0.4)";
+          
+          pin.style.display = "flex";
+          pin.style.justifyContent = "center";
+          pin.style.alignItems = "center";
+          pin.innerText = i === 0 ? "◈" : "🥪";
+          pin.style.color = "white";
+          pin.style.fontSize = "24px";
 
-    marker.addListener("click", () => {
-      setSelectedPlace(PlaceTemplate);
-      setCenter({ lat: 37.5381679, lng:127.1262834 });
-    });
+          return pin;
+        })()
+      });
 
-    markersRef.current.push(marker);
-    setSelectedPlace(PlaceTemplate);
+      newMarker.addListener("click", () => {
+        setSelectedPlace(PlaceTemplate[i]);
+        setCenter({ lat: PlaceTemplate[i].geometry.location.lat(), 
+            lng:PlaceTemplate[i].geometry.location.lng() });
+      });
 
-    //console.log(marker);
+      markersRef.current.push(newMarker);
+    }
+    
+    setSelectedPlace(PlaceTemplate[0]);
   }
 
 
@@ -74,10 +149,18 @@ export default function GGMap({handleGPStoggle}) {
     tempMarker();
   };
 
-  function toggleAddrList() {
+  function toggleUserAddrList() {
     //tempMarker();
-    addrListRef.current.classList.toggle('GGMap_addrList_Closed');
+    UserAddrListRef.current.classList.toggle('GGMap_addrList_Closed');
     toggleListBtnRef.current.classList.toggle('GGMap_RightDDBtn_Closed')
+  }
+
+  function toggleShopAddrList_Mobile() {
+    ShopAddrListRef.current.classList.toggle('GGMap_ShopAddrList_Open');
+  }
+
+  function toggleUserAddrList_Mobile() {
+
   }
 
 
@@ -111,7 +194,7 @@ export default function GGMap({handleGPStoggle}) {
                     rel="noopener noreferrer"
                     style={{ marginTop: "8px", display: "inline-block", color: "#4285F4" }}
                   >
-                    구글 지도에서 보기</a>
+                    여기서 주문하기!</a>
                 </div>
               </InfoWindow>
             )}
@@ -121,17 +204,17 @@ export default function GGMap({handleGPStoggle}) {
           <div className="GGMap_Right">
             <div className="GGMap_RightInner GGMap_Vertical_Container">
               <div className='GGMap_RightTop'>
-                <div className='MP_Footer_Box MP_HorizontalContainer MP_User'>
+                <div className='MP_Footer_Box MP_HorizontalContainer MP_User' onClick={toggleUserAddrList}>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
                         <div className='MP_FooterText_Normal MP_textColor2'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
                     </div>
                 </div>
+
                 <div className='GGMap_addrListContainer GGMap_Vertical_Container'>
 
-
-                  <div className='GGMap_addrList GGMap_addrList_Closed' ref={addrListRef}>
+                  <div className='GGMap_UserAddrList GGMap_addrList_Closed' ref={UserAddrListRef}>
                     <div className='GGMap_addrBox GGMap_Vertical_Container'>
                       <div className='GGMap_addrNameText'>집</div>
                       <div className="GGMap_addrLine"></div>
@@ -164,14 +247,14 @@ export default function GGMap({handleGPStoggle}) {
                     </div>
 
                     <button className="GGMap_RightDDBtn GGMap_RightDDBtn_Closed" 
-                      ref={toggleListBtnRef} onClick={toggleAddrList}>
+                      ref={toggleListBtnRef} onClick={toggleUserAddrList_Mobile}>
                     </button>
                   </div>
                   
                 </div>
               </div>
               
-              <div className='GGMap_shopListContainer'>
+              <div className='GGMap_shopListContainer' onClick={toggleShopAddrList_Mobile}>
                 <div className='MP_Footer_Box MP_HorizontalContainer MP_Shop'>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
@@ -180,7 +263,7 @@ export default function GGMap({handleGPStoggle}) {
                     </div>
                 </div>
 
-                <div className='GGMap_addrBoxList'>
+                <div className='GGMap_ShopAddrList' ref={ShopAddrListRef}>
                   <div className='GGMap_addrBox GGMap_Vertical_Container'>
                     <div className='GGMap_addrTopBox GGMap_Horizontal_Container'>
                       <div className='GGMap_addrNameText'>천호점</div>

@@ -7,7 +7,7 @@ import { useSpring, animated } from '@react-spring/web'
 function DropIngredient({item, index}) {
 
   const xAlter = useRef(Math.random() * 30 - 15).current; 
-  let yAlter = 75 - (index * 25);
+  //let yAlter = 75 - (index * 25);
 
   const styles = useSpring({
     from: { opacity: 0, x: xAlter, y: -750},
@@ -107,6 +107,8 @@ function MainPage() {
                 break;
             case 4 :
                 IngredientsContainerRef.current.classList.add('MP_SourceTypeHead');
+                break;
+            default :
                 break;
         }
 

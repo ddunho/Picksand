@@ -57,9 +57,6 @@
     background-color: #FFFEFB;
 }
 
-.GGMap_addrList
-{
-}
 .GGMap_addrList_Closed
 {
     flex-direction: column;
@@ -231,11 +228,6 @@
         height: 85%; 
     }
 
-    .GGMap_addrList
-    {
-        display: none;
-    }
-
     .GGMap_Right
     {
         position: absolute;
@@ -273,11 +265,6 @@
         max-width: 45%;
     }
 
-    .GGMap_addrBoxList
-    {
-        display: none;
-    }
-
 
     .GGMap_Right
     {
@@ -299,8 +286,26 @@
 
         width: 32px;
         height: 32px;
-        background-color:#FEFAEA;
+        background-color:white;
         color: #F54A00;
         border: 1px solid #FFEDD4;
+    }
+
+    .GGMap_UserAddrList
+    {
+        display: none;
+    }
+    .GGMap_UserAddrList_Open
+    {
+        display: block;
+    }
+
+    .GGMap_ShopAddrList
+    {
+        display: none;
+    }
+    .GGMap_ShopAddrList_Open
+    {
+        display: block;
     }
 }
