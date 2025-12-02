@@ -10,6 +10,8 @@
     min-height: calc(100vh - 208px);
 
     padding: 32px 50px 32px 50px;
+
+    overflow: hidden;
 }
 
 .MP_HorizontalContainer {
@@ -53,47 +55,20 @@
     height: calc(100vh - 104px - 224px);
 }
 
-@media (max-width: 426px) {
 
-    .MP_main {
-        background-color: #FEFAEA;
-        justify-content: space-between;
-        box-sizing: border-box;
+.MP_Mobile_IngredientsContainer
+{
+    flex: 1;
+}
 
-        min-width: 100vw;
-        min-height: calc(100vh - 104);
+.MP_Mobile_LeftAside
+{
+    display: none;
+}
 
-        padding: 16px;
-    }
-
-    .MP_MainContainers{
-        flex: 1;    
-        border-radius: 12px;
-        background-color: #FFFEFB;
-        border: 1px solid #FFEDD4;
-
-        padding: 12px;
-        height: calc(100vh - 64px - 120px);
-    }
-
-    .MP_IngredientsContainer
-    {
-        display: none;
-        position: absolute;
-        left: 0;
-
-        z-index: 66;
-    }
-
-    .MP_CartContainer
-    {
-        display: none;
-    }
-
-    .MP_Footer
-    {
-        display: none;
-    }
+.MP_Mobile_LeftBackCover
+{
+    display: none;
 }
 
 
@@ -106,6 +81,11 @@
 .MP_IngredientsTop{
     gap:15px;
     margin-bottom: 12px;
+}
+
+.MP_IngredientsTop .MP_NormalText::after
+{
+    content: '원하는 재료를 클릭해서 추가하세요';
 }
 
 
@@ -125,31 +105,31 @@
 }
 
 .MP_BreadTypeHead{
-    background-color: #FEF3C6;
+    background-color: #FEF3C6 !important; 
     border-color: #FEE685;
     color: #BA4D00;
 }
 
 .MP_VegetableTypeHead{
-    background-color: #DBFCE7;
+    background-color: #DBFCE7 !important;
     border-color: #B9F8CF;
     color: #09883E;
 }
 
 .MP_CheeseTypeHead{
-    background-color: #FEF9C2;
+    background-color: #FEF9C2 !important;
     border-color: #FFF085;
     color: #BB832E;
 }
 
 .MP_MeatTypeHead{
-    background-color: #FFE4E6;
+    background-color: #FFE4E6 !important;
     border-color: #FFCCD3;
     color: #C60035;
 }
 
 .MP_SourceTypeHead{
-    background-color: #FFEDD4;
+    background-color: #FFEDD4 !important;
     border-color: #FFD7A8;
     color: #CA3500;
 }
@@ -168,6 +148,7 @@
     border-radius: 12px;
     border: 1px solid #FFEDD4;
 
+    background-color: #FFFEFB;
     height: 60px;
 
     position: relative;
@@ -313,9 +294,9 @@
     font-weight:500;
 }
 
-.MP_SandwichContainer{
-    
 
+
+.MP_SandwichContainer{
     position: relative;
     overflow:hidden;
 }
@@ -325,8 +306,9 @@
     justify-content: space-between;
     background-color: #fffefb50;
 
-    z-index: 50;
+    z-index: 55;
 }
+
 
 .MP_SandwichTopButtonBox{
     display: flex;
@@ -366,6 +348,32 @@
 
     width: 100%;
     height: 100%;
+
+    position: relative;
+}
+
+.MP_SandwichTopText::after
+{
+    content: "🥪 샌드위치 미리보기 ";
+}
+
+.MP_SandwichImgPlace
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+
+    position: absolute;
+    bottom: 285px;
+}
+
+.MP_SandwichImg
+{
+    width: 360px;
+    height: 360px;
+    margin-bottom: -385px;
 }
 
 .MP_SandwichMain_emptyDisplay{
@@ -379,6 +387,7 @@
     text-align: center;
     gap: 12px;
 }
+
 
 
 .MP_CartContainer{
@@ -528,7 +537,6 @@
 }
 
 
-
 .MP_Footer{
     
     position: fixed;
@@ -639,4 +647,481 @@
     height: 100%;
 
     background-color: #00000062;
+}
+
+
+.MP_MobileFooterCartBTN
+{
+    display: none;
+}
+
+
+@media (max-width: 426px) {
+
+    .MP_main {
+        background-color: #FEFAEA;
+        justify-content: space-between;
+        box-sizing: border-box;
+
+        min-width: 100vw;
+        min-height: calc(100vh - 104px);
+
+        padding: 16px;
+    }
+
+    .MP_MainContainers{
+
+        background-color: #FFFEFB;
+        border: 1px solid #FFEDD4;
+        box-sizing: border-box;
+        border-radius: 12px;
+        padding: 12px;
+        height: calc(100vh - 64px - 28px - 60px);
+    }
+}
+
+
+@media (max-width: 426px) {
+
+    .MP_SandwichContainer{
+        flex: 1;    
+    }
+
+    .MP_Mobile_IngredientsContainer
+    {
+        display: flex;
+        transform: translateY(-7px);
+        
+        left: -48%;
+        width: 50%;
+        position: absolute;
+        z-index: 70;
+
+        transition: left 0.20s ease;
+    }    
+    
+    .MP_Mobile_IngredientsContainer_Opened
+    {
+        transition: left 0.33s ease;
+        left: 0%;
+    }
+
+    .MP_IngredientsContainer
+    {
+        box-sizing: border-box;
+        border-radius: 0px 12px 12px 0px;
+        border: 1px solid #FEE685 !important;
+        border-width: 2px 2px 2px 0px !important;
+        background-color: #FEF3C6;
+
+        position: relative;
+        z-index: 83;
+        
+        height: calc(100vh - 64px - 12px);
+    }
+
+    .MP_IngredientsContainer_SomeSelected
+    {
+        border: 2px solid #FF8904 !important;
+        border-width: 2px 2px 2px 0px !important;
+        z-index: 86;
+    }
+    
+    .MP_IngredientsTop .MP_NormalText::after
+    {
+        content: '재료를 클릭해서 추가하세요' !important;
+    }
+
+    .MP_Mobile_LeftAside
+    {
+        display: block !important;
+        position: absolute;
+        right: -26px;
+        top: 0px;
+    }
+
+    .MP_Mobile_IngredientTypeBTNList
+    {
+        display: flex;
+        flex-direction:column-reverse;
+
+        padding-top: 64px;
+    }
+
+    .MP_IngredientBox
+    {
+        border-width: 2px;
+    }
+
+    .MP_Mobile_IngredientTypeBTN
+    {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        
+        align-items: center;
+        text-align: center;
+
+        padding: 10px 2px 8px 6px;
+        gap: 8px;
+        line-height: 14px;
+
+
+        width: 29px;
+
+        box-sizing: border-box;
+        border: 2px solid #FEE685;
+        border-width: 2px 2px 2px 0px;
+        border-radius: 0px 6px 12px 0px;
+        
+        margin-bottom: -6px;
+
+        transition: transform 0.25s ease,
+            padding-left 0.1s ease,
+            width 0.25s ease,
+            margin-left 0.25s ease;
+    }
+    .MP_Mobile_IngredientTypeBTN_selected
+    {
+        transform: translateX(10.5px);
+        z-index: 88;
+        border-color: #FF8904;
+        border-style: solid;
+        border-width: 2px 2px 2px 0px;
+
+        padding-left: 10px;
+        width: 39px;
+        margin-left: -10px
+    }
+    
+    .MP_Mobile_LeftBackCover
+    {
+        display: block;
+        position: absolute;
+
+        left: 0px;
+        bottom: 0px;
+
+        z-index: -5;
+
+        width: 100%;
+        height: 125%;
+    }
+    .MP_Mobile_LeftBackCover_Act
+    {
+        width: 200%;
+    }
+}
+
+@media (max-width: 426px) {
+
+    .MP_SandwichContainer
+    {
+        position: absolute;
+
+        width: 100%;
+        right: 0px;
+
+        padding-bottom: 48px;
+
+        transition: width 0.25s ease;
+    }
+    
+    .MP_SandwichTop
+    {
+        display: flex;
+        padding-left: 25%;
+    }
+    
+    .MP_SandwichTopText::after
+     {
+        position: absolute;
+        content: "🥪 샌드위치 미리보기 " ;
+        font-size: 18px;
+        transform: translateY(-14.5px);
+
+        width: 168px;
+        height: 30px;
+
+        overflow: hidden;
+        
+        transition: width 0.25s ease-in;
+     }
+
+    .MP_SandwichMain_emptyText
+     {
+        transition: font-size 0.25s ease;
+     }
+
+    .MP_SandwichImgPlace
+    {
+        bottom: 245px;
+        transition: all 0.25s ease;
+    }
+    .MP_SandwichImg
+    {
+        transition: scale 0.25s ease,
+            margin 0.25s ease;
+    }
+
+    .MP_SandwichContainer_Half
+    {
+        width: 50%;
+    }
+    .MP_SandwichContainer_Half .MP_SandwichTop
+    {
+        display: flex;
+        padding-left: 0%;
+    }
+    .MP_SandwichContainer_Half .MP_SandwichTopText::after
+    {
+        position: absolute;
+        content: "🥪 미리보기 " ;
+        font-size: 18px;
+        transform: translateY(-14.5px);
+
+        width: 100px;
+        height: 30px;
+
+        overflow: hidden;
+
+        transition: width 0.25s ease;
+    }
+     
+    .MP_SandwichContainer_Half .MP_SandwichImgPlace
+    {
+        bottom: 205px ;
+    }
+
+    .MP_SandwichContainer_Half .MP_SandwichImg
+    {
+        scale: 0.45;
+        margin-bottom: -375px;
+    }
+
+    .MP_SandwichContainer_Half .MP_SandwichMain_emptyText 
+    {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 426px) {
+
+    .MP_Footer
+    {
+        justify-content: space-between;
+
+        height: 60px;
+
+        padding: 0px 8px 8px 16px;
+        box-sizing: border-box;
+        
+        gap: 8px;
+
+        background-color: #FEFAEA;
+    }
+
+    .MP_Footer .MP_Footer_Box
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        position: relative;
+
+        width: 225px;
+        height: 100%;
+        padding: 4px;
+
+        background-color: #FFFEFB;
+    }
+
+    .MP_Footer .MP_Footer_Box:hover
+    {
+        background-color: #FFF7ED;
+        border: 1px solid #FFBD75;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        padding: 4px;
+    }
+
+    .MP_Footer .MP_Footer_Img
+    {
+        display: none;
+        height: 24px;
+        width: 24px;
+
+        background-color: #FEFAEA;
+        border-radius: 99px;
+        border: 1px solid #FFEDD4;
+    }
+
+    .MP_Footer .MP_Footer_TextBox.MP_VerticalContainer
+    {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .MP_Footer  .MP_Footer_TextBox .MP_FooterText_Large
+    {
+        padding-left: 0px;
+        font-size: 16px;
+        
+        width: 48px;
+    }
+    
+    .MP_Footer .MP_Footer_TextBox .MP_FooterText_Normal
+    {
+        padding-left: 4px;
+        font-size: 12px;
+
+        width: 140px;
+    }
+
+    .MP_Footer .MP_FooterArrow
+    {
+        display: none;
+    }
+
+    .MP_Footer .MP_User
+    {
+        display: none;
+    }
+
+}
+
+
+@media (max-width: 426px) {
+
+
+    .MP_MobileFooterCartBTN
+    {
+        position: absolute;
+        right: 26px;
+        bottom: 8px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        gap: 4px;
+
+        width: 132px;
+        height: 54px;
+        border-radius: 12px;
+        box-sizing: border-box;
+
+        background : linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
+        color: white;
+
+        border: 1px solid #FFEDD4;
+
+        z-index: 80;
+    }
+
+    .MP_MobileFooterCartBTN_emoji
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 24px;
+        height: 24px;
+
+        box-sizing: border-box;
+        padding-left: 2px;
+
+        background-color: white;
+        border-radius: 99px;
+        border: 1px solid #FFEDD4;
+    }
+
+    
+    .MP_MobileFooterCartBTN:hover{    
+        scale: 1.05;
+        background: linear-gradient(90deg, #F54B00 0%, #E27000 100%);
+        font-weight: 500;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .MP_CartContainer
+    {
+        z-index: 55;
+
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+        
+        width: 184px;
+
+        height: calc(100vh - 64px - 12px + 8px);
+        opacity: 1;
+
+        transition: height 0.25s ease, opacity 0s ease;
+    }
+
+    .MP_CartContainer_Closed
+    {
+        opacity: 0;
+        height: 0px;
+        
+        transition: height 0.25s ease, opacity 0s ease 0.25s;
+    }
+    .MP_CartContainer_Closed *
+    {
+        display: none;
+    }
+
+    
+    .MP_CartTop
+    {
+        height: calc(100% - 0px);
+    }
+
+    .MP_CartList 
+    {
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .MP_CartTopText .MP_LargeText.MP_textColor1::after
+    {
+        content: ' (8)';
+    }
+
+    .MP_cartAmount
+    {
+        display: none;
+    }
+
+    .MP_CartItemRemove
+    {
+        display: none;
+    } 
+
+    .MP_cartPrice
+    {
+        margin-bottom: 52px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    
+
+    .MP_OrderButton
+    {
+        display: none;
+    }
+
+}
+
+@media (max-width: 426px) {
+    
+    .MP_GPSPopup 
+    {
+        width: 90%;
+        height: 95%;
+
+    }
+
+    
 }

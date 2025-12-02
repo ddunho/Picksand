@@ -4,7 +4,7 @@ import '../css/GGMap.css';
 
 const libraries = ["places"];
 
-export default function GGMap() {
+export default function GGMap({handleGPStoggle}) {
 
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
   const mapId = process.env.REACT_APP_GOOGLE_MAP_ID;
@@ -85,7 +85,7 @@ export default function GGMap() {
     <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
       <div className="GGMap_MainContainer">
         <div className="GGMap_InnerContainer GGMap_Horizontal_Container">
-          <GoogleMap mapContainerClassName="GGMap_Left" mapContainerStyle={containerStyle} center={center} zoom={18} onLoad={handleLoad}  options={{ mapId: mapId }}>
+          <GoogleMap mapContainerClassName="GGMap_Left" mapContainerStyle={containerStyle} center={center} zoom={18} onLoad={handleLoad} options={{ mapId: mapId, disableDefaultUI: true }}>
                     
             {selectedPlace && (
               <InfoWindow style={{ marginTop: "16px", padding: "8px", border: "1px solid #888"}}
@@ -180,6 +180,7 @@ export default function GGMap() {
                     </div>
                 </div>
 
+                <div className='GGMap_addrBoxList'>
                   <div className='GGMap_addrBox GGMap_Vertical_Container'>
                     <div className='GGMap_addrTopBox GGMap_Horizontal_Container'>
                       <div className='GGMap_addrNameText'>천호점</div>
@@ -206,11 +207,18 @@ export default function GGMap() {
                     <div className="GGMap_addrLine"></div>
                     <div className='GGMap_addrDetailText'>서울특별시 광진구 천호대로 지하550 (능동 275-5)</div>
                   </div>
+                </div>
               </div>
 
             </div>
           </div>
         </div>
+
+        <div className="GGMap_MobileQuitBTN"
+            onClick={() => handleGPStoggle(false)}>
+          X
+        </div>
+
       </div>
     </LoadScript>
   );
