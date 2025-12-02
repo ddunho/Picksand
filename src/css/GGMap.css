@@ -13,7 +13,7 @@
     width: 100%;
     height: 100%;
 
-    padding: 12px;
+    padding: 12px 0px 0px 12px;
 }
 .GGMap_InnerContainer
 {
@@ -193,4 +193,114 @@
     transform-origin: center;
 
     z-index: 99;
+}
+
+
+@media (max-width: 426px) {
+
+    .GGMap_InnerContainer
+    {
+        position: relative;
+    }
+
+    .GGMap_InnerContainer .MP_Footer_Img
+    {
+        display: none;
+    }
+
+    .GGMap_InnerContainer .MP_FooterText_Large
+    {
+        font-size: 14px;
+    }
+    .GGMap_InnerContainer .MP_FooterText_Normal
+    {
+        font-size: 12px;
+    }
+    
+    .GGMap_InnerContainer .GGMap_addrNameText
+    {
+        font-size: 14px;
+    }
+    .GGMap_InnerContainer .GGMap_addrDetailText
+    {
+        font-size: 12px;
+    }
+
+    .GGMap_InnerContainer
+    {
+        height: 85%; 
+    }
+
+    .GGMap_addrList
+    {
+        display: none;
+    }
+
+    .GGMap_Right
+    {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+
+        width: 100%;
+        height: 100%;
+    }
+
+    .GGMap_RightInner
+    {
+        background-color: transparent;
+    }
+
+    .GGMap_RightTop
+    {
+        position: fixed;
+        box-sizing: border-box;
+
+        bottom: 2.5%;
+        left: 5%;
+
+        max-width: 45%;
+    }
+
+    .GGMap_shopListContainer
+    {
+        position: fixed;
+        box-sizing: border-box;
+
+        bottom: 2.5%;
+        right: 5%;
+        
+        max-width: 45%;
+    }
+
+    .GGMap_addrBoxList
+    {
+        display: none;
+    }
+
+
+    .GGMap_Right
+    {
+        min-width: 0px !important;
+
+        width: 0%;
+        height: 0%;
+    }
+
+    .GGMap_MobileQuitBTN
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        position: absolute;
+        top: 2.5%;
+        right: 5%;
+
+        width: 32px;
+        height: 32px;
+        background-color:#FEFAEA;
+        color: #F54A00;
+        border: 1px solid #FFEDD4;
+    }
 }
