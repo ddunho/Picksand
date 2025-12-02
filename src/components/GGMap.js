@@ -4,7 +4,7 @@ import '../css/GGMap.css';
 
 const libraries = ["places"];
 
-export default function GGMap() {
+export default function GGMap(handleGPStoggle) {
 
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
   const mapId = process.env.REACT_APP_GOOGLE_MAP_ID;
