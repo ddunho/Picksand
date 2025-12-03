@@ -16,6 +16,12 @@ function LoginForm({openLogin}) {
               <input type="text" placeholder="아이디를 입력해 주세요." />
               <p>비밀번호</p>
               <input type="password" placeholder="비밀번호를 입력해 주세요." />
+              <div className="findmyidpw" onClick={()=>{
+                openLogin();
+              }}>
+                <Link to="/findid">
+                아이디/비밀번호 찾기</Link>
+              </div> 
               <div className="loginsignup">
               </div>
               <button type="submit">확인</button>
