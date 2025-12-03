@@ -7,18 +7,20 @@ import { useState } from 'react';
 function Review() {
     const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(null);
-
-    const items = ["0.5", "1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0" ];
+    const goBack = () => {
+        navigate(-1);
+    };
+    const items = ["0.5", "1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0"];
     return (
         <div className="mmainpage">
             <div className='reviewmain'>
                 <p
                     style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/")}
+                    onClick={goBack}
                 >
                     <HiArrowLeft />
                 </p>
-                
+
                 <div className='reviewhead'>
                     별점 리뷰
                     <div className='reviewhead2'>
@@ -42,14 +44,14 @@ function Review() {
                                 >
                                     {item}
                                 </p>
-                               ))}
-                               
+                            ))}
+
                         </div>
 
                         <textarea className='reviewtxt'
                             type='text'
                             placeholder='리뷰내용을 작성해주세요.'
-                            name='Review'   
+                            name='Review'
                         />
 
                         <button onClick={() => (alert("저장되었습니다."))}>저장</button>
