@@ -153,5 +153,18 @@
     color: #FF8904;
 }
 
+.findmyidpw{
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    width: 100%;
+}
 
+.findmyidpw > a{
+    text-decoration: none;
+    font-size: 14px;
+    color: #7C290C;
+    margin-bottom: -8px;
+    font-weight: 300;
+}
 

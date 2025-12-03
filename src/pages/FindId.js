@@ -1,39 +1,50 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import "../css/findid.css";
+import FindPw from "./FindPw";
 
-function FindId({openLogin}) {
+function FindId() {
 
+  const [findId, setFindId] = useState(true);
+  const [findPw, setFindPw] = useState(false);
+
+  const handleFindId = () => {
+    setFindId(prev => !prev);
+    setFindPw(false);
+  }
+
+  const handleFindPw = () => {
+    setFindPw(prev => !prev);
+    setFindId(false);
+  }
+
+ 
   
 
   return (
-    <>
-    <div className="login">
-        <div className="loginheader">
-            <div>아이디 찾기</div>
-            <div>비밀번호 찾기</div>
-          <img src="./images/cancel.png" alt="X" onClick={()=>{openLogin()}}></img>
+    <main>
+      {findId &&
+      <div className="findidwrapper">
+        <div className="findid">
+            <div className="findidheader">
+                <div>아이디 찾기</div>
+                <div onClick={handleFindPw}>비밀번호 찾기</div>
+            </div>
+            <div className="findidcontent">
+              <form className="loginform">
+                  <p>닉네임</p>
+                  <input type="text" placeholder="닉네임을 입력해 주세요." />
+                  <p>휴대폰 번호</p>
+                  <input type="password" placeholder="비밀번호를 입력해 주세요." />
+                  <div className="loginsignup">
+                  </div>
+                  <button type="submit">확인</button>
+              </form>
+            </div>
         </div>
-        <div className="logincontent">
-          <form className="loginform">
-              <p>아이디</p>
-              <input type="text" placeholder="아이디를 입력해 주세요." />
-              <p>비밀번호</p>
-              <input type="password" placeholder="비밀번호를 입력해 주세요." />
-              <div className="loginsignup">
-              </div>
-              <button type="submit">확인</button>
-          </form>
-          <div className="loginline"></div>
-          <div className="notuser">
-          <p>계정이 없으신가요?</p> 
-          <p onClick={()=>{
-            openLogin();
-          }}>
-            <Link to="/signup">회원가입</Link>
-          </p>
-        </div>
-        </div>
-    </div>
-    </>
+      </div>
+      }
+      {findPw && <FindPw openLogin = {handleFindId}></FindPw>}
+    </main>
   );
 }
 
