@@ -299,14 +299,21 @@
 .MP_SandwichContainer{
     position: relative;
     overflow:hidden;
+
+    overflow-y: scroll;
 }
+
 
 .MP_SandwichTop{
     align-items: center;
     justify-content: space-between;
     background-color: #fffefb50;
 
-    z-index: 55;
+    z-index: 155;
+
+    position: sticky;
+    top: 0;
+    margin-right: -8px;
 }
 
 
@@ -347,9 +354,10 @@
     align-items: flex-end;
 
     width: 100%;
-    height: 100%;
+    height: 70%;
 
     position: relative;
+    top: 0px;
 }
 
 .MP_SandwichTopText::after
@@ -366,14 +374,14 @@
     width: 100%;
 
     position: absolute;
-    bottom: 285px;
+    bottom: 30vh;
 }
 
 .MP_SandwichImg
 {
-    width: 360px;
-    height: 360px;
-    margin-bottom: -385px;
+    width: 300px;
+    height: 300px;
+    margin-bottom: -325px;
 }
 
 .MP_SandwichMain_emptyDisplay{
@@ -382,7 +390,7 @@
     height: 100%;
     
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
 
     text-align: center;
     gap: 12px;
@@ -617,7 +625,7 @@
     height: 100vh;
     background-color: #00000062;
 
-    z-index: 98;
+    z-index: 198;
 }
 .MP_GPSPopupDisabled{
     opacity: 0;
@@ -634,7 +642,7 @@
     height: 80%;
     background-color: #FEFAEA;
 
-    z-index: 100;
+    z-index: 200;
 
 }
 
@@ -655,6 +663,11 @@
     display: none;
 }
 
+
+.MP_MobileCartTopHandle
+{
+    display: none;
+}
 
 @media (max-width: 426px) {
 
@@ -695,7 +708,7 @@
         left: -48%;
         width: 50%;
         position: absolute;
-        z-index: 70;
+        z-index: 170;
 
         transition: left 0.20s ease;
     }    
@@ -715,7 +728,7 @@
         background-color: #FEF3C6;
 
         position: relative;
-        z-index: 83;
+        z-index: 183;
         
         height: calc(100vh - 64px - 12px);
     }
@@ -724,7 +737,7 @@
     {
         border: 2px solid #FF8904 !important;
         border-width: 2px 2px 2px 0px !important;
-        z-index: 86;
+        z-index: 186;
     }
     
     .MP_IngredientsTop .MP_NormalText::after
@@ -784,7 +797,7 @@
     .MP_Mobile_IngredientTypeBTN_selected
     {
         transform: translateX(10.5px);
-        z-index: 88;
+        z-index: 188;
         border-color: #FF8904;
         border-style: solid;
         border-width: 2px 2px 2px 0px;
@@ -896,7 +909,7 @@
     .MP_SandwichContainer_Half .MP_SandwichImg
     {
         scale: 0.45;
-        margin-bottom: -375px;
+        margin-bottom: -315px;
     }
 
     .MP_SandwichContainer_Half .MP_SandwichMain_emptyText 
@@ -1004,8 +1017,6 @@
         justify-content: center;
         align-items: center;
 
-        gap: 4px;
-
         width: 31.5vw;
         height: 54px;
         border-radius: 12px;
@@ -1016,7 +1027,16 @@
 
         border: 1px solid #FFEDD4;
 
-        z-index: 80;
+        z-index: 180;
+    }
+
+    .MP_MobileFooterCartInnerText
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        gap: 4px;
     }
 
     .MP_MobileFooterCartBTN_emoji
@@ -1036,6 +1056,21 @@
         border: 1px solid #FFEDD4;
     }
 
+    .MP_MobileFooterCartBTN_orderEmoji
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 24px;
+        height: 24px;
+
+        box-sizing: border-box;
+
+        background-color: white;
+        border-radius: 99px;
+        border: 1px solid #FFEDD4;
+    }
     
     .MP_MobileFooterCartBTN:hover{    
         scale: 1.05;
@@ -1046,7 +1081,7 @@
 
     .MP_CartContainer
     {
-        z-index: 55;
+        z-index: 155;
 
         position: absolute;
         right: 0px;
@@ -1054,7 +1089,7 @@
         
         width: 184px;
 
-        height: calc(100vh - 64px - 12px + 8px);
+        height: calc(100vh - 64px - 12px + 16px);
         opacity: 1;
 
         transition: height 0.25s ease, opacity 0s ease;
@@ -1072,21 +1107,48 @@
         display: none;
     }
 
+    .MP_MobileCartTopHandle
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 100%;
+        height: 24px;
+
+        border-radius: 12px 12px 0px 0px;
+
+        position: absolute;
+
+        top:0px;
+        left:0px;
+
+        font-size: 14px;
+        color: #7C290C;
+        background-color: #FFEDD4;
+    }
     
     .MP_CartTop
     {
+        margin-top: 16px;
         height: calc(100% - 0px);
+    }
+
+    .MP_CartTopText
+    {
+        display: flex;
+        justify-content: center;
     }
 
     .MP_CartList 
     {
         padding: 6px;
         gap: 6px;
-    }
 
-    .MP_CartTopText .MP_LargeText.MP_textColor1::after
-    {
-        content: ' (8)';
+        height: 350px;
+        max-height: 350px;
+
+        box-sizing: border-box;
     }
 
     .MP_cartAmount
@@ -1112,6 +1174,10 @@
         display: none;
     }
 
+}
+
+.GGMap_MobileQuitBTN{
+    display: none;
 }
 
 @media (max-width: 426px) {
