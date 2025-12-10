@@ -244,6 +244,8 @@
     
     border-radius: 12px;
     box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
 
     margin-right: 8px;
 }
@@ -764,6 +766,15 @@
     .MP_IngredientBox
     {
         border-width: 2px;
+    }
+
+    .MP_TypeHead{
+        background-color:#FFFEFB !important;
+    }
+
+    .MP_IngredientsHead .MP_NormalText.MP_textColor3
+    {
+        color: #7C290C;
     }
 
     .MP_Mobile_IngredientTypeBTN

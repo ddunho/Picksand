@@ -1,6 +1,7 @@
 import '../css/MainPage.css'
 import GGMap from '../components/GGMap';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 import { useState, useRef, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web'
@@ -35,10 +36,11 @@ function CartIngredient({item, index, handleRemoveIngredient}) {
             ${item.uid === 'Ind_uid:last' ? 'MP_noPointerEv' : ''}`}
             onClick={() => handleRemoveIngredient(item)}>
 
-            <div className='MP_CartItemIcon'></div>
+            <div className='MP_CartItemIcon'
+                style={{"backgroundColor" : item.bgColor, "borderColor" : item.borderColor}}></div>
             <div className='MP_CartItemTextBox MP_VerticalContainer'>
                 <div className='MP_NormalText MP_textColor1'>{item.name} {index}</div>
-                <div className='MP_NormalText MP_textColor2'>1,500원</div>
+                <div className='MP_NormalText MP_textColor2'>{item.price.toLocaleString()}원</div>
             </div>
             {(item.uid !== 'Ind_uid:first' && item.uid !== 'Ind_uid:last') && 
                 <div className='MP_CartItemRemove'>X</div>}
@@ -47,6 +49,8 @@ function CartIngredient({item, index, handleRemoveIngredient}) {
 }
 
 function MainPage() {
+
+    const navigate = useNavigate();
 
     const [currentTowerIndex,setCurrentTowerIndex] = useState(0);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -188,7 +192,9 @@ function MainPage() {
 
     function handleAddIngredient(ingredient) {
 
-        if(selectedIngredients.length === 0)
+        if(selectedIngredients.length === 0
+            && ingredient.typeUid !== 1
+        )
         {
             setSelectedIngredients(prev => [...prev, indList[0]]);
         }
@@ -327,12 +333,24 @@ function MainPage() {
             console.log(result);
             alert(`성공!`);
 
+
+            
+
         }catch(error){
             const errorMassage = error.response && error.response.data ? error.response.data : '개별 처리에 실패 했습니다.';
             alert(`${errorMassage}`);
         }
         finally{
             setIsOrdering(false);
+            
+            //PageNavigate
+            navigate("/orderpay", {
+                state: {
+                    recipeId: result.data.recipeId,
+                    totalPrice: currentTotalPrice,
+                    selectedIngredients: selectedIngredients
+                }
+            });
         }
     }
 
@@ -380,6 +398,9 @@ function MainPage() {
             <div className='MP_IngredientList'>
                 {datas.map((element, index, array) => 
                     <IndBoxes key={"IndBoxesKey" + element.uid} ingredient={element}></IndBoxes>)}
+                {datas.length % 2 !== 0 
+                    ? <div className='MP_IngredientBox_empty'></div> 
+                    : null}
             </div>
         )
     }
@@ -388,10 +409,11 @@ function MainPage() {
         return(
             <div className='MP_IngredientBox MP_HorizontalContainer'
                 onClick={() => handleAddIngredient(indList[ingredient.uid - 1])}>
-                <div className='MP_TypeImageBox MP_typeColor_Bread1'></div>
+                <div className='MP_TypeImageBox' 
+                    style={{"backgroundColor" : ingredient.bgColor, "borderColor" : ingredient.borderColor}} ></div>
                 <div className='MP_TypeTextBox MP_VerticalContainer'>
                     <div className='MP_NormalText MP_textColor1'>{ingredient.name}</div>
-                    <div className='MP_NormalText MP_textColor2'>{ingredient.price}원</div>
+                    <div className='MP_NormalText MP_textColor2'>{ingredient.price.toLocaleString()}원</div>
                 </div>
                 <div className='MP_TypeAddBtn'>
                     <div className='MP_TypeAddBtn_InnerText'>+</div>
@@ -563,12 +585,12 @@ function MainPage() {
                         </div>
                         <div className='MP_cartPrice MP_ingredient_total MP_HorizontalContainer'>
                             <div className='MP_LargeText MP_textColor1'>총 금액</div>
-                            <div className='MP_LargeText MP_textColor3'>{currentTotalPrice}원</div>
+                            <div className='MP_LargeText MP_textColor3'>{currentTotalPrice.toLocaleString()}원</div>
                         </div>
 
                         <div className='MP_OrderButton'
                             onClick={() => handleOrder()}>
-                            <div className='MP_LargeText'>주문하기 {currentTotalPrice}원</div>
+                            <div className='MP_LargeText'>주문하기 {currentTotalPrice.toLocaleString()}원</div>
                         </div>
                     </div>
                 </div>
