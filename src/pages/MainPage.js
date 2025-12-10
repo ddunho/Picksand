@@ -297,6 +297,13 @@ function MainPage() {
     const [isOrdering, setIsOrdering] = useState(false);
     async function handleOrder() {
 
+        
+            
+            //PageNavigate
+            navigate("/orderpay", {
+            });
+            return;
+
         if(isOrdering)
         {
             return;
@@ -342,15 +349,6 @@ function MainPage() {
         }
         finally{
             setIsOrdering(false);
-            
-            //PageNavigate
-            navigate("/orderpay", {
-                state: {
-                    recipeId: result.data.recipeId,
-                    totalPrice: currentTotalPrice,
-                    selectedIngredients: selectedIngredients
-                }
-            });
         }
     }
 
