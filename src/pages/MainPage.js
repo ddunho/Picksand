@@ -422,7 +422,7 @@ function MainPage() {
                     {isLoaded && 
                     <div className='MP_IngredientTypeList'>
 
-                        {(!isMobileView || mobileCurretnSelectedType == 0)  &&
+                        {(!isMobileView || mobileCurretnSelectedType === 0)  &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_BreadTypeHead '>🍞 빵</div>
@@ -431,7 +431,7 @@ function MainPage() {
                             <IngredientList index={0}/>
                         </div>}
 
-                        {(!isMobileView || mobileCurretnSelectedType == 1)  &&
+                        {(!isMobileView || mobileCurretnSelectedType === 1)  &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_VegetableTypeHead '>🥬 채소</div>
@@ -440,7 +440,7 @@ function MainPage() {
                             <IngredientList index={1}/>
                         </div>}
 
-                        {(!isMobileView || mobileCurretnSelectedType == 2)  &&
+                        {(!isMobileView || mobileCurretnSelectedType === 2)  &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_CheeseTypeHead '>🧀 치즈</div>
@@ -449,7 +449,7 @@ function MainPage() {
                             <IngredientList index={2}/>
                         </div>}
                         
-                        {(!isMobileView || mobileCurretnSelectedType == 3) &&
+                        {(!isMobileView || mobileCurretnSelectedType === 3) &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_MeatTypeHead '>🥓 단백질</div>
@@ -458,7 +458,7 @@ function MainPage() {
                             <IngredientList index={3}/>
                         </div>}
 
-                        {(!isMobileView || mobileCurretnSelectedType == 4) &&
+                        {(!isMobileView || mobileCurretnSelectedType === 4) &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_SourceTypeHead '>🥫 소스</div>
