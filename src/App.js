@@ -10,6 +10,7 @@ import Review from './pages/Review.js';
 import OrderPay from './pages/OrderPay.js';
 import FindId from './pages/FindId.js';
 import { AuthProvider } from './context/AuthProvider';
+import { GlobalProvider } from "./services/globalContext";
 
 function App() {
   
@@ -17,7 +18,8 @@ function App() {
 
   return (
     <>
-    
+    <AuthProvider>
+      <GlobalProvider>
       <BrowserRouter>
           <Header></Header>
           <Routes>
@@ -32,7 +34,8 @@ function App() {
             <Route path='/findid' element={<FindId/>}/>
           </Routes>
       </BrowserRouter>
-    
+      </GlobalProvider>
+    </AuthProvider>
     </>
   );
 }
