@@ -1,6 +1,6 @@
 .findpwwrapper{
     width: 100%;
-    height: calc(100vh - 104px);
+    min-height: calc(100vh - 104px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -22,7 +22,8 @@
     height: 64px;
     font-size: 24px;
     color: white;
-    border-radius: 16px 16px 0px 0px
+    border-radius: 16px 16px 0px 0px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
 }
 
 .findpwheader > div{
@@ -61,6 +62,55 @@
     width: 100%;
     padding: 16px 24px;
     box-sizing: border-box;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    border-radius: 0px 0px 16px 16px;
+}
+
+@media(max-width : 768px){
+    .findpwheader{
+        height: 48px;
+        font-size: 14px;
+    }
+
+    .findpwheader > div{
+        height: 48px;
+
+    }
+    .findidform > p{
+        font-size: 14px;
+    }
+
+    .findidform > input{
+        height: 32px;
+    }
+
+    .findidform > button{
+        height: 36px;
+    }
+
+}
+
+@media(max-width : 426px){
+    .findpwwrapper{
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+    }
+    .findpw{
+        width: 100%;
+        padding: 0px;
+
+    }
+    .findpwheader{
+        border-radius: 0px;
+    }
+
+    .findpwheader > div{
+        border-radius: 0px !important;
+    }
+    .findpwcontent{
+        border-radius: 0px;
+    }
 }
 
 

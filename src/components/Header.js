@@ -124,6 +124,7 @@ const HeaderWrapper = styled.div`
         }
     }
 
+
     & > div > div > a{
         
     }
@@ -194,10 +195,10 @@ function Header(){
                     </Link>
                     <div className="logincontainer">
                         {accessToken ? (
-                            <>
+                            <div>
                                 <div onClick={() => window.location.href = "/mypage"}>내 정보</div>
                                 <div onClick={handleLogout}>로그아웃</div>
-                            </>
+                            </div>
                             ) : (
                             <>
                                 <button onClick={handleIsLogin} className="signupbutton">로그인</button>

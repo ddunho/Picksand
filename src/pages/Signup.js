@@ -33,11 +33,7 @@ function Signup(){
 
     const [modalState, setModalState] = useState(false);
     
-    const postCodeStyle = {
-        width: '400px',
-        height: '400px',
-        display: modalState ? 'block' : 'none',
-    };        
+         
 
     const onCompletePost = (data) => {
         setModalState(false);
@@ -365,11 +361,25 @@ function Signup(){
                                 <Link to="/">홈으로 이동하기→</Link>
                             </div>
                         </form>
-                        {modalState && 
-                            <div className="postcodeContainer">
-                                <DaumPostcode style={postCodeStyle} onComplete={onCompletePost}></DaumPostcode>
-                            </div>
-                        }
+                        {modalState && (
+                            <div className="custom-modal-overlay" onClick={() => setModalState(false)}>
+                                <div className="custom-modal" onClick={(e) => e.stopPropagation()}>
+                                    <div className="custom-modal-header">
+                                        <span>주소 검색</span>
+                                        <button className="close-btn" onClick={() => setModalState(false)}>
+                                            ✕
+                                        </button>
+                                    </div>
+
+                            <DaumPostcode
+                                onComplete={onCompletePost}
+                                autoClose={false}
+                                style={{ width: "100%", height: "420px" }}
+                            />
+            </div>
+        </div>
+    )}
+
                     </div>
                 </div>
             </div>

@@ -32,7 +32,7 @@ function FindPw({ openLogin }) {
           </div>
 
           <div className="findpwcontent">
-            <form className="loginform" onSubmit={handleSubmit}>
+            <form className="findidform" onSubmit={handleSubmit}>
 
               <p>아이디</p>
               <input

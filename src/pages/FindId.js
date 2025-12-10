@@ -38,15 +38,14 @@ function FindId() {
       {findId &&
         <div className="findidwrapper">
           <div className="findid">
-
             <div className="findidheader">
               <div>아이디 찾기</div>
               <div onClick={handleFindPw}>비밀번호 찾기</div>
             </div>
 
             <div className="findidcontent">
-              <form className="loginform" onSubmit={handleSubmit}>
-                <p>휴대폰 번호</p>
+              <form className="findidform" onSubmit={handleSubmit}>
+                <p className="findidbyphone">휴대폰 번호</p>
                 <input
                   type="text"
                   placeholder="휴대폰 번호를 입력해 주세요."

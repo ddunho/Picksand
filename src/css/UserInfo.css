@@ -274,9 +274,7 @@
 }
 
 @media (max-width: 768px){
-    .myinfo{
-        height: 180px;
-    }
+    
 
     .infocomponent > p{
         font-size: 12px;
