@@ -1,7 +1,50 @@
 import "../css/UserInfo.css";
+import { useAxios } from "../api/axiosInterceptor";
+import { useEffect, useState } from "react";
 
 
 function UserInfo(){
+
+    const api = useAxios();
+
+    const [userInfo, setUserInfo] = useState({
+        username: "",
+        password: "",
+        nickname: "",
+        phoneNumber: "",
+        address: "",
+        addressDetail: ""
+    });
+    const [editMode, setEditMode] = useState(false);
+
+    useEffect(() => {
+        api.get("/members/userinfo")
+            .then((res) => {
+                setUserInfo(res.data);
+            })
+            .catch((err) => {
+                console.error("유저정보 불러오기 오류:", err);
+            });
+    }, [api]);
+
+    const handleUpdate = () => {
+        api.patch("/members/me", {
+            nickname: userInfo.nickname,
+            password: userInfo.password,
+            phoneNumber: userInfo.phoneNumber,
+            address: userInfo.address,
+            addressDetail: userInfo.addressDetail
+        })
+        .then(() => {
+            alert("정보가 수정되었습니다.");
+            setEditMode(false);     // 수정 완료 후 읽기 전용으로 복귀
+        })
+        .catch((err) => {
+            console.error("정보수정 오류:", err);
+            alert("정보 수정 중 오류가 발생했습니다.");
+        });
+    };
+
     return(
         <main>
             <div className="userinfomain">
@@ -9,7 +52,19 @@ function UserInfo(){
                     <p>회원 정보</p>
                     <div>
                         <p>나의 정보를 확인하고 주문 기록을 한눈에 볼 수 있습니다.</p>
-                        <button><img src="/images/edit.png" alt="수정"></img>정보 수정</button>
+                        <button
+                            className={editMode ? "edit-confirm-btn" : "edit-btn"}
+                            onClick={() => {
+                                if (!editMode) {
+                                    setEditMode(true);
+                                } else {
+                                    handleUpdate();
+                                }   
+                            }}
+                        >
+                            {!editMode && <img src="/images/edit.png" alt="수정" />}
+                            {editMode ? "확인" : "정보 수정"}
+                        </button>
                     </div>
                 </div>
 
@@ -23,28 +78,97 @@ function UserInfo(){
                                 <img src="/images/identity.png" alt="이름"></img>
                                 <p>아이디</p>
                             </div>
-                            <input></input>
+                            <input value={userInfo.username} readOnly className={editMode ? "edit-username-input" : ""}></input>
                         </div>
                         <div>
                             <div className="infocomponent">
                                 <img src="/images/identity.png" alt="이름"></img>
                                 <p>닉네임</p>
                             </div>
-                            <input></input>
+                            <input value={userInfo.nickname} readOnly={!editMode} 
+                                onChange={(e) =>
+                                    setUserInfo((prev) => ({
+                                        ...prev,
+                                        nickname: e.target.value
+                                    }))
+                                }></input>
                         </div>
+        
+                        <div>
+                            <div className="infocomponent">
+                                <img src="/images/lock.png" alt="이름"></img>
+                                <p>비밀번호</p>
+                            </div>
+                            <input placeholder="정보 수정 시 비밀번호를 다시 설정할 수 있습니다." value={userInfo.password} readOnly={!editMode} 
+                                onChange={(e) =>
+                                    setUserInfo((prev) => ({
+                                        ...prev,
+                                        password: e.target.value
+                                    }))
+                                }></input>
+                        </div>
+                    
                         <div>
                             <div className="infocomponent">
                                 <img src="/images/call.png" alt="이름"></img>
                                 <p>휴대폰</p>
                             </div>
-                            <input></input>
+                            <input value={userInfo.phoneNumber} readOnly={!editMode}
+                                onChange={(e) =>
+                                    setUserInfo((prev) => ({
+                                        ...prev,
+                                        phoneNumber: e.target.value
+                                    }))
+                                }></input>
                         </div>
                         <div>
+                            
+                            {editMode ? (
+                            <div className="dorodetailcontainer">
+                                <div>
+                                    <div className="infocomponent">
+                                        <img src="/images/place.png" alt="이름"></img>
+                                        <p>도로명 주소</p>
+                                    </div>
+                                    <input
+                                        value={userInfo.address}
+                                        onChange={(e) =>
+                                            setUserInfo(prev => ({
+                                                ...prev,
+                                                address: e.target.value
+                                            }))
+                                        }
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <div className="infocomponent">
+                                        <img src="/images/place.png" alt="이름"></img>
+                                        <p>상세 주소</p>
+                                    </div>
+                                    <input
+                                        value={userInfo.addressDetail}
+                                        onChange={(e) =>
+                                            setUserInfo(prev => ({
+                                                ...prev,
+                                                addressDetail: e.target.value
+                                            }))
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <>
                             <div className="infocomponent">
                                 <img src="/images/place.png" alt="이름"></img>
                                 <p>주소</p>
                             </div>
-                            <input></input>
+                            <input
+                                value={`${userInfo.address} ${userInfo.addressDetail}`}
+                                readOnly
+                            />
+                            </>
+                        )}
                         </div>
                     </div>
                 </div>

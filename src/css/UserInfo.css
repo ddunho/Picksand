@@ -25,22 +25,42 @@
     font-weight: 400;
 }
 
-.userinfotitle > div > button{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    width: 100px;
-    height: 32px;
-    background: inherit; 
-    background: linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
-    border:none; 
-    box-shadow:none; 
-    border-radius: 8px; 
-    cursor:pointer;
-    margin-top: 12px;
-    color: white;
-    font-size: 14px;
-}
+
+
+.edit-btn{
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        width: 100px;
+        height: 32px;
+        background: inherit; 
+        background: linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
+        border:none; 
+        box-shadow:none; 
+        border-radius: 8px; 
+        cursor:pointer;
+        margin-top: 12px;
+        color: white;
+        font-size: 14px;
+    }
+
+    .edit-confirm-btn{
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        width: 60px;
+        height: 32px;
+        background: inherit; 
+        background: linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
+        border:none; 
+        box-shadow:none; 
+        border-radius: 8px; 
+        cursor:pointer;
+        margin-top: 12px;
+        color: white;
+        font-size: 14px;
+    }
 
 .userinfotitle > div > button > img{
     width: 16px;
@@ -49,7 +69,6 @@
 
 .myinfo{
     width: 100%;
-    height: 240px;
     border: 3px solid #FFEDD4;
     border-radius: 16px;
     background-color: #FFFEFB;
@@ -100,6 +119,17 @@
     border: none;
     background-color: #FEFAEA;
     margin-top: 4px;
+    padding-left: 12px;
+    box-sizing: border-box;
+    font-weight: 300;
+}
+
+.edit-username-input{
+    background-color: #d9d9d9 !important;
+}
+
+.myinfodetail > div > input:focus{
+    outline: none;
 }
 
 .orderinfo{
@@ -203,6 +233,32 @@
     color: #3CA366;
 }
 
+.dorodetailcontainer{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dorodetailcontainer > div{
+    width: 100%;
+}
+
+.dorodetailcontainer > div > input{
+    width: 100%;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background-color: #FEFAEA;
+    margin-top: 4px;
+    padding-left: 12px;
+    box-sizing: border-box;
+    font-weight: 300;
+}
+.dorodetailcontainer > div > input:focus{
+    outline: none;
+}
+
 @media (max-width: 768px){
     .myinfo{
         height: 180px;
@@ -271,10 +327,14 @@
     }
 
     .userinfotitle > div > button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 80px;
         height: 20px;
         font-size: 10px;
     }
+    
 
     .userinfotitle > div > button > img{
         width: 12px;

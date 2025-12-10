@@ -58,13 +58,36 @@
 
 .logincontainer{
     display: flex;
+    align-items: center;
     gap: 6px;
+}
+
+
+.logincontainer > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #FF8904;
+    color: #FF8904;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+
+.logincontainer > div:hover{
+    background: rgba(255, 149, 0, 0.2);
 }
 
 .logincontent{
     width: 100%;
     padding: 16px 24px;
     box-sizing: border-box;
+}
+
+.logincontainer > button{
+    color: white;
 }
 
 .loginform > button{
@@ -85,6 +108,7 @@
     transform: scale(1.1);
     transition: transform 0.3s ease;
 }
+
 
 .signupbutton:hover{
     transform: scale(1.1);
