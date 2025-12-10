@@ -45,6 +45,24 @@ function UserInfo(){
         });
     };
 
+    const handleDelete = () => {
+        if (!window.confirm("정말로 회원 탈퇴하시겠습니까?")) return;
+
+        api.delete("/members/me")
+            .then(() => {
+            alert("회원 탈퇴가 완료되었습니다.");
+            // localStorage 삭제
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            // 홈으로 이동
+            window.location.href = "/";
+            })
+            .catch((err) => {
+            console.error("회원탈퇴 오류:", err);
+            alert("회원 탈퇴 처리 중 오류가 발생했습니다.");
+            });
+        };
+
     return(
         <main>
             <div className="userinfomain">
@@ -172,7 +190,10 @@ function UserInfo(){
                         </div>
                     </div>
                 </div>
-
+                
+                <div className="deleteaccount">
+                    <p onClick={handleDelete}>회원탈퇴</p>
+                </div>
                 <div className="orderinfo">
                     <p>주문 기록</p>
                     <div className="orderlist">
