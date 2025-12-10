@@ -52,6 +52,7 @@ function FindId() {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                 />
+                
 
                 <button type="submit">확인</button>
               </form>

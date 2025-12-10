@@ -1,10 +1,8 @@
 .findidwrapper{
     width: 100%;
     min-height: calc(100vh - 104px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background-color: #FEFAEA;
+    position: relative;
     
 }
 
@@ -12,6 +10,10 @@
     width: 90%;
     padding: 0px 30%;
     box-sizing: border-box;
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     
 }
 
@@ -116,6 +118,10 @@
     .findidheader{
         height: 48px;
         font-size: 14px;
+    }
+
+    .findid{
+        top: 44%;
     }
 
     .findidheader > div{
