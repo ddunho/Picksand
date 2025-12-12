@@ -2,9 +2,11 @@ import styled from "styled-components";
 import "../css/LoginModal.css";
 import LoginForm from "../pages/LoginForm.js";
 import "../css/SignupModal.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import SignupForm from "../pages/SignupForm.js";
 import { Link, useLocation } from "react-router-dom";
+import { AuthContext } from "../context/AuthProvider.js";
+import { useAxios } from "../api/axiosInterceptor.js";
 
 
 const HeaderWrapper = styled.div`
@@ -122,12 +124,16 @@ const HeaderWrapper = styled.div`
         }
     }
 
+
     & > div > div > a{
         
     }
 `
 
 function Header(){
+    const api = useAxios();
+
+    const { accessToken, logout } = useContext(AuthContext);
 
     
     const location = useLocation();
@@ -140,6 +146,28 @@ function Header(){
         setIsLogin(false);
         setIsSignup(false)
     }
+
+    const handleLogout = async () => {
+    try {
+        const response = await api.post("members/logout", {}, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+            }
+        });
+
+        console.log(response.data);
+        alert("로그아웃 성공!");
+
+        logout();
+        window.location.href = "/";
+    } catch (e) {
+        console.log("서버 로그아웃 실패", e);
+        alert("서버 로그아웃 실패 (클라이언트에서는 로그아웃 처리됨)");
+        
+        logout(); 
+        window.location.href = "/";
+    }
+};
     
     if (location.pathname === "/signup") {
     return null;
@@ -166,14 +194,17 @@ function Header(){
                         </div>
                     </Link>
                     <div className="logincontainer">
-                        <button onClick={handleIsLogin} className="loginbutton">
-                            <p>로그인</p>
-                        </button>
-                    <Link to="/signup">
-                        <button className="signupbutton">
-                            <p>회원가입</p>
-                        </button>
-                    </Link>
+                        {accessToken ? (
+                            <div>
+                                <div onClick={() => window.location.href = "/mypage"}>내 정보</div>
+                                <div onClick={handleLogout}>로그아웃</div>
+                            </div>
+                            ) : (
+                            <>
+                                <button onClick={handleIsLogin} className="signupbutton">로그인</button>
+                                <button onClick={() => window.location.href = "/signup"} className="signupbutton">회원가입</button>
+                            </>
+                            )}
                     </div>
                 </div>
             </HeaderWrapper>

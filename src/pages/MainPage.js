@@ -1,5 +1,7 @@
 import '../css/MainPage.css'
 import GGMap from '../components/GGMap';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 import { useState, useRef, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web'
@@ -11,14 +13,14 @@ function DropIngredient({item, index}) {
 
   const styles = useSpring({
     from: { opacity: 0, x: xAlter, y: -750},
-    to: { opacity: 1, x : xAlter, y: 0},
+    to: { opacity: 1, x : xAlter, y: 50},
     delay: 0 + (item.addDelay ?? 0), 
     config: { mass: 1, tension: 270, friction: 26, bounce: 4 }, // 스프링 물리 설정
   })
 
   return (
     <animated.img
-      src={`${process.env.PUBLIC_URL}/images/sandwichimg/${item.img}`}
+      src={`${process.env.PUBLIC_URL}/images/sandwichimg/${item.imgAddr}`}
       alt={item.name}
       style={{ ...styles, position: "relative", zIndex: index}} 
       className={'MP_noPointerEv MP_SandwichImg'}
@@ -34,10 +36,11 @@ function CartIngredient({item, index, handleRemoveIngredient}) {
             ${item.uid === 'Ind_uid:last' ? 'MP_noPointerEv' : ''}`}
             onClick={() => handleRemoveIngredient(item)}>
 
-            <div className='MP_CartItemIcon'></div>
+            <div className='MP_CartItemIcon'
+                style={{"backgroundColor" : item.bgColor, "borderColor" : item.borderColor}}></div>
             <div className='MP_CartItemTextBox MP_VerticalContainer'>
                 <div className='MP_NormalText MP_textColor1'>{item.name} {index}</div>
-                <div className='MP_NormalText MP_textColor2'>1,500원</div>
+                <div className='MP_NormalText MP_textColor2'>{item.price.toLocaleString()}원</div>
             </div>
             {(item.uid !== 'Ind_uid:first' && item.uid !== 'Ind_uid:last') && 
                 <div className='MP_CartItemRemove'>X</div>}
@@ -47,9 +50,14 @@ function CartIngredient({item, index, handleRemoveIngredient}) {
 
 function MainPage() {
 
-    const [index,setIndex] = useState("index");
+    const navigate = useNavigate();
+
+    const [currentTowerIndex,setCurrentTowerIndex] = useState(0);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [currentTotalPrice, setCurrentTotalPrice] = useState(0);
     const [mobileCurrentSelectedIndBTN, setMobileCurrentSelectedIndBTN] = useState();
+    const [mobileCurretnSelectedType, setMobileCurretnSelectedType] = useState(0);
+    const [isMobileView, setIsMobileView] = useState(false);
 
     const lastSelectedAry = useRef([[],[],[]]);
     const GGMapRef = useRef(null);
@@ -58,9 +66,53 @@ function MainPage() {
     const LeftBackCoverRef = useRef(null);
     const SandwichContainerRef = useRef(null);
     const CartContainerRef = useRef(null);
+    const SandwichMainRef = useRef(null);
+
+    //axios
+    const [indType,setIndType] = useState();
+    const [indList,setIndList] = useState();
+    const [isLoaded,setIsLoaded] = useState(false);
 
     useEffect(()=>{
-        setIndex(0);
+
+        // 미디어 쿼리 객체 생성 (426px 이하)
+        const mediaQuery = window.matchMedia('(max-width: 426px)');
+
+        const updateMobileView = () => {
+            setIsMobileView(mediaQuery.matches);
+        };
+
+        updateMobileView();
+        mediaQuery.addEventListener('change', updateMobileView);
+
+        // 1. 필요한 모든 비동기 요청을 Promise 배열로 만듭니다.
+        const loadIngredientTypePromise = axios.get(
+            `${process.env.REACT_APP_API_URL}/IngredientType/getAllWithCount`
+        );
+
+        const loadIngredientListPromise = axios.get(
+            `${process.env.REACT_APP_API_URL}/Ingredient/findAll`
+        );
+
+        // 2. Promise.all로 모든 요청을 묶고, 모두 완료되면 then 블록 실행
+        Promise.all([loadIngredientTypePromise, loadIngredientListPromise])
+            .then(([indTypeResp, indListResp]) => {
+            // 응답 순서는 Promise 배열의 순서와 같습니다.
+
+            // 3. 상태 업데이트
+            setIndType(indTypeResp.data);
+            setIndList(indListResp.data);
+            
+            // 4. 모든 데이터 로딩이 완료되었으므로 로딩 상태 변경
+            setIsLoaded(true);
+
+            // * 디버깅용 콘솔 로그 (개선된 코드에서는 이곳에 위치하는 것이 좋습니다)
+        })
+        .catch(error => {
+            console.error('데이터 로딩 중 오류 발생:', error);
+            // 필요하다면 에러 처리 (예: 에러 상태 설정, 사용자에게 메시지 표시)
+        });
+
     },[])
 
     function addToLastSelected()
@@ -112,6 +164,8 @@ function MainPage() {
                 break;
         }
 
+        setMobileCurretnSelectedType(input);
+
     }
 
     function handleMobileIndClose() {
@@ -138,23 +192,53 @@ function MainPage() {
 
     function handleAddIngredient(ingredient) {
 
-        if(selectedIngredients.length === 0)
+        if(selectedIngredients.length === 0
+            && ingredient.typeUid !== 1
+        )
         {
-            setSelectedIngredients(prev => [...prev, ind[0]]);
+            setSelectedIngredients(prev => [...prev, indList[0]]);
         }
 
         if(ingredient.uid === '')
         {
             ingredient.addDelay = 150;
-            ingredient.uid = 'Ind_uid'+index;
+            ingredient.uid = 'Ind_uid'+currentTowerIndex;
         }
 
-        setIndex(index+1);
+        setCurrentTowerIndex(prevIndex => prevIndex + 1);
 
         //
         addToLastSelected();
         setSelectedIngredients(prev => [...prev, ingredient]);
     };
+
+    useEffect(()=>{
+
+        const SandwichContainerCurrentScroll = SandwichContainerRef.current.scrollTop;
+        
+        let totalPrice = 0;
+        for(let i = 0 ; i < selectedIngredients.length; i++)
+        {
+            totalPrice += parseInt(selectedIngredients[i].price);
+        }
+        console.log(totalPrice);
+        setCurrentTotalPrice(totalPrice);
+        
+        if(selectedIngredients.length > 10)
+        {
+            let newTop = 25 * (selectedIngredients.length - 10);
+            SandwichMainRef.current.style.top = `${newTop}px`;
+            if (SandwichMainRef.current) {
+                const scrollTargetElement = SandwichContainerRef.current; // 또는 스크롤바가 붙은 다른 컨테이너
+                scrollTargetElement.scrollTop = SandwichContainerCurrentScroll + 25;
+            }
+        }
+        else
+        {
+            SandwichMainRef.current.style.top = `0px`;
+        }
+
+    },[selectedIngredients])
 
     function handleUndoIngredient() {
 
@@ -210,6 +294,66 @@ function MainPage() {
         }
     }
 
+    const [isOrdering, setIsOrdering] = useState(false);
+    async function handleOrder() {
+
+        
+            
+            //PageNavigate
+            navigate("/orderpay", {
+            });
+            return;
+
+        if(isOrdering)
+        {
+            return;
+        }
+
+        if(selectedIngredients.length < 1)
+        {
+            return;
+        }
+
+        console.log(selectedIngredients);
+        console.log(currentTotalPrice);
+
+        setIsOrdering(true);
+
+        try{
+            const requestData = {
+                "recipe":{
+                recipeType: 1,
+                name: "createdInCart",
+                totalPrice: currentTotalPrice
+                },
+                "inds": selectedIngredients
+            };
+
+            let result = await axios.post(`${process.env.REACT_APP_API_URL}/Recipe/addNewWithInds`,
+                requestData,
+                { 
+                    headers: {'Content-Type': 'application/json'},
+                    withCredentials: true
+                }
+            );
+
+            console.log(result);
+            alert(`성공!`);
+
+
+            
+
+        }catch(error){
+            const errorMassage = error.response && error.response.data ? error.response.data : '개별 처리에 실패 했습니다.';
+            alert(`${errorMassage}`);
+        }
+        finally{
+            setIsOrdering(false);
+        }
+    }
+
+//
+
     function handleGPStoggle(input) {
         
         if(input)
@@ -222,21 +366,65 @@ function MainPage() {
         }
     }
 
-    function handleMobileCartToggle() {
-        CartContainerRef.current.classList.toggle('MP_CartContainer_Closed')
+    const [mobile_isCartOpen, setMobile_isCartOpen] = useState(false);
+    function handleMobileCartOrderBTN() {
+
+        if(mobile_isCartOpen)
+        {
+            //Order
+            handleOrder();
+        }
+        else
+        {
+            setMobile_isCartOpen(true);
+            CartContainerRef.current.classList.remove('MP_CartContainer_Closed')
+        }
+    }
+    function handleMobileCartCloseBTN() {
+
+        setMobile_isCartOpen(false);
+        CartContainerRef.current.classList.add('MP_CartContainer_Closed')
     }
 
-    const ind = [
-        { uid : 'Ind_uid:first', id: 0, name: "빵", img: "Bread.png" },
-        { uid : '', id: 1, name: "양상추", img: "Lettuce.png" },
-        { uid : '', id: 2, name: "올리브", img: "Olive.png" },
-        { uid : '', id: 3, name: "피클", img: "Pickle.png" },
-        { uid : '', id: 4, name: "토마토", img: "Tomato.png"},
-        { uid : 'Ind_uid:last', id: 5, name: "빵", img: "Bread.png" , addDelay: 500},
-    ];
+    function IngredientList({index}) {
+        
+        const datas = indList.filter((d)=>{
+            return d.typeUid === indType[index].uid;
+        })
+
+        return(
+            <div className='MP_IngredientList'>
+                {datas.map((element, index, array) => 
+                    <IndBoxes key={"IndBoxesKey" + element.uid} ingredient={element}></IndBoxes>)}
+                {datas.length % 2 !== 0 
+                    ? <div className='MP_IngredientBox_empty'></div> 
+                    : null}
+            </div>
+        )
+    }
+
+    function IndBoxes({ingredient}) {
+        return(
+            <div className='MP_IngredientBox MP_HorizontalContainer'
+                onClick={() => handleAddIngredient(indList[ingredient.uid - 1])}>
+                <div className='MP_TypeImageBox' 
+                    style={{"backgroundColor" : ingredient.bgColor, "borderColor" : ingredient.borderColor}} ></div>
+                <div className='MP_TypeTextBox MP_VerticalContainer'>
+                    <div className='MP_NormalText MP_textColor1'>{ingredient.name}</div>
+                    <div className='MP_NormalText MP_textColor2'>{ingredient.price.toLocaleString()}원</div>
+                </div>
+                <div className='MP_TypeAddBtn'>
+                    <div className='MP_TypeAddBtn_InnerText'>+</div>
+                </div>
+            </div>
+        )
+    }
 
 
+/* //////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
 
+
+    
     return(
         <div className='MP_noSelect'>
 
@@ -249,178 +437,62 @@ function MainPage() {
                         <div className='MP_NormalText MP_textColor2'></div>
                     </div>
 
+                    {!isLoaded && <div>로딩중!</div>}
+
+                    {isLoaded && 
                     <div className='MP_IngredientTypeList'>
+
+                        {(!isMobileView || mobileCurretnSelectedType === 0)  &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_BreadTypeHead '>🍞 빵</div>
-                                <div className='MP_NormalText MP_textColor3'>2가지</div>
+                                <div className='MP_NormalText MP_textColor3'>{indType[0].ingredientCount} 가지</div>
                             </div>
-                            <div className='MP_IngredientList'>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'
-                                    onClick={() => handleAddIngredient(ind[1])}>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread1'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>호밀빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>2,000원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                                
-                                <div className='MP_IngredientBox MP_HorizontalContainer MP_SoldOut '>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                                
-                                <div className='MP_IngredientBox MP_HorizontalContainer'
-                                    onClick={() => handleAddIngredient(ind[2])}>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            <IngredientList index={0}/>
+                        </div>}
 
+                        {(!isMobileView || mobileCurretnSelectedType === 1)  &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_VegetableTypeHead '>🥬 채소</div>
-                                <div className='MP_NormalText MP_textColor3'>2가지</div>
+                                <div className='MP_NormalText MP_textColor3'>{indType[1].ingredientCount} 가지</div>
                             </div>
-                            
-                            <div className='MP_IngredientList'>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'
-                                    onClick={() => handleAddIngredient(ind[3])}>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            <IngredientList index={1}/>
+                        </div>}
 
+                        {(!isMobileView || mobileCurretnSelectedType === 2)  &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_CheeseTypeHead '>🧀 치즈</div>
-                                <div className='MP_NormalText MP_textColor3'>2가지</div>
+                                <div className='MP_NormalText MP_textColor3'>{indType[2].ingredientCount} 가지</div>
                             </div>
-                            
-                            <div className='MP_IngredientList'>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'
-                                    onClick={() => handleAddIngredient(ind[4])}>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            <IngredientList index={2}/>
+                        </div>}
                         
+                        {(!isMobileView || mobileCurretnSelectedType === 3) &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_MeatTypeHead '>🥓 단백질</div>
-                                <div className='MP_NormalText MP_textColor3'>2가지</div>
+                                <div className='MP_NormalText MP_textColor3'>{indType[3].ingredientCount} 가지</div>
                             </div>
-                            
-                            <div className='MP_IngredientList'>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            <IngredientList index={3}/>
+                        </div>}
 
+                        {(!isMobileView || mobileCurretnSelectedType === 4) &&
                         <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
                             <div className='MP_IngredientsHead MP_HorizontalContainer'>
                                 <div className='MP_NormalText MP_TypeHead MP_SourceTypeHead '>🥫 소스</div>
-                                <div className='MP_NormalText MP_textColor3'>2가지</div>
+                                <div className='MP_NormalText MP_textColor3'>{indType[4].ingredientCount} 가지</div>
                             </div>
-                            
-                            <div className='MP_IngredientList'>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                                
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                                
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                                
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                                <div className='MP_IngredientBox MP_HorizontalContainer'>
-                                    <div className='MP_TypeImageBox MP_typeColor_Bread2'></div>
-                                    <div className='MP_TypeTextBox MP_VerticalContainer'>
-                                        <div className='MP_NormalText MP_textColor1'>화이트빵</div>
-                                        <div className='MP_NormalText MP_textColor2'>1,500원</div>
-                                    </div>
-                                    <div className='MP_TypeAddBtn'>
-                                        <div className='MP_TypeAddBtn_InnerText'>+</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                            <IngredientList index={4}/>
+                        </div>}
+
+                    </div>}
+
                 </div>
 
                 <div className='MP_Mobile_LeftAside'>
+                    
                     <div className='MP_Mobile_IngredientTypeBTNList'>
                         <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_SourceTypeHead'
                             onClick={(e) => handleMobileTypeSelect(e,4)}>🥫<br/><div>소<br/>스</div></div>
@@ -436,7 +508,7 @@ function MainPage() {
                 </div>
 
                 <div className='MP_Mobile_LeftBackCover' ref={LeftBackCoverRef}
-                            onClick={() => handleMobileIndClose()}>
+                            onPointerDown={() => handleMobileIndClose()}>
 
                 </div>
 </div>
@@ -458,7 +530,7 @@ function MainPage() {
                         </div>
                     </div>
      
-                    <div className='MP_SandwichMain'>
+                    <div className='MP_SandwichMain' ref={SandwichMainRef}>
                         <div className='MP_SandwichImgPlace'>
 
                             {selectedIngredients.map((element, index) => (
@@ -482,9 +554,17 @@ function MainPage() {
                 </div>
 
                 <div className='MP_CartContainer MP_MainContainers MP_VerticalContainer MP_CartContainer_Closed' ref={CartContainerRef}>
+                    
+                    <div className='MP_MobileCartTopHandle'
+                        onClick={() => handleMobileCartCloseBTN()}>
+                        ▼　　▼　　▼
+                    </div>
+                    
                     <div className='MP_CartTop'>
                         <div className='MP_CartTopText'>
-                            <div className='MP_LargeText MP_textColor1'>🛒 장바구니</div>
+                            <div className='MP_LargeText MP_textColor1'>
+                                🛒 장바구니 {mobile_isCartOpen && `(${selectedIngredients.length})`}</div>
+                            
                         </div>
 
                         <div className='MP_CartList MP_VerticalContainer'>
@@ -499,16 +579,16 @@ function MainPage() {
                     <div className='MP_CartBottom MP_VerticalContainer'>
                         <div className='MP_cartAmount MP_ingredient_total MP_HorizontalContainer'>
                             <div className='MP_LargeText MP_textColor1'>총 재료</div>
-                            <div className='MP_LargeText MP_textColor3'>8개</div>
+                            <div className='MP_LargeText MP_textColor3'>{selectedIngredients.length}개</div>
                         </div>
                         <div className='MP_cartPrice MP_ingredient_total MP_HorizontalContainer'>
                             <div className='MP_LargeText MP_textColor1'>총 금액</div>
-                            <div className='MP_LargeText MP_textColor3'>3,500원</div>
+                            <div className='MP_LargeText MP_textColor3'>{currentTotalPrice.toLocaleString()}원</div>
                         </div>
 
                         <div className='MP_OrderButton'
-                            onClick={() => handleAddIngredient(ind[5])}>
-                            <div className='MP_LargeText'>주문하기 (3,500원)</div>
+                            onClick={() => handleOrder()}>
+                            <div className='MP_LargeText'>주문하기 {currentTotalPrice.toLocaleString()}원</div>
                         </div>
                     </div>
                 </div>
@@ -548,10 +628,19 @@ function MainPage() {
             </div>
 
             <div className='MP_MobileFooterCartBTN'
-                            onClick={() => handleMobileCartToggle()}>
+                            onClick={() => handleMobileCartOrderBTN()}>
 
-                <div className='MP_MobileFooterCartBTN_emoji'>🛒</div> 
-                장바구니
+                <div className='MP_MobileFooterCartInner'>
+                        {!mobile_isCartOpen && 
+                            <div className='MP_MobileFooterCartInnerText'>
+                                <div className='MP_MobileFooterCartBTN_emoji'>🛒</div> 
+                                        장바구니</div>}
+                        {mobile_isCartOpen && 
+                            <div className='MP_MobileFooterCartInnerText'>
+                                <div className='MP_MobileFooterCartBTN_orderEmoji'>💳️</div> 
+                                        결제하기</div>}
+                </div>
+                
             </div>
         </div>
     )

@@ -1,8 +1,29 @@
 import { useEffect, useState } from "react";
 import "../css/OrderPay.css";
+import { useAxios } from "../api/axiosInterceptor";
+import { loadTossPayments } from "@tosspayments/payment-sdk";
+
 
 
 function OrderPay(){
+
+    const api = useAxios();
+
+    const [userInfo, setUserInfo] = useState({
+        nickname: "",
+        phoneNumber: "",
+        address: "",
+        addressDeatil: ""
+        });
+
+    useEffect(() => {
+        api.get("/members/userinfo")
+            .then(res => {
+            setUserInfo(res.data);
+            })
+            .catch(err => console.error(err));
+    }, [api]);
+
     const [showAddress, setShowAddress] = useState(true);
 
 
@@ -19,6 +40,19 @@ function OrderPay(){
     const handleAddress = () => {
         setShowAddress(prev => !prev)
     }
+
+    const handlePay = async () => {
+        const tossPayments = await loadTossPayments("test_ck_5OWRapdA8ddBLEl9mY998o1zEqZK");
+
+        tossPayments.requestPayment("카드", {
+        amount: 1,
+        orderId: "order_" + new Date().getTime(), // 유니크한 ID
+        orderName: "커스텀 샌드위치 주문",
+        customerName: userInfo.nickname || "고객",
+        successUrl: "http://localhost:3000",
+        failUrl: "http://localhost:3000/orderpay",
+        });
+        };
 
 
 
@@ -38,38 +72,40 @@ function OrderPay(){
                             </div>
                             <button>3개</button>
                         </div>
-                        <div className="ordercontent">
-                            <p>커스텀 샌드위치</p>
-                            <p>베이컨,양상추,토마토,마요네즈</p>
-                            <div className="orderquantity">
-                                <div className="quantitycontainer">
-                                    <p>1</p>
-                                    <p className="quantityminus">-</p>
-                                    <p className="quantityplus">+</p>
+                        <div className="ordersandwichcontainer">
+                            <div className="ordercontent">
+                                <p>커스텀 샌드위치</p>
+                                <p>베이컨,양상추,토마토,마요네즈</p>
+                                <div className="orderquantity">
+                                    <div className="quantitycontainer">
+                                        <p>1</p>
+                                        <p className="quantityminus">-</p>
+                                        <p className="quantityplus">+</p>
+                                    </div>
+                                    <div>
+                                        <p>6,500원 x 2</p>
+                                        <p>13,000원</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p>6,500원 x 2</p>
-                                    <p>13,000원</p>
-                                </div>
-                            </div>
-                            <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
+                                <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
 
-                        </div>
-                        <div className="ordercontent">
-                            <p>커스텀 샌드위치</p>
-                            <p>베이컨,양상추,토마토,마요네즈</p>
-                            <div className="orderquantity">
-                                <div className="quantitycontainer">
-                                    <p>1</p>
-                                    <p className="quantityminus">-</p>
-                                    <p className="quantityplus">+</p>
-                                </div>
-                                <div>
-                                    <p>6,500원 x 2</p>
-                                    <p>13,000원</p>
-                                </div>
                             </div>
-                            <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
+                            <div className="ordercontent">
+                                <p>커스텀 샌드위치</p>
+                                <p>베이컨,양상추,토마토,마요네즈</p>
+                                <div className="orderquantity">
+                                    <div className="quantitycontainer">
+                                        <p>1</p>
+                                        <p className="quantityminus">-</p>
+                                        <p className="quantityplus">+</p>
+                                    </div>
+                                    <div>
+                                        <p>6,500원 x 2</p>
+                                        <p>13,000원</p>
+                                    </div>
+                                </div>
+                                <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
+                            </div>
                         </div>
 
                         <div className="orderline"></div>
@@ -91,10 +127,11 @@ function OrderPay(){
                                 <p>26,500원</p>
                             </div>
 
-                        <button className="finalorderbutton" onClick={()=>{if(window.confirm("정말로 주문하시겠습니까?")){
-                            alert("주문 완료");
-                        }}}>
-                        주문하기
+                        <button
+                            className="finalorderbutton"
+                            onClick={handlePay}
+                            >
+                            결제하기
                         </button>
                     </div>
                     {showAddress &&
@@ -106,28 +143,37 @@ function OrderPay(){
                         </div>
 
                         <p>닉네임</p>
-                            <input placeholder="닉네임을 입력해 주세요."></input>
+                            <input
+                            type="text"
+                            value={userInfo.nickname}
+                            readOnly></input>
                         </div>
 
-                        <div className="deliverinfo">
-                            <p>받으시는 분 성함</p>
-                            <input placeholder="이름을 입력해 주세요."></input>
-                        </div>
-
+                        
                         <div className="deliverinfo">
                             <p>휴대폰 번호</p>
-                            <input placeholder="010-1234-5678"></input>
+                            <input
+                            type="text"
+                            value={userInfo.phoneNumber}
+                            readOnly></input>
                         </div>
 
                         <div className="deliverinfo">
                             <p>배송 주소</p>
-                            <input placeholder="서울시 강남구 테헤란로 123"></input>
-                            <input placeholder="상세주소"></input>
+                            <input
+                            type="text"
+                            value={`${userInfo.address} ${userInfo.addressDetail}`}
+                            readOnly></input>
+                        </div>
+
+                        <div className="deliverinfo">
+                            <p>받으시는 분 성함</p>
+                            <input placeholder="받으시는 분 성함을 입력해 주세요." className="changenameinput"></input>
                         </div>
 
                         <div className="deliverrequest">
                             <p>배송 요청 사항</p>
-                            <textarea cols="30" rows="3" className="delivermessage"></textarea>
+                            <textarea cols="30" rows="3" className="delivermessage" placeholder="배송 요청 사항을 적어주세요."></textarea>
                         </div>  
 
                         <button className="checkdeliverspot" onClick={handleAddress}>

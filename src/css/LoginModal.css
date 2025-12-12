@@ -6,7 +6,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 100;
+    z-index: 9998;
     border-radius: 16px;
     box-sizing: border-box;
     overflow: hidden;
@@ -23,7 +23,7 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4);
     top: 0;
-    z-index: 90;
+    z-index: 9990;
 }
 .login{
     display: flex;
@@ -58,13 +58,43 @@
 
 .logincontainer{
     display: flex;
+    align-items: center;
     gap: 6px;
+}
+
+.logincontainer > div{
+    display: flex;
+    gap: 6px;
+}
+
+
+.logincontainer > div > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 16px !important;
+    border: 1px solid #FF8904;
+    color: #FF8904;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+
+.logincontainer > div > div:hover{
+    background: rgba(255, 149, 0, 0.2);
 }
 
 .logincontent{
     width: 100%;
     padding: 16px 24px;
     box-sizing: border-box;
+}
+
+.logincontainer > button{
+    color: white;
 }
 
 .loginform > button{
@@ -85,6 +115,7 @@
     transform: scale(1.1);
     transition: transform 0.3s ease;
 }
+
 
 .signupbutton:hover{
     transform: scale(1.1);
@@ -166,5 +197,62 @@
     color: #7C290C;
     margin-bottom: -8px;
     font-weight: 300;
+}
+
+@media(max-width : 426px){
+    .logincontainer > div{
+        width: 100%;
+        height: 100%;
+    }
+
+    .logincontainer > div > div{
+        width: 40px;
+        height: 18px !important;
+        font-size: 10px;
+        padding: 4px;
+    }
+
+    .loginmodal{
+        width: 280px;
+        height: 360px;
+    }
+
+    .loginheader{
+        height: 48px;
+        font-size: 18px;
+    }
+
+    .loginheader > img{
+        width: 10px;
+        height: 10px;
+        top: 12px;
+        right: 24px;
+    }
+
+    .loginform > p{
+        font-size: 12px;
+    }
+
+    .loginform > input{
+        height: 36px;
+    }
+
+    .loginform > button{
+        height: 36px;
+    }
+
+    .loginsignup > p{
+        font-size: 8px;
+    }
+
+    .findmyidpw > a{
+        font-size: 10px;
+    }
+
+    .notuser > p{
+        font-size: 12px;
+    }
+
+
 }
 
