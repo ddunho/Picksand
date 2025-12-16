@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import "../css/OrderPay.css";
+import "../css/PaySuccess.css";
 import { useAxios } from "../api/axiosInterceptor";
-import { loadTossPayments } from "@tosspayments/payment-sdk";
 
 
 
@@ -15,13 +14,6 @@ function OrderPay(){
         address: "",
         addressDeatil: ""
         });
-
-    useEffect(() => {
-        if (window.location.search) {
-            alert("결제가 취소되었거나 실패했습니다.");
-            window.history.replaceState({}, "", "/orderpay"); // 쿼리 제거
-        }
-        }, []);
 
     useEffect(() => {
         api.get("/members/userinfo")
@@ -48,103 +40,87 @@ function OrderPay(){
         setShowAddress(prev => !prev)
     }
 
-    const handlePay = async () => {
-        const tossPayments = await loadTossPayments("test_ck_5OWRapdA8ddBLEl9mY998o1zEqZK");
-
-        tossPayments.requestPayment("카드", {
-        amount: 1,
-        orderId: "order_" + new Date().getTime(), // 유니크한 ID
-        orderName: "커스텀 샌드위치 주문",
-        customerName: userInfo.nickname || "고객",
-        successUrl: "http://localhost:3000/paySuccess",
-        failUrl: "http://localhost:3000/orderpay",
-        });
-        };
+    
 
 
 
     return(
         <main>
-            <div className="orderpaywrapper">
+            <div className="orderpaywrapperp">
                 <div>
-                    <p>주문 및 결제</p>
                     <div onClick={handleAddress}>배송지 확인</div>
                 </div>
-                <div className="orderaddresscontainer">
-                    <div className="orderwrapper">
-                        <div className="ordertitle">
+                <div className="orderaddresscontainerp">
+                    <div className="orderwrapperp">
+                        <div className="ordertitlep">
                             <div>
                                 <img src="/images/shopping_bag.png" alt="상품"></img>
                                 <p>주문상품</p>
                             </div>
                             <button>3개</button>
                         </div>
-                        <div className="ordersandwichcontainer">
-                            <div className="ordercontent">
+                        <div className="ordersandwichcontainerp">
+                            <div className="ordercontentp">
                                 <p>커스텀 샌드위치</p>
                                 <p>베이컨,양상추,토마토,마요네즈</p>
-                                <div className="orderquantity">
-                                    <div className="quantitycontainer">
+                                <div className="orderquantityp">
+                                    <div className="quantitycontainerp">
                                         <p>1</p>
-                                        <p className="quantityminus">-</p>
-                                        <p className="quantityplus">+</p>
+                                        <p className="quantityminusp">-</p>
+                                        <p className="quantityplusp">+</p>
                                     </div>
                                     <div>
                                         <p>6,500원 x 2</p>
                                         <p>13,000원</p>
                                     </div>
                                 </div>
-                                <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
+                                <img src="/images/Trash.png" alt="삭제" className="ordertrashp"></img>
 
                             </div>
-                            <div className="ordercontent">
+                            <div className="ordercontentp">
                                 <p>커스텀 샌드위치</p>
                                 <p>베이컨,양상추,토마토,마요네즈</p>
-                                <div className="orderquantity">
-                                    <div className="quantitycontainer">
+                                <div className="orderquantityp">
+                                    <div className="quantitycontainerp">
                                         <p>1</p>
-                                        <p className="quantityminus">-</p>
-                                        <p className="quantityplus">+</p>
+                                        <p className="quantityminusp">-</p>
+                                        <p className="quantityplusp">+</p>
                                     </div>
                                     <div>
                                         <p>6,500원 x 2</p>
                                         <p>13,000원</p>
                                     </div>
                                 </div>
-                                <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
+                                <img src="/images/Trash.png" alt="삭제" className="ordertrashp"></img>
                             </div>
                         </div>
 
-                        <div className="orderline"></div>
+                        <div className="orderlinep"></div>
 
-                        <div className="paycontainer">
-                            <div className="productprice">
+                        <div className="paycontainerp">
+                            <div className="productpricep">
                                 <p>상품 금액</p>
                                 <p>26,500원</p>
                             </div>
 
-                            <div className="deliverprice">
+                            <div className="deliverpricep">
                                 <p>배송비</p>
                                 <p>무료</p>
                             </div>
                         </div>
-                        <div className="orderline"></div>
-                            <div className="totalprice">
+                        <div className="orderlinep"></div>
+                            <div className="totalpricep">
                                 <p>총 결제 금액</p>
                                 <p>26,500원</p>
                             </div>
+                            <p className="payfinish">결제가 완료되었습니다.</p>
 
-                        <button
-                            className="finalorderbutton"
-                            onClick={handlePay}
-                            >
-                            결제하기
-                        </button>
+                       
                     </div>
                     {showAddress &&
-                    <div className={`addresswrapper ${showAddress ? "open" : "close"}`}>
-                        <div className="deliverinfo">
-                        <div className="addresstitle">
+                    <div className={`addresswrapperp ${showAddress ? "open" : "close"}`}>
+                        <div className="deliverinfop">
+                        <div className="addresstitlep">
                             <img src="/images/place.png" alt="위치"></img>
                             <p>배송지 정보</p>
                         </div>
@@ -157,7 +133,7 @@ function OrderPay(){
                         </div>
 
                         
-                        <div className="deliverinfo">
+                        <div className="deliverinfop">
                             <p>휴대폰 번호</p>
                             <input
                             type="text"
@@ -165,7 +141,7 @@ function OrderPay(){
                             readOnly></input>
                         </div>
 
-                        <div className="deliverinfo">
+                        <div className="deliverinfop">
                             <p>배송 주소</p>
                             <input
                             type="text"
@@ -173,17 +149,17 @@ function OrderPay(){
                             readOnly></input>
                         </div>
 
-                        <div className="deliverinfo">
+                        <div className="deliverinfop">
                             <p>받으시는 분 성함</p>
-                            <input placeholder="받으시는 분 성함을 입력해 주세요." className="changenameinput"></input>
+                            <input placeholder="받으시는 분 성함을 입력해 주세요." className="changenameinputp"></input>
                         </div>
 
-                        <div className="deliverrequest">
+                        <div className="deliverrequestp">
                             <p>배송 요청 사항</p>
-                            <textarea cols="30" rows="3" className="delivermessage" placeholder="배송 요청 사항을 적어주세요."></textarea>
+                            <textarea cols="30" rows="3" className="delivermessagep" placeholder="배송 요청 사항을 적어주세요."></textarea>
                         </div>  
 
-                        <button className="checkdeliverspot" onClick={handleAddress}>
+                        <button className="checkdeliverspotp" onClick={handleAddress}>
                             배송지 정보를 확인하였습니다. 
                         </button>            
                     </div>

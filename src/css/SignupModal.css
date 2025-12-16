@@ -113,7 +113,7 @@
     justify-content: space-between;
     align-items: end;
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     
     
 }
@@ -145,7 +145,6 @@
     width: 100%;
     justify-content: right;
     align-items: center;
-    margin-top: 4px;
 }
 
 .signupform > div:last-child > a{
@@ -187,6 +186,10 @@
     box-sizing: border-box;
     box-shadow: none;
     border: 1px solid #D9D9D9;
+}
+
+.inputwrapper > div > input:focus{
+    outline: none;
 }
 .inputwrapper > div > button{
     position: absolute;
@@ -250,6 +253,7 @@
     font-size: 20px;
     cursor: pointer;
 }
+
 
 @keyframes modalFloat {
     from {

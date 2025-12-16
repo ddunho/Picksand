@@ -11,6 +11,7 @@ import OrderPay from './pages/OrderPay.js';
 import FindId from './pages/FindId.js';
 import { AuthProvider } from './context/AuthProvider';
 import { GlobalProvider } from "./services/globalContext";
+import PaySuccess from './pages/PaySuccess.js';
 
 function App() {
   
@@ -32,6 +33,7 @@ function App() {
             <Route path='/Review' element={<Review />} />
             <Route path='/orderpay' element={<OrderPay/>}/>
             <Route path='/findid' element={<FindId/>}/>
+            <Route path='/paySuccess' element={<PaySuccess/>}/>
           </Routes>
       </BrowserRouter>
       </GlobalProvider>
