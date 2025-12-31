@@ -18,31 +18,125 @@ function Review() {
     const [starAvg, setStarAvg] = useState();
     const [countReview, setCountReview] = useState();
     const [review, setReview] = useState([]);
+    const [memberId, setMemberId] = useState();
+    const api = axios.create({
+        baseURL: "http://localhost:8080",
+        withCredentials: true,
+    });
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const reviewsPerPage = 7;
+
+    const sortedReview = [...review].sort(
+        (a, b) => new Date(b.reviewDate) - new Date(a.reviewDate)
+    );
+
+    const indexOfLast = currentPage * reviewsPerPage;
+    const indexOfFirst = indexOfLast - reviewsPerPage;
+    const currentReviews = sortedReview.slice(indexOfFirst, indexOfLast);
+
+    const totalPages = Math.ceil(sortedReview.length / reviewsPerPage);
+
+    api.interceptors.request.use((config) => {
+        const token = localStorage.getItem("accessToken");
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return config;
+    });
+
+    api.interceptors.response.use(
+        (response) => response,
+        (error) => {
+
+            if (!error.response) {
+                alert("서버에 연결할 수 없습니다.");
+            }
+
+            else if (error.response.status === 401) {
+                alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                localStorage.removeItem("accessToken");
+            }
+
+            else if (error.response.status === 403) {
+                alert("접근 권한이 없습니다.");
+            }
+            return Promise.reject(error);
+        }
+    );
+
+    api.interceptors.response.use(
+        response => response,
+
+        async error => {
+            const originalRequest = error.config;
+
+            if (
+                error.response?.status === 401 &&
+                error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
+                !originalRequest._retry
+            ) {
+                originalRequest._retry = true;
+
+                try {
+                    // ⭐ refreshToken 쿠키는 자동 포함됨
+                    const res = await api.post("/auth/refresh");
+
+                    const newAccessToken = res.data.accessToken;
+                    localStorage.setItem("accessToken", newAccessToken);
+
+                    originalRequest.headers.Authorization =
+                        `Bearer ${newAccessToken}`;
+
+                    return api(originalRequest);
+
+                } catch (e) {
+                    // Refresh Token 만료/위조
+                    localStorage.clear();
+                    window.location.href = "/login";
+                }
+            }
+
+            return Promise.reject(error);
+        }
+    );
+
 
     const admitButton = async () => {
         const review = {
             reviewTxt: reviewTxt,
-            starPoint: star
+            starPoint: star,
+            memberId: memberId
         };
-        await axios.post("http://localhost:8080/review/addReview", review);
+        await api.post("/review/addReview", review);
+
     };
+
+
 
     useEffect(() => {
 
         const avgStar = async () => {
-            const res = await axios.get("http://localhost:8080/review/avgStar");
+            const res = await api.get("/review/avgStar");
             setStarAvg(res.data);
         };
         const reviewCount = async () => {
-            const cou = await axios.get("http://localhost:8080/review/reviewCount");
+            const cou = await api.get("/review/reviewCount");
             setCountReview(cou.data);
         };
 
         const allReview = async () => {
-            const rev = await axios.get("http://localhost:8080/review/allReview");
+            const rev = await api.get("/review/allReview");
             setReview(rev.data);
         }
 
+        const getMemberId = async () => {
+            const mid = await api.get("/review/getMemberId");
+            setMemberId(mid.data);
+        }
+        getMemberId();
         allReview();
         reviewCount();
         avgStar();
@@ -117,21 +211,31 @@ function Review() {
 
 
                     </div>
-                    {[...review]
-                        .sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate))
-                        .map((item, index) => (
-                            <div className='reviewcard' key={index}>
-                                <div className='spoint'>
-                                    <FaStar color="gold" size={35} />
-                                    <p>{item.starPoint}</p>
-                                </div>
-                                <div className='reviewcard2'>
-                                    <p>닉네임</p>
-                                    <p>{item.reviewDate.slice(0, 10)}</p>
-                                    <p>{item.reviewTxt}</p>
-                                </div>
+                    {currentReviews.map((item, index) => (
+                        <div className='reviewcard' key={index}>
+                            <div className='spoint'>
+                                <FaStar color="gold" size={35} />
+                                <p>{item.starPoint}</p>
                             </div>
+                            <div className='reviewcard2'>
+                                <p>닉네임</p>
+                                <p>{item.reviewDate.slice(0, 10)}</p>
+                                <p className='reviewtext'>{item.reviewTxt}</p>
+                            </div>
+                        </div>
+                    ))}
+
+                    <div className="pagination">
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <button
+                                key={i}
+                                className={currentPage === i + 1 ? "activePage" : ""}
+                                onClick={() => setCurrentPage(i + 1)}
+                            >
+                                {i + 1}
+                            </button>
                         ))}
+                    </div>
 
                 </div>
             </div>

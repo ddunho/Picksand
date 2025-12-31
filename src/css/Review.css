@@ -113,6 +113,7 @@
 
 .reviewcard2 :nth-child(3){
     margin-top: 10px;
+    margin-bottom: 20px;
     
 }
 
@@ -199,6 +200,32 @@
     background-color: #ffffff;
     color: #DEA88B;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    gap: 8px;
+}
+
+.pagination button {
+    padding: 6px 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    background: white;
+}
+
+.pagination button.activePage {
+    background: black;
+    color: white;
+    
+}
+
+.reviewtext{
+    white-space: pre-wrap;
+}
+
 
 @media (max-width: 1100px){
    .reviewmain{
