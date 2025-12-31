@@ -1,4 +1,4 @@
-.orderpaywrapper{
+.orderpaywrapperp{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -6,11 +6,11 @@
     width: 100%;
     padding: 24px 15%;
     box-sizing: border-box;
-    background-color: #FEFAEA;
+    background-color: #F1FAF4;
     min-height: calc(100vh - 104px);
 }
 
-.orderpaywrapper > div:first-child {
+.orderpaywrapperp > div:first-child {
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -18,31 +18,31 @@
     box-sizing: border-box;
 }
 
-.orderpaywrapper > div:first-child > div{
+.orderpaywrapperp > div:first-child > div{
     display: none;
     justify-content: center;
     align-items: center;
     width: 80px;
     height: 20px;
-    background-color: #7C290C;
+    background: linear-gradient(90deg, #00c524 0%, #3ceb5c 100%);
     color: white;
     font-size: 12px;
     cursor: pointer;
 }
 
 
-.orderpaywrapper > div > p{
+.orderpaywrapperp > div > p{
     font-size: 24px;
-    color: #7C290C;
+    color: green;
 }
 
-.orderaddresscontainer{
+.orderaddresscontainerp{
     display: flex;
     flex-direction: row-reverse;
     gap: 24px;
 }
 
-.orderwrapper{
+.orderwrapperp{
     width: 80%;
     height: 100%;
     background-color: #FFFEFB;
@@ -51,30 +51,30 @@
     box-sizing: border-box;
 }
 
-.ordertitle{
+.ordertitlep{
     display: flex;
     justify-content: space-between;
 }
 
-.ordertitle > div{
+.ordertitlep > div{
     display: flex;
     align-items: center;
     margin-bottom: 12px;
     gap: 4px;
 }
 
-.ordertitle > div > img{
+.ordertitlep > div > img{
     width: 24px;
     height: 24px;
 }
 
-.ordertitle > div > p{
+.ordertitlep > div > p{
     font-size: 18px;
     color: black;
     font-weight: 400;
 }
 
-.ordertitle > button{
+.ordertitlep > button{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -87,13 +87,13 @@
     background-color: #FF8904;
     color: white;
 }
-.ordersandwichcontainer{
+.ordersandwichcontainerp{
     width: 100%;
     height: 280px;
     overflow-y: scroll;
 }
 
-.ordercontent{
+.ordercontentp{
     width: 100%;
     height: 120px;
     background-color: #F5F5F5;
@@ -104,7 +104,7 @@
     position: relative;
 }
 
-.ordertrash{
+.ordertrashp{
     width: 18px;
     height: 18px;
     position: absolute;
@@ -113,26 +113,26 @@
     cursor: pointer;
 }
 
-.ordercontent > p:first-child{
+.ordercontentp > p:first-child{
     font-size: 18px;
     font-weight: 300;
 
 }
 
-.ordercontent > p:nth-child(2){
+.ordercontentp > p:nth-child(2){
     font-size: 12px;
     color: black;
     opacity: 0.4;
     margin: 12px 0px 12px 0px;
 }
 
-.orderquantity{
+.orderquantityp{
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.orderquantity > div:first-child{
+.orderquantityp > div:first-child{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -143,25 +143,25 @@
     border-radius: 8px;
 }
 
-.orderquantity > div:last-child{
+.orderquantityp > div:last-child{
     display: flex;
     flex-direction: column;
     align-items: end;
     gap: 4px;
 }
 
-.orderquantity > div:last-child > p:first-child{
+.orderquantityp > div:last-child > p:first-child{
     font-size: 12px;
     color: black;
     opacity: 0.4;
 }
 
-.orderquantity > div:last-child > p:last-child{
+.orderquantityp > div:last-child > p:last-child{
     font-size: 18px;
     color: #FF8904;
 }
 
-.quantityminus{
+.quantityminusp{
     position: absolute;
     left: 12px;
     font-size: 24px;
@@ -169,59 +169,67 @@
     cursor: pointer;
 }
 
-.quantityplus{
+.quantityplusp{
     position: absolute;
     right: 12px;
     top: auto;
     cursor: pointer;
 }
 
-.orderline{
+.orderlinep{
     width: 100%;
     height: 0px;
     border: 1px solid #F5F5F5;
 }
 
-.paycontainer{
+.payfinish{
+    font-size: 24px;
+    color: green;
+    margin-top: 19px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.paycontainerp{
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin: 16px 0px 12px 0px;
 }
 
-.productprice{
+.productpricep{
     display: flex;
     justify-content: space-between;
 }
 
-.productprice > p{
+.productpricep > p{
     font-weight: 300;
 }
 
-.deliverprice{
+.deliverpricep{
     display: flex;
     justify-content: space-between;
 }
 
-.deliverprice > p:first-child{
+.deliverpricep > p:first-child{
     font-weight: 300;
 }
 
-.deliverprice > p:last-child{
+.deliverpricep > p:last-child{
     color: #FF8904;
 }
 
-.totalprice{
+.totalpricep{
     display: flex;
     justify-content: space-between;
     margin-top: 12px;
 }
 
-.totalprice > p:last-child{
+.totalpricep > p:last-child{
     color: #FF8904;
 }
 
-.addresswrapper{
+.addresswrapperp{
     width: 80%;
     height: 100%;
     background-color: #FFFEFB;
@@ -230,7 +238,7 @@
     box-sizing: border-box;
 }
 
-.addresstitle{
+.addresstitlep{
     display: flex;
     align-items: center;
     justify-content: left;
@@ -238,35 +246,35 @@
     margin-bottom: 18px;
 }
 
-.addresstitle > p{
+.addresstitlep > p{
     font-size: 18px;
 }
 
-.deliverinfo{
+.deliverinfop{
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin-bottom: 16px;
 }
 
-.deliverinfo > p{
+.deliverinfop > p{
     font-size: 16px;
     font-weight: 300;
 }
 
-.deliverrequest{
+.deliverrequestp{
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin-bottom: 16px;
 }
 
-.deliverrequest > p{
+.deliverrequestp > p{
     font-size: 16px;
     font-weight: 300;
 }
 
-.deliverinfo > input{
+.deliverinfop > input{
     width: 100%;
     height: 36px;
     border-radius: 8px;
@@ -277,11 +285,11 @@
     background-color: #F5F5F5;
 }
 
-.deliverinfo > input:focus{
+.deliverinfop > input:focus{
     outline: none;
 }
 
-.delivermessage{
+.delivermessagep{
     background: inherit;
     background-color: white;
     font-family: inherit;
@@ -293,11 +301,11 @@
     resize: none;
 }
 
-.delivermessage:focus{
+.delivermessagep:focus{
     outline: none;
 }
 
-.finalorderbutton{
+.finalorderbuttonp{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -314,7 +322,7 @@
 
 }
 
-.checkdeliverspot{
+.checkdeliverspotp{
     display: none;
     justify-content: center;
     align-items: center;
@@ -324,92 +332,92 @@
     border:none; 
     box-shadow:none;
     border-radius: 8px;
-    background: linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
+    background: linear-gradient(90deg, #00c524 0%, #3ceb5c 100%);
     color: white;
     margin-top: 21.5px;
     cursor: pointer;
 }
 
-.finalorderbutton:hover{
+.finalorderbuttonp:hover{
     transform: scale(1.05);
     transition: transform 0.5s ease-in-out;
 }
 
-.changenameinput{
+.changenameinputp{
     background-color: white !important;
 }
 
 @media (max-width : 768px){
-    .orderpaywrapper > div > p{
+    .orderpaywrapperp > div > p{
     font-size: 18px;
     color: #7C290C;
     }
-    .ordercontent{
+    .ordercontentp{
         height: 100px;
     }
 
-    .ordercontent > p:first-child{
+    .ordercontentp > p:first-child{
         font-size: 14px;
     }
-    .ordercontent > p:nth-child(2){
+    .ordercontentp > p:nth-child(2){
     font-size: 10px;
     margin: 8px 0px 8px 0px;
     }
-    .orderquantity > div:last-child > p:first-child{
+    .orderquantityp > div:last-child > p:first-child{
     font-size: 8px;
     }
 
-    .orderquantity > div:last-child > p:last-child{
+    .orderquantityp > div:last-child > p:last-child{
     font-size: 14px;
     }
 
-    .orderquantity > div:first-child{
+    .orderquantityp > div:first-child{
         width: 60px;
         height: 24px;
     }
 
-    .quantityminus{
+    .quantityminusp{
         left: 8px;
         margin-top: -4px;
     }
-    .quantityplus{
+    .quantityplusp{
         right: 8px;
         margin-top: -3px;
     }
-    .deliverprice > p{
+    .deliverpricep > p{
         font-size: 14px;
     }
 
-    .productprice > p{
+    .productpricep > p{
         font-size: 14px;
     }
 
-    .totalprice > p{
+    .totalpricep > p{
         font-size: 14px;
     }
 
-    .finalorderbutton{
+    .finalorderbuttonp{
         height: 40px;
     }
 
-    .deliverinfo > p{
+    .deliverinfop > p{
         font-size: 12px;
     }
 
-    .deliverinfo > input{
+    .deliverinfop > input{
         height: 28px;
     }
 
-    .deliverrequest > p{
+    .deliverrequestp > p{
         font-size: 12px;
     }
 
-    .addresswrapper{
+    .addresswrapperp{
         padding: 12px 12px 8px 12px;
         border-radius: 16px;
     }
 
-    .orderwrapper{
+    .orderwrapperp{
         padding: 12px;
         border-radius: 16px;
     }
@@ -418,7 +426,7 @@
 
 @media (max-width : 426px){
     
-    .addresswrapper{
+    .addresswrapperp{
         width: 100%;
         position: fixed;
         right:0px;
@@ -432,38 +440,38 @@
         overflow: hidden;
         transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
     }
-    .addresswrapper.open {
+    .addresswrapperp.open {
         max-height: 100vh;
         opacity: 1;
         
     }
 
-    .orderwrapper{
+    .orderwrapperp{
         width: 100%;
     }
 
-    .orderpaywrapper > div > p{
+    .orderpaywrapperp > div > p{
         margin-left: 6px;
     }
 
-    .orderpaywrapper{
+    .orderpaywrapperp{
         padding: 12px 12px 12px 12px;
         width: 100%;
         gap: 14px;
     }
 
-    .orderaddresscontainer{
+    .orderaddresscontainerp{
         width: 100%;
         flex-direction: row;
         gap: 0px;
         min-height: calc(100vh - 60px);
     }
 
-    .orderpaywrapper > div:first-child > div{
+    .orderpaywrapperp > div:first-child > div{
         display: flex;
     }
 
-    .checkdeliverspot{
+    .checkdeliverspotp{
         display: flex;
         height: 40px;
     }

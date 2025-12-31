@@ -108,7 +108,34 @@
     height: 24px;
 }
 
+
+.infocomponent > div{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.infocomponent > div > button{
+    display: block;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 24px;
+    background: inherit; 
+    background: linear-gradient(90deg, #FF6B00 0%, #FE9800 100%);
+    border:none; 
+    font-size: 12px;
+    box-shadow:none; 
+    border-radius: 8px; 
+    cursor:pointer;
+    color: white;
+}
+
 .infocomponent > p{
+    color: #F54A00;
+}
+
+.infocomponent > div > p{
     color: #F54A00;
 }
 
@@ -273,6 +300,13 @@
     outline: none;
 }
 
+
+.error-text {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+    margin-left: 6px;
+}
 @media (max-width: 768px){
     
 
@@ -318,6 +352,23 @@
     .deliverstatus > button{
         width: 58px;
         height: 24px;
+        font-size: 12px;
+    }
+
+    .dorodetailcontainer {
+        flex-direction: column;
+    }
+
+    .dorodetailcontainer > div > input{
+        height: 24px;
+    }
+    .infocomponent > div > button{
+        width: 60px;
+        height: 24px;
+        font-size: 12px;
+    }
+
+    .infocomponent > div > p{
         font-size: 12px;
     }
 
@@ -403,6 +454,17 @@
     .deliverstatus > button{
         width: 58px;
         height: 20px;
+        font-size: 12px;
+    }
+
+    .infocomponent > div > button{
+        width: 32px;
+        height: 16px;
+        font-size: 8px;
+        font-weight: 300;
+    }
+
+    .infocomponent > div > p{
         font-size: 12px;
     }
 }

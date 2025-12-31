@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import DaumPostcode from 'react-daum-postcode';
 import { useState } from "react";
 import "../css/SignupModal.css";
 import { useAxios } from "../api/axiosInterceptor";
+import AddressSearchModal from "../components/AddressSearchModal";
 
 function Signup(){
     
@@ -96,15 +96,14 @@ function Signup(){
         }
 
         if (name === "phoneNumber") {
-            if (!value.trim()) {
+            const onlyNumber = value.replace(/-/g, "");
+            if (!onlyNumber) {
                 message = "휴대폰 번호를 입력해주세요.";
-            } else if (value.length !== 11) {
-                message = "휴대폰 번호는 숫자 11자리여야 합니다.";
-            } else if (!/^[0-9]{11}$/.test(value)) {
-                message = "휴대폰 번호는 하이픈을 제외한 숫자 11자리만 입력 가능합니다.";
-            } else if (!/^010\d{8}$/.test(value)) {
-                message = "휴대폰 번호는 010으로 시작하는 하이픈을 제외한 숫자 11자리입니다.";
+            } else if (!/^010\d{8}$/.test(onlyNumber)) {
+                message = "휴대폰 번호는 010으로 시작하는 숫자 11자리입니다.";
             }
+            
+           
         }
 
         if (name === "address") {
@@ -129,14 +128,17 @@ function Signup(){
     const handleChange = (e) => {
         const { name, value } = e.target;
 
+        let newValue = value;
+
+        
         // 입력값 변경
         setForm(prev => ({
             ...prev,
-            [name]: value,
+            [name]: newValue,
         }));
 
         // 입력값 변경 후 에러 체크
-        handleError(name, value);
+        handleError(name, newValue);
 
         if (name === "username") {
             setUsernameChecked(false);
@@ -258,18 +260,22 @@ function Signup(){
                                     />
                                     <button onClick={handleCheckUsername} className="inputbutton">중복 확인</button>
                                 </div>
-                            </div>  
+                            </div>
+                            
+                        
                             {usernameCheckMessage && usernameChecked && (
-                                <div style={{ color: "green", fontSize: "10px"}}>
+                                <div style={{ color: "green", fontSize: "10px", marginLeft: "4px"}}>
                                     {usernameCheckMessage}
                                 </div>
                             )}
-
+                        
+                            <div className="er">
                             {errors.username && !usernameChecked && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
                                     {errors.username}
                                 </div>
                             )}
+                            </div>
                             <p>비밀번호</p>
                             <input 
                                 name="password"
@@ -279,7 +285,7 @@ function Signup(){
                                 onChange={handleChange}
                             />
                             {errors.password && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
                                     {errors.password}
                                 </div>
                             )}
@@ -292,7 +298,7 @@ function Signup(){
                                 onChange={handleChange}
                             />
                             {errors.passwordCheck && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
                                     {errors.passwordCheck}
                                 </div>
                             )}
@@ -305,7 +311,7 @@ function Signup(){
                                 onChange={handleChange}
                             />
                             {errors.nickname && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
                                     {errors.nickname}
                                 </div>
                             )}
@@ -313,12 +319,12 @@ function Signup(){
                             <input
                                 name="phoneNumber"
                                 type="text"
-                                placeholder="휴대폰 번호를 입력해 주세요. (예:01012345678)"
+                                placeholder="휴대폰 번호를 입력해 주세요."
                                 value={form.phoneNumber}
                                 onChange={handleChange}
                             />
                             {errors.phoneNumber && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
                                     {errors.phoneNumber}
                                 </div>
                             )}
@@ -341,7 +347,7 @@ function Signup(){
                                 readOnly
                             />
                             {errors.address && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
                                     {errors.address}
                                 </div>
                             )}
@@ -352,7 +358,7 @@ function Signup(){
                                 onChange={handleChange}
                             />
                             {errors.addressDetail && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
                                     {errors.addressDetail}
                                 </div>
                             )}
@@ -362,23 +368,12 @@ function Signup(){
                             </div>
                         </form>
                         {modalState && (
-                            <div className="custom-modal-overlay" onClick={() => setModalState(false)}>
-                                <div className="custom-modal" onClick={(e) => e.stopPropagation()}>
-                                    <div className="custom-modal-header">
-                                        <span>주소 검색</span>
-                                        <button className="close-btn" onClick={() => setModalState(false)}>
-                                            ✕
-                                        </button>
-                                    </div>
-
-                            <DaumPostcode
+                            <AddressSearchModal
+                                onClose={() => setModalState(false)}
                                 onComplete={onCompletePost}
-                                autoClose={false}
-                                style={{ width: "100%", height: "420px" }}
                             />
-            </div>
-        </div>
-    )}
+                        )}
+
 
                     </div>
                 </div>

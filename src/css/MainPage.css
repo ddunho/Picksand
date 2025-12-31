@@ -350,6 +350,13 @@
     height: 16px;
 }
 
+.MP_SandwichTopNameText
+{
+    position: absolute;
+    top: 64px;
+    left: 0px;
+}
+
 .MP_SandwichMain{
     display: flex;
     justify-content: center;
@@ -384,6 +391,11 @@
     width: 300px;
     height: 300px;
     margin-bottom: -325px;
+}
+
+.MP_SandwichImg.MP_Thin
+{
+    padding-top: 25px;
 }
 
 .MP_SandwichMain_emptyDisplay{
@@ -449,9 +461,158 @@
     background-color: #FEFAEA;
     padding: 12px 12px 12px 12px;
     
-    flex: 1; /* 남은 공간을 전부 차지 */
-    overflow-y: auto; /* 내용이 많으면 스크롤 */
+    flex: 1; 
+    overflow-y: scroll;
 }
+
+.MP_CartSandwichTop{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px 12px 12px 12px;
+    border-radius: 12px;
+
+    box-sizing: border-box;
+    text-align: center;
+
+    background-color: #FFFEFB;
+}
+
+.MP_CartSandwichTop_Right
+{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    position: relative;
+    right: 12px;
+    gap: 12px;
+
+    width: 100px;
+    height: 32px;
+}
+
+.MP_CartSandwichTop_Right_Toggle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    border-radius: 12px;
+    background-color: #FFEDD4;
+    border: 1px solid #FFBD75;
+    padding: 1px;
+
+    width: 32px;
+    height: 32px;
+
+    cursor: pointer;
+}
+
+.MP_CartSandwichTop_Right_Toggle::after{
+    color: #F6540D;
+    content: '▼';
+}
+.MP_CartSandwichTop_Right_Toggle_Closed::after{
+    color: #F6540D;
+    content: '▲';
+}
+
+.MP_CartSandwichTop_Right_Toggle:hover{
+    background-color: #FFF7ED;
+    border: 2px solid #FFBD75;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    padding: 0px;
+}
+
+.MP_CartSandwichTop_Right_Remove{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    border-radius: 12px;
+    background-color: #FFEDD4;
+    border: 1px solid #FFBD75;
+    padding: 1px;
+
+    width: 32px;
+    height: 32px;
+    
+    cursor: pointer;
+}
+
+.MP_CartSandwichTop_Right_Remove:hover{
+    background-color: #FFF7ED;
+    border: 2px solid #F54A00;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    padding: 0px;
+}
+
+
+.MP_CartIngredientList{
+
+    padding: 6px 12px 12px 24px;
+
+    gap: 12px;
+}
+
+.MP_CartIngredientList_Closed{
+    padding: 0px;
+    gap: 0px;
+}
+
+
+
+
+.MP_CartItemBox,
+.MP_CartItemIcon,
+.MP_CartItemTextBox,
+.MP_CartItemRemove
+{
+    transform-origin: top;
+
+    transition: 
+        max-height 0.2s ease,
+}
+
+.MP_CartIngredientList_Closed .MP_CartItemBox,
+.MP_CartIngredientList_Closed .MP_CartItemIcon,
+.MP_CartIngredientList_Closed .MP_CartItemTextBox,
+.MP_CartIngredientList_Closed .MP_CartItemRemove
+{
+    pointer-events: none;
+
+    opacity: 0;
+    padding: 0px;
+    max-height: 0;
+    font-size: 0px;
+
+    border-width: 0px;
+}
+
+
+.MP_CartSandwichBox{
+
+    border-radius: 12px;
+    padding: 1px;
+    border: 1px solid #FFEDD4;
+    
+    background-color: white;
+}
+
+.MP_CartSandwichBox_Selected{
+    background-color: #FFF7ED;
+    border: 2px solid #FFBD75;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    padding: 0px;
+}
+
+
+
+
+
 
 .MP_CartItemBox{
 
@@ -513,6 +674,89 @@
     font-size: 16px;
     font-weight:500;
 }
+
+
+.MP_CartAddSandwichBTN{
+
+    align-items: center;
+
+    width: 100%;
+    height: 54px;
+
+    gap:8px;
+}
+
+.MP_CardAddNewSandwichBTN
+{
+    display: flex;
+    justify-content: center;
+
+    border-radius: 12px;
+    border: 1px solid #FFEDD4;
+    box-sizing: border-box;
+
+    background-color: white;
+}
+
+.MP_CardAddNewSandwichBTN:hover{
+    background-color: #FFF7ED;
+    border: 2px solid #FFBD75;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+}
+
+
+.MP_CartAddNewSandwich_LeftBTN
+{
+    flex: 1;
+    padding: 11px;
+
+    display: flex;
+    gap: 8px;
+}
+.MP_CartAddNewSandwich_RightBTN
+{
+    flex: 1;
+    padding: 11px;
+
+    display: flex;
+    gap: 8px;
+}
+
+.MP_CartAddSandwichBTN_Icon
+{
+    position: relative;
+    background-color: #FFEDD4;
+    border-radius: 99px;
+
+    height: 30px;
+    width: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.MP_CartAddSandwichBTN_IconText
+{
+    position: absolute;
+    top: 43%;             /* 수직 중앙 */
+    transform: translateY(-50%); /* 수평 중앙 */
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 16px;
+    font-weight:500;
+}
+
+
+
 
 .MP_ingredient_total{
     padding: 12px;
@@ -885,7 +1129,7 @@
     .MP_SandwichImg
     {
         transition: scale 0.25s ease,
-            margin 0.25s ease;
+            margin 0.25s ease, padding 0.25 ease;
     }
 
     .MP_SandwichContainer_Half
@@ -921,6 +1165,11 @@
     {
         scale: 0.45;
         margin-bottom: -315px;
+    }
+    
+    .MP_SandwichContainer_Half .MP_SandwichImg.MP_Thin
+    {
+        padding-top: 15px;
     }
 
     .MP_SandwichContainer_Half .MP_SandwichMain_emptyText 
