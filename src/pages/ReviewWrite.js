@@ -167,7 +167,7 @@ function Review() {
                 </div>
                 <div className='review'>
 
-                    {/* <div className='reviewcard'>
+                    <div className='reviewcard'>
                         <div className='spointbu'>
                             <FaStar color="gold" size={35} />
                             {items.map((item, index) => (
@@ -210,7 +210,7 @@ function Review() {
 
 
 
-                    </div> */}
+                    </div>
                     {currentReviews.map((item, index) => (
                         <div className='reviewcard' key={index}>
                             <div className='spoint'>

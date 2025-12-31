@@ -9,6 +9,7 @@ import OrderList from './pages/OrderList.js';
 import Review from './pages/Review.js';
 import OrderPay from './pages/OrderPay.js';
 import FindId from './pages/FindId.js';
+import ReviewWrite from './pages/ReviewWrite.js'
 import { AuthProvider } from './context/AuthProvider';
 import { GlobalProvider } from "./services/globalContext";
 import PaySuccess from './pages/PaySuccess.js';
@@ -34,6 +35,7 @@ function App() {
             <Route path='/orderpay' element={<OrderPay/>}/>
             <Route path='/findid' element={<FindId/>}/>
             <Route path='/paySuccess' element={<PaySuccess/>}/>
+            <Route path='/ReviewWrite' element={<ReviewWrite />} />
           </Routes>
       </BrowserRouter>
       </GlobalProvider>
