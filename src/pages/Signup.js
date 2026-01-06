@@ -8,6 +8,8 @@ function Signup(){
     
     const api = useAxios();
 
+    const [show, setShow] = useState(false);
+    const [showcheck, setShowCheck] = useState(false);
     const [usernameChecked, setUsernameChecked] = useState(false);
     const [usernameCheckMessage, setUsernameCheckMessage] = useState("");
 
@@ -264,7 +266,7 @@ function Signup(){
                             
                         
                             {usernameCheckMessage && usernameChecked && (
-                                <div style={{ color: "green", fontSize: "10px", marginLeft: "4px"}}>
+                                <div style={{ color: "green", fontSize: "10px", marginLeft: "4px", marginTop: "2px"}}>
                                     {usernameCheckMessage}
                                 </div>
                             )}
@@ -276,29 +278,35 @@ function Signup(){
                                 </div>
                             )}
                             </div>
-                            <p>비밀번호</p>
-                            <input 
-                                name="password"
-                                type="password"
-                                placeholder="비밀번호를 입력해 주세요."
-                                value={form.password}
-                                onChange={handleChange}
-                            />
+                            <p className="passwordeyepw">비밀번호</p>
+                            <div className="passwordeye">
+                                <input 
+                                    name="password"
+                                    type={show ? "text" : "password"}
+                                    placeholder="비밀번호를 입력해 주세요."
+                                    value={form.password}
+                                    onChange={handleChange}
+                                />
+                                <img src="/images/eye.png" alt="눈" onClick={()=> setShow(!show)}></img>
+                            </div>
                             {errors.password && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginLeft: "4px", marginTop: "2px"}}>
                                     {errors.password}
                                 </div>
                             )}
                             <p>비밀번호 확인</p>
-                            <input 
-                                name="passwordCheck"
-                                type="password"
-                                placeholder="비밀번호를 한번 더 입력해 주세요."
-                                value={form.passwordCheck}
-                                onChange={handleChange}
-                            />
+                            <div className="passwordeye">
+                                <input 
+                                    name="passwordCheck"
+                                    type={showcheck ? "text" : "password"}
+                                    placeholder="비밀번호를 한번 더 입력해 주세요."
+                                    value={form.passwordCheck}
+                                    onChange={handleChange}
+                                />
+                                <img src="/images/eye.png" alt="눈" onClick={()=> setShowCheck(!showcheck)}></img>
+                            </div>
                             {errors.passwordCheck && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginLeft: "4px", marginTop: "2px" }}>
                                     {errors.passwordCheck}
                                 </div>
                             )}
@@ -311,7 +319,7 @@ function Signup(){
                                 onChange={handleChange}
                             />
                             {errors.nickname && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginLeft: "4px", marginTop: "2px" }}>
                                     {errors.nickname}
                                 </div>
                             )}
@@ -324,7 +332,7 @@ function Signup(){
                                 onChange={handleChange}
                             />
                             {errors.phoneNumber && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginLeft: "4px", marginTop: "2px" }}>
                                     {errors.phoneNumber}
                                 </div>
                             )}
@@ -339,7 +347,8 @@ function Signup(){
                                     주소 찾기
                                 </button>
                             </div>
-                            <input 
+                            <input
+                                style={{marginBottom: "4px"}}
                                 name="address"
                                 value={form.address}
                                 onChange={handleChange}
@@ -347,7 +356,7 @@ function Signup(){
                                 readOnly
                             />
                             {errors.address && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginLeft: "4px", marginTop: "2px" }}>
                                     {errors.address}
                                 </div>
                             )}
@@ -358,7 +367,7 @@ function Signup(){
                                 onChange={handleChange}
                             />
                             {errors.addressDetail && (
-                                <div style={{ color: "red", fontSize: "10px", marginTop: "2px", marginLeft: "4px" }}>
+                                <div style={{ color: "red", fontSize: "10px", marginLeft: "4px", marginTop: "2px" }}>
                                     {errors.addressDetail}
                                 </div>
                             )}
