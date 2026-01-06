@@ -43,7 +43,7 @@ export const useAxios = () => {
 
         try {
           const response = await axios.post(
-            `${process.env.REACT_APP_API_URL}/members/reissue`,
+            `${process.env.REACT_APP_API_URL}/server-a/members/reissue`,
             { refreshToken },
             { withCredentials: true }
           );
