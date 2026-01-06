@@ -1,8 +1,10 @@
 import '../css/itemManage.css'
+import { FaClipboardList } from "react-icons/fa";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { MdFoodBank } from "react-icons/md";
+import { CgUnavailable } from "react-icons/cg";
 function ItemManage() {
     const navigate = useNavigate();
     const message = [
@@ -39,16 +41,16 @@ function ItemManage() {
     api.interceptors.response.use(
         (response) => response,
         (error) => {
-            
+
             if (!error.response) {
                 alert("서버에 연결할 수 없습니다.");
             }
-            
+
             else if (error.response.status === 401) {
                 alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
                 localStorage.removeItem("accessToken");
             }
-            
+
             else if (error.response.status === 403) {
                 alert("접근 권한이 없습니다.");
             }
@@ -56,7 +58,7 @@ function ItemManage() {
         }
     );
 
-        api.interceptors.response.use(
+    api.interceptors.response.use(
         response => response,
 
         async error => {
@@ -126,7 +128,7 @@ function ItemManage() {
         storeList();
     }, [])
 
-    
+
 
     const [stock, setStock] = useState([]);
     useEffect(() => {
@@ -184,7 +186,10 @@ function ItemManage() {
         <div className='mmainpage'>
             <div className="mmain">
                 <div className='mnamespace'>
-                    <p className='mname'>재고관리</p>
+                    <div className='in'>
+                        <FaClipboardList size={35} />
+                        <p className='mname'>재고관리</p>
+                    </div>
                     <div className='mname2'>
                         <p
                             style={{ cursor: "pointer" }}
@@ -198,10 +203,15 @@ function ItemManage() {
                         <p className="empty">재고가 없습니다.</p>
                     ) : stock.map((item, index) => (
                         <div className='itemlist2' key={index}>
-                            <p>{item.stockName}</p>
-                            <p className='itemcount'>수량/{item.stockQuantity}개</p>
+                            <div>
+                                <div className='mdec'>
+                                <MdFoodBank />
+                                <p>{item.stockName}</p>
+                                </div>
+                                <p className='itemcount'>수량/{item.stockQuantity}개</p>
+                            </div>
                             <label className='mlabel'>
-
+                            <CgUnavailable color='#F54A00'/>
                                 품절여부
                                 <input
                                     type='checkbox'
@@ -212,6 +222,7 @@ function ItemManage() {
 
                             </label>
                         </div>
+                        
                     ))}
 
 

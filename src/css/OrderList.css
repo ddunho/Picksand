@@ -10,12 +10,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 17px;
     margin-top: 10px;
     border-radius: 10px;
     width: 51%;
     height: 1080px;
-    background-color: #ffffff;
+    background-color: #FEFAEA;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     
 }
@@ -24,6 +24,10 @@
     display: flex;
     justify-content: space-between;
     padding-left: 10px;
+}
+.in{
+    display: flex;
+    align-items: center;
 }
 .mname{
     margin-top: 30px;
@@ -45,32 +49,64 @@
 }
 .mlist{
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
+    /* gap: 15px; */
     width: 90%;
     height: 200px;
     border-radius: 10px;
-    background: linear-gradient(to right, #d65b03, #d17e02);
+    background: linear-gradient(to right, #d17e02, #df5f04);
 }
+
+
+
 .mlist2{
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 95%;
-    height: 180px;
-    border-radius: 10px;
-    background-color: #E6F7F5;
-    color: #000000;
+    gap: 15px;
+    width: 85%;
+    height: 200px;
+    border-radius: 10px 0px 0px 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    color: #F54A00;
+    /* font-weight: bold; */
     padding-top: 10px;
     padding-left: 15px;
     box-sizing: border-box;
+    /* margin-left: 20px; */
 }
+
+.mlist2>div{
+    display: flex;
+}
+
+.ordstat{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0px 10px 10px 0px;
+    width: 15%;
+    height: 200px;
+    font-size: 23px;
+    font-weight: bold;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to right, #FF6B00, #FE9800);
+}
+
+.oitem{
+    color: #000000;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
 .mfoot{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
+    border-radius: 10px;
     width: 51%;
     height: 90px;
     background: linear-gradient(to right, #FF6B00, #FE9800);
@@ -82,6 +118,7 @@
     
 }
 .mfoot>div>p{
+    color: #ffffff;
     margin-left: 10px;
     font-size: 35px;
 }
@@ -89,8 +126,10 @@
 .mfoot>button{
     width: 20%;
     height: 90px;
+    
     font-size: 25px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 }
 
 .mfoot>div{

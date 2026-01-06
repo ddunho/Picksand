@@ -1,7 +1,6 @@
-
-.itemlist{
+.itemlist {
     display: flex;
-    flex-direction: column;   
+    flex-direction: column;
     align-items: center;
     gap: 10px;
     justify-content: center;
@@ -10,10 +9,10 @@
     padding: 10px 0px 10px 0px;
     box-sizing: border-box;
     border-radius: 10px;
-    background-color: rgba(245, 74, 0, 0.6);
+    background: linear-gradient(to right, #FF6B00, #FE9800);
 }
 
-.itemlist2{
+.itemlist2 {
     display: flex;
     align-items: center;
     position: relative;
@@ -22,35 +21,60 @@
     width: 97%;
     height: 75px;
     border-radius: 10px;
-    background-color: #2A2C2C;
-    color: #ffffff;
-    padding: 10px 25px 10px 25px;
+    background: transparent;
+
+    color: #000000;
+    padding: 10px 0px 10px 0px;
     box-sizing: border-box;
     font-size: 22px;
 }
 
+.itemlist2>div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    height: 75px;
+    border-radius: 10px;
+    padding-left: 20px;
+    box-sizing: border-box;
 
-.mlabel{
-display: flex;
+}
+
+.mlabel {
+    width: 20%;
+    height: 75px;
+    display: flex;
+    background: #ffffff;
     align-items: center;
+    justify-content: center;
+    color: #000000;
+    border-radius: 10px;
+
+    box-sizing: border-box;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.checkbox{
-    accent-color: #ffffff;
-  width: 20px;
-  height: 20px;
+.checkbox {
+    accent-color: #000000;
+    width: 20px;
+    height: 20px;
 }
 
-.savebutton{
+.savebutton {
     width: 90%;
     display: flex;
     justify-content: end;
 }
-.itemsave{
+
+.itemsave {
     width: 15%;
     height: 70px;
-    
+    color: #ffffff;
     font-size: 25px;
+    font-weight: bold;
     border-radius: 12px;
     background: linear-gradient(to right, #FF6B00, #FE9800);
     margin-top: 15px;
@@ -58,21 +82,24 @@ display: flex;
     box-shadow: 0 4px 10px rgba(245, 74, 0, 0.6);
 }
 
-.itemcount{
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+.itemcount {
+    margin-left: 22px;
+    margin-top: 8px;
 }
 
-@media (max-width: 1100px){
-    .itemlist2{
+.mdec{
+    display: flex;
+    color: #F54A00;
+}
+
+@media (max-width: 1100px) {
+    .itemlist2 {
         font-size: 15px;
     }
 
-    .itemsave{
+    .itemsave {
         width: 15%;
         height: 50px;
         font-size: 15px;
     }
 }
-
