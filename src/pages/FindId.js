@@ -22,7 +22,7 @@ function FindId() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.post("http://localhost:8080/members/find-id", {
+    axios.post(`${process.env.REACT_APP_API_URL}/server-a/members/find-id`, {
       phoneNumber: phoneNumber
     })
     .then(() => {
