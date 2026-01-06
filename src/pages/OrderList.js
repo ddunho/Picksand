@@ -10,53 +10,115 @@ function OrderList() {
     ];
     const alertmessage = [
         "개점처리되었습니다.",
-        "마감처리되었습니다."
+        "마감처리되었습니다.",
     ];
     const [storeInfoList, setStoreInfoList] = useState([]);
-    
-    const storeUid = 1;
-    
+
+    const storeUid = 1; //지점uid
+
     const targetStore = storeInfoList.find(store => store.storeUid === storeUid);
 
     const [index, setindex] = useState(0);
 
-    const change = async() => {
-        const newIndex = (index + 1) % message.length;
-        const newState = newIndex === 0;
+    const api = axios.create({
+        baseURL: "http://localhost:8080",
+        withCredentials: true,
+    });
+
+    api.interceptors.request.use((config) => {
+        const token = localStorage.getItem("accessToken");
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return config;
+    });
+
+    api.interceptors.response.use(
+    response => response,
+    async error => {
+        const originalRequest = error.config;
+
+        // ✅ Access Token 만료 → refresh
+        if (
+            error.response?.status === 401 &&
+            error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
+            !originalRequest._retry
+        ) {
+            originalRequest._retry = true;
+
+            try {
+                const res = await api.post("/auth/refresh");
+                const newAccessToken = res.data.accessToken;
+
+                localStorage.setItem("accessToken", newAccessToken);
+                originalRequest.headers.Authorization =
+                    `Bearer ${newAccessToken}`;
+
+                return api(originalRequest);
+
+            } catch (e) {
+                localStorage.clear();
+                window.location.href = "/login";
+                return Promise.reject(e);
+            }
+        }
+
+        // ❌ refresh 대상이 아닌 401
+        if (error.response?.status === 401) {
+            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+            localStorage.clear();
+            window.location.href = "/login";
+        }
+
+        // ❌ 권한 없음
+        if (error.response?.status === 403) {
+            alert("접근 권한이 없습니다.");
+        }
+
+        return Promise.reject(error);
+    }
+);
+
+
+    const change = async () => {
+        const newIndex = (!targetStore.storeState + 1) % message.length;
+        const newState = !targetStore.storeState;
         setindex(newIndex);
         setStoreInfoList(prev =>
-        prev.map(store =>
-            store.storeUid === storeUid
-                ? { ...store, storeState: newState }  
-                : store
-        )
-    );
-    console.log(storeInfoList);
-        
+            prev.map(store =>
+                store.storeUid === storeUid
+                    ? { ...store, storeState: newState }
+                    : store
+            )
+        );
+
+
         alert(alertmessage[newIndex]);
-        
+
         try {
-            await axios.post("http://localhost:8080/store/storeManage", {
+            await api.post("/store/storeManage", {
                 storeUid: storeUid,
                 storeState: newState
             });
         } catch (e) {
             console.error("백엔드 전송 오류:", e);
         }
-        console.log(targetStore);
-        //window.location.reload();
-    };
-    
 
-    
+
+    };
+
+
+
 
     useEffect(() => {
         const storeList = async () => {
-            const sto = await axios.get("http://localhost:8080/store/getStore")
+            const sto = await api.get("/store/getStore")
             setStoreInfoList(sto.data)
         }
         storeList();
-    },[])
+    }, [])
 
     return (
         <div className='mmainpage'>
