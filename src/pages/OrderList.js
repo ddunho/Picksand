@@ -34,7 +34,7 @@ function OrderList() {
     const [index, setindex] = useState(0);
 
     const api = axios.create({
-        baseURL: "http://localhost:8080",
+        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
         withCredentials: true,
     });
 

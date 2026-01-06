@@ -8,19 +8,19 @@ import { useEffect } from 'react';
 
 function Review() {
     const navigate = useNavigate();
-    const [activeIndex, setActiveIndex] = useState(null);
+    // const [activeIndex, setActiveIndex] = useState(null);
     const goBack = () => {
         navigate(-1);
     };
-    const items = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
-    const [reviewTxt, setReviewTxt] = useState("");
-    const [star, setStar] = useState();
+    // const items = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
+    // const [reviewTxt, setReviewTxt] = useState("");
+    // const [star, setStar] = useState();
     const [starAvg, setStarAvg] = useState();
     const [countReview, setCountReview] = useState();
     const [review, setReview] = useState([]);
-    const [memberId, setMemberId] = useState();
+    const [MemberId ,setMemberId] = useState();
     const api = axios.create({
-        baseURL: "http://localhost:8080",
+        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
         withCredentials: true,
     });
 
@@ -104,15 +104,15 @@ function Review() {
     );
 
 
-    const admitButton = async () => {
-        const review = {
-            reviewTxt: reviewTxt,
-            starPoint: star,
-            memberId: memberId
-        };
-        await api.post("/review/addReview", review);
+    // const admitButton = async () => {
+    //     const review = {
+    //         reviewTxt: reviewTxt,
+    //         starPoint: star,
+    //         memberId: memberId
+    //     };
+    //     await api.post("/review/addReview", review);
 
-    };
+    // };
 
 
 
@@ -140,7 +140,7 @@ function Review() {
         allReview();
         reviewCount();
         avgStar();
-    }, [])
+    }, [api, MemberId])
 
 
 
