@@ -408,11 +408,11 @@ function MainPage() {
 
         // 1. 필요한 모든 비동기 요청을 Promise 배열로 만듭니다.
         const loadIngredientTypePromise = axios.get(
-            `${process.env.REACT_APP_API_URL}/IngredientType/getAllWithCount`
+            `${process.env.REACT_APP_API_URL}/server-b/IngredientType/getAllWithCount`
         );
 
         const loadIngredientListPromise = axios.get(
-            `${process.env.REACT_APP_API_URL}/Ingredient/findAll`
+            `${process.env.REACT_APP_API_URL}/server-b/Ingredient/findAll`
         );
 
         // 2. Promise.all로 모든 요청을 묶고, 모두 완료되면 then 블록 실행
@@ -440,7 +440,7 @@ function MainPage() {
 
     function LoadRecipeDatas(indData)
     {
-        return axios.get(`${process.env.REACT_APP_API_URL}/Recipe/getAllList`)
+        return axios.get(`${process.env.REACT_APP_API_URL}/server-b/Recipe/getAllList`)
         .then(response => {
             let loadRecipeList = response.data;
             console.log(loadRecipeList);
@@ -764,7 +764,7 @@ function MainPage() {
 
         try{
 
-            let result = await axios.post(`${process.env.REACT_APP_API_URL}/Recipe/addALLNewWithInds`,
+            let result = await axios.post(`${process.env.REACT_APP_API_URL}/server-b/Recipe/addALLNewWithInds`,
                 reqDatas,
                 { 
                     headers: {'Content-Type': 'application/json'},
