@@ -303,6 +303,8 @@
     overflow:hidden;
 
     overflow-y: scroll;
+
+    min-width: 158px;
 }
 
 
@@ -368,10 +370,27 @@
     position: relative;
     top: 0px;
 }
+.MP_SandwichTopText
+{
+    font-size: 0px;
+}
 
 .MP_SandwichTopText::after
 {
+    font-size: 20px;
     content: "🥪 샌드위치 미리보기 ";
+}
+@media (max-width: 1075px) {
+    .MP_SandwichTopText::after
+    {
+        content: "🥪 미리보기";
+    }
+}
+@media (max-width: 925px) {
+    .MP_SandwichTopText::after
+    {
+        content: "미리보기";
+    }
 }
 
 .MP_SandwichImgPlace
@@ -424,8 +443,71 @@
     height: calc(100% - 170px);
 }
 
-.MP_CartTopText{
+.MP_CartTopHeader{
+    
+    align-items: center;
+    justify-content: space-between;
+
     margin-bottom : 12px;
+}
+
+.MP_CartModeSwitch
+{
+    display: flex;
+    
+    align-items: center;
+    gap: 8px;
+}
+
+.MP_CartModeSwitchText
+{
+
+}
+
+.MP_CartModeSwitch input
+{
+    display: none;
+}
+.MP_CartModeSwitchSlider
+{
+    width: 64px;
+    height: 24px;
+
+    border-radius: 12px;
+
+    background-color: #8B8B8B;
+    box-sizing: border-box;
+    border: 1px solid rgb(153, 153, 153);
+
+    transition: background-color 0.2s ease;
+}
+
+.MP_CartModeSwitchSliderBall
+{
+    position: relative;
+    display: block; 
+
+    width: 22px;
+    height: 22px;
+
+    border-radius: 12px;
+    box-sizing: border-box;
+    border: 1px solid rgb(153, 153, 153);
+    transition: transform 0.2s ease;
+
+    background-color: white;
+    transform: translateX(0px);
+}
+
+.MP_CartModeSwitch input:checked
+  ~ .MP_CartModeSwitchSlider .MP_CartModeSwitchSliderBall {
+  transform: translateX(40px);
+}
+
+.MP_CartModeSwitch input:checked
+  ~ .MP_CartModeSwitchSlider 
+{
+    background-color: #FFBD75;
 }
 
 .MP_CartItemBox{
@@ -477,6 +559,45 @@
     text-align: center;
 
     background-color: #FFFEFB;
+
+    position: relative;
+}
+
+.MP_CartSandwichTop_Left,
+.MP_CartSandwichTop_EditInput {
+  min-width: 0;      
+  box-sizing: border-box;
+
+  font: inherit;
+  line-height: inherit;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  box-sizing: border-box;
+}
+
+.MP_CartSandwichTop_EditInput {
+  padding: 0;
+  width: calc(100% - 120px);
+
+    border: 1px solid #8B8B8B; 
+    border-radius: 4px; 
+    outline: none; 
+}
+
+.MP_CartSandwichTop_EditInput::selection
+{
+    color: white;
+    background-color: #8B8B8B;
+}
+
+.MP_CartSandwichTop_Left {
+  display: flex;
+  align-items: center;
+
+  height: 100%;
 }
 
 .MP_CartSandwichTop_Right
@@ -493,7 +614,8 @@
     height: 32px;
 }
 
-.MP_CartSandwichTop_Right_Toggle{
+.MP_CartSandwichTop_BTNs
+{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -508,6 +630,13 @@
     height: 32px;
 
     cursor: pointer;
+}
+.MP_CartSandwichTop_BTNs:hover
+{
+    background-color: #FFF7ED;
+    border: 2px solid #FFBD75;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    padding: 0px;
 }
 
 .MP_CartSandwichTop_Right_Toggle::after{
@@ -519,35 +648,14 @@
     content: '▲';
 }
 
-.MP_CartSandwichTop_Right_Toggle:hover{
-    background-color: #FFF7ED;
-    border: 2px solid #FFBD75;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    padding: 0px;
-}
 
-.MP_CartSandwichTop_Right_Remove{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-
-    border-radius: 12px;
-    background-color: #FFEDD4;
-    border: 1px solid #FFBD75;
-    padding: 1px;
-
-    width: 32px;
-    height: 32px;
-    
-    cursor: pointer;
+.MP_CartSandwichTop_Right_Edit
+{
+    display: none;
 }
 
 .MP_CartSandwichTop_Right_Remove:hover{
-    background-color: #FFF7ED;
     border: 2px solid #F54A00;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    padding: 0px;
 }
 
 
@@ -690,26 +798,38 @@
 {
     display: flex;
     justify-content: center;
+    align-items: center;
+    height: 54px;
 
     border-radius: 12px;
     border: 1px solid #FFEDD4;
     box-sizing: border-box;
 
-    background-color: white;
+    background-color: white;    
+    container-type: inline-size;
+    container-name: AddNewSandwichBTN;
+}
+@container AddNewSandwichBTN (max-width: 125px) {
+    .MP_CartAddSandwichBTN_Icon, 
+    .MP_CartAddSandwichBTN_Icon .MP_CartAddSandwichBTN_IconText {
+        opacity: 0;
+        width: 0px !important;
+        font-size: 0px;
+    }
 }
 
 .MP_CardAddNewSandwichBTN:hover{
     background-color: #FFF7ED;
     border: 2px solid #FFBD75;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    padding: 10px;
+    padding: 0px;
 }
 
 
 .MP_CartAddNewSandwich_LeftBTN
 {
     flex: 1;
-    padding: 11px;
+    padding: 1px;
 
     display: flex;
     gap: 8px;
@@ -717,7 +837,7 @@
 .MP_CartAddNewSandwich_RightBTN
 {
     flex: 1;
-    padding: 11px;
+    padding: 1px;
 
     display: flex;
     gap: 8px;
@@ -893,6 +1013,91 @@
 }
 
 .MP_GPSPopupBackground{
+    position: absolute;
+    left:0;
+    top:0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: #00000062;
+}
+
+.MP_GPSPopupContainer{
+
+    display: flex;               
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+
+    left:0;
+    top:0;
+
+    width: 100vw;
+    height: 100vh;
+    background-color: #00000062;
+
+    z-index: 198;
+}
+.MP_GPSPopupDisabled{
+    opacity: 0;
+    pointer-events: none;
+}
+
+.MP_GPSPopup{
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    border: 1px solid #FFEDD4;
+    box-sizing: border-box;
+    
+    width: 80%;
+    height: 80%;
+    background-color: #FEFAEA;
+
+    z-index: 200;
+
+}
+
+.MP_LoadRecipeContainer{
+
+    display: flex;               
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+
+    left:0;
+    top:0;
+
+    width: 100vw;
+    height: 100vh;
+    background-color: #00000062;
+
+    z-index: 198;
+}
+.MP_LoadRecipePopupDisabled{
+    opacity: 0;
+    pointer-events: none;
+}
+
+.MP_LoadRecipePopup{
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    border: 1px solid #FFEDD4;
+    box-sizing: border-box;
+
+    padding: 0px 0px 12px 0px;
+    
+    width: 80%;
+    height: 80%;
+    background-color: #FEFAEA;
+
+    max-width: 490px;
+    max-height: 650px;
+
+    z-index: 200;
+
+}
+.MP_LoadRecipePopupBackground{
     position: absolute;
     left:0;
     top:0;
@@ -1394,10 +1599,28 @@
         height: calc(100% - 0px);
     }
 
+    .MP_CartModeSwitch input
+    {
+        display: block;
+    }
+    .MP_CartModeSwitchSlider
+    {
+        display: none;
+    }
+
     .MP_CartTopText
     {
         display: flex;
         justify-content: center;
+    }
+    .MP_CartTopText .MP_LargeText 
+    {
+        font-size: 18px;
+    }
+
+    .MP_CartTopModSwitchContainer
+    {
+        margin-top: 2px;
     }
 
     .MP_CartList 
@@ -1423,9 +1646,13 @@
 
     .MP_cartPrice
     {
-        margin-bottom: 52px;
+        margin-bottom: 60px;
         padding-top: 0px;
         padding-bottom: 0px;
+    }
+    .MP_cartPrice .MP_LargeText
+    {
+        font-size: 18px;
     }
     
 
@@ -1434,6 +1661,123 @@
         display: none;
     }
 
+    .MP_CartTopHeader
+    {
+        margin-top:6px;
+    }
+
+    .MP_CartSandwichTop
+    {
+        flex-direction: column;
+        gap: 12px;
+
+        padding: 4px;
+    }
+
+
+    .MP_CartSandwichTop_Right
+    {
+        right : 0px;
+        justify-content: space-around;
+
+        width: 100%;
+    }
+
+    .MP_CartSandwichTop_BTNs
+    {
+        width: 28px;
+        height: 28px;
+    }
+
+    .MP_CartSandwichTop_Right_Edit
+    {
+        display: flex;
+    }
+
+    .MP_CartSandwichTop_Left
+    {
+        pointer-events: none;
+    }
+
+    
+    .MP_CartSandwichTop_Left,
+    .MP_CartSandwichTop_EditInput
+    {
+        width: 100%;
+        justify-content: center;
+
+        height: 32px;
+    }
+
+    .MP_CartAddSandwichBTN_Text
+    {
+        font-size: 14px;
+    }
+
+    .MP_CartAddSandwichBTN_Icon 
+    {
+        display: none;
+    }
+
+    .MP_CartItemIcon
+    {
+        width: 16px;
+        height: 16px;
+
+        border-radius: 99px;
+    }
+
+    .MP_CartIngredientList
+    {
+        padding: 12px;
+        
+    }
+    .MP_CartIngredientList_Closed
+    {
+        padding: 0px;
+    }
+
+    .MP_CartItemBox
+    {
+        padding: 4px;
+        padding-left: 12px;
+        gap: 4px;
+    }
+
+    .MP_SandwichTopNameText 
+    {
+        display: none;
+    }
+
+    .MP_CartModeSwitchText 
+    {
+        display: none;
+    }
+    
+    .MP_SandwichTopText
+    {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        box-sizing: border-box;
+    }
+
+    .MP_SandwichTopText::after
+    {
+        content: "" !important;
+    }
+
+    .MP_SandwichTopText
+    {
+        font-size: 18px;
+    }
+    
+    .MP_SandwichTop
+    {
+        margin-right: 0px;
+        padding-left: calc(50% - 80px);
+    }
 }
 
 .GGMap_MobileQuitBTN{

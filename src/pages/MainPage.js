@@ -1,5 +1,6 @@
 import '../css/MainPage.css'
 import GGMap from '../components/GGMap';
+import LoadRecipe from '../components/LoadRecipe';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +21,7 @@ function DropIngredient({item, index}) {
 
   return (
     <animated.img
+      draggable="false"
       src={`${process.env.PUBLIC_URL}/images/sandwichimg/${item.imgAddr}`}
       alt={item.name}
       style={{ ...styles, position: "relative", zIndex: index}} 
@@ -28,7 +30,7 @@ function DropIngredient({item, index}) {
   );
 }
 
-function CartIngredient({item, index, handleRemoveIngredient, sandwichIndex}) {
+function CartIngredient({item, index, handleRemoveIngredient, sandwichIndex, alterName = null, amount = 1}) {
 
   return (
         <div className={`MP_CartItemBox MP_HorizontalContainer 
@@ -39,13 +41,310 @@ function CartIngredient({item, index, handleRemoveIngredient, sandwichIndex}) {
             <div className='MP_CartItemIcon'
                 style={{"backgroundColor" : item.bgColor, "borderColor" : item.borderColor}}></div>
             <div className='MP_CartItemTextBox MP_VerticalContainer'>
-                <div className='MP_NormalText MP_textColor1'>{item.name} {index}</div>
-                <div className='MP_NormalText MP_textColor2'>{item.price.toLocaleString()}원</div>
+                <div className='MP_NormalText MP_textColor1'>{alterName ? alterName : (item.name + " " + index)}</div>
+                <div className='MP_NormalText MP_textColor2'>{(item.price * amount).toLocaleString()}원</div>
             </div>
             {(item.uid !== 'Ind_uid:first' && item.uid !== 'Ind_uid:last') && 
                 <div className='MP_CartItemRemove'>X</div>}
         </div>
   );
+}
+
+function makeStackedIngredients(indList, targetIngredients) {
+
+    const uidIndexMap = new Map(
+        indList.map((item, index) => [item.uid, index])
+    );
+
+    const countMap = new Map();
+    for (const ingredient of targetIngredients) {
+        const uid = ingredient.uid;
+        countMap.set(uid, (countMap.get(uid) || 0) + 1);
+    } 
+
+
+    let tempList = [];
+
+    for (const [uid, count] of countMap.entries()) {
+
+        const index = uidIndexMap.get(uid);
+        if (index === undefined) continue;
+
+        let newInd = {
+            name : indList[index].name + ' x' + count,
+            ingredient : indList[index],
+            amount : count
+        };
+
+        tempList.push(newInd);
+    }
+    
+    return tempList;
+}
+
+function CartModeChangeSwitch({ value, onChange }) {
+    return (
+        <label className="MP_CartModeSwitch">
+            <input
+                type="checkbox"
+                checked={value}
+                onChange={e => onChange(e.target.checked)}
+            />
+            <div className="MP_CartModeSwitchText MP_textColor1 MP_NormalText">묶음 모드</div>
+            <div className="MP_CartModeSwitchSlider">    
+                <div className="MP_CartModeSwitchSliderBall"/>
+            </div>
+        </label>
+    );
+}
+
+function SandwichBox({sandwichIndex,
+    currentSelectedSandwich, 
+    indList, 
+    sandwichAry, setSandwichAry,isCartMode,
+    lastSelectedAry})
+{
+    const [openedCartSandwichAry, setOpenedCartSandwichAry] = useState([]);
+    const [currentEditingSandwichName, setCurrentEditingSandwichName] = useState(-1);
+
+    const inputRef = useRef(null);
+    const readyRef = useRef(false);
+    const cartBlurReasonRef = useRef(null);
+    const targetSandwich = sandwichAry[sandwichIndex];
+
+    useEffect(() => {
+        if (currentEditingSandwichName === sandwichIndex && inputRef.current) {
+            
+            setTimeout(() => {
+                inputRef.current.focus();
+                inputRef.current.select();
+                readyRef.current = true;
+            }, 0); 
+        } else {
+            readyRef.current = false;
+        }
+    }, [sandwichIndex, currentEditingSandwichName]);
+
+    
+    function handleRemoveIngredient(e, item, sandwichIndex) {
+
+        console.log("REMOVE");
+        e.stopPropagation();
+        
+        console.log("sandwichIndex : " + sandwichIndex);
+        console.log(sandwichAry[sandwichIndex]);
+
+        const removeIndex =
+            sandwichAry[sandwichIndex].Ingredients.findLastIndex(
+                ing => ing === item
+            );
+        
+        setSandwichAry(prev =>
+            prev.map((sandwich, index) =>
+                index === sandwichIndex
+                    ? {
+                        ...sandwich,
+                        Ingredients: sandwich.Ingredients.filter(
+                            (element, i) => i !== removeIndex
+                        )
+                    }
+                    : sandwich
+            )
+        );
+    }
+    
+    function handleSandwichSelect(input) {
+
+        console.log("Select : " + input);
+        currentSelectedSandwich.current = input;
+        console.log("Select Name : " + sandwichAry[currentSelectedSandwich.current].name);
+
+        lastSelectedAry.current = [];
+
+        setSandwichAry(prev =>
+            prev.map((sandwich, index) =>
+                index === currentSelectedSandwich.current
+                    ? {
+                        ...sandwich,
+                        Ingredients: [...sandwichAry[input].Ingredients]
+                    }
+                    : sandwich
+            )
+        );
+    }
+
+    function handleSandwichBoxToggleBTN(e, sandwichIndex) {
+
+        e.stopPropagation();
+
+        setOpenedCartSandwichAry(prev =>
+            prev.includes(sandwichIndex)
+                ? prev.filter(i => i !== sandwichIndex)
+                : [...prev, sandwichIndex]
+        );
+
+    }
+    
+    function handleSandwichBoxRemoveBTN(e, sandwichIndex) {
+
+        e.stopPropagation();
+
+        if(sandwichAry.length === 1)
+        {
+            setSandwichAry([
+                {
+                    name: 'DefaultName',
+                    Ingredients: [],
+                }
+            ]);
+
+            currentSelectedSandwich.current = 0;
+        }
+        else
+        {
+            if (currentSelectedSandwich.current === sandwichIndex) {
+                currentSelectedSandwich.current = 0;
+            } else if (currentSelectedSandwich.current > sandwichIndex) {
+                currentSelectedSandwich.current -= 1;
+            }
+
+            setSandwichAry(prev =>
+                prev.filter((element, index) => index !== sandwichIndex)
+            );
+        }
+        
+        setOpenedCartSandwichAry(prev =>
+            prev
+                .filter(i => i !== sandwichIndex)
+                .map(i => (i > sandwichIndex ? i - 1 : i))
+        );
+    }
+
+    
+
+    function handleEditingSandwichName(e, sandwichIndex)
+    {
+        e.stopPropagation();
+
+        setCurrentEditingSandwichName(sandwichIndex);
+    }
+
+    
+    function handleSaveSandwichName(sandwichIndex, newName)
+    {
+        if(newName==='' || cartBlurReasonRef.current === "Escape")
+        {
+            setCurrentEditingSandwichName(-1);
+            return;
+        }
+        
+        setSandwichAry(prev =>
+            prev.map((sandwich, index) =>
+                index === sandwichIndex
+                    ? {
+                        ...sandwich,
+                        name: newName
+                    }
+                    : sandwich
+            )
+        );
+
+        setCurrentEditingSandwichName(-1);
+    }
+
+    return(
+        <div className={`MP_CartSandwichBox MP_VerticalContainer
+            ${currentSelectedSandwich.current === sandwichIndex ? 'MP_CartSandwichBox_Selected' : ''}`}
+                onClick={() => handleSandwichSelect(sandwichIndex)}>
+            <div className='MP_CartSandwichTop'>
+                {currentEditingSandwichName === sandwichIndex?
+                    <input className='MP_CartSandwichTop_EditInput' name={`EditInput_${sandwichIndex}`} type='text' defaultValue={targetSandwich.name} maxLength='10' ref={inputRef} 
+                        onClick={e => e.stopPropagation()}
+                        //onChange={e => handleChangeSandwichName(e.target.value)}
+                        onBlur={(e) => { if (readyRef.current) {
+                                handleSaveSandwichName(sandwichIndex, e.target.value); }}}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {cartBlurReasonRef.current = "Enter"; e.currentTarget.blur();}
+                            if (e.key === 'Escape')  {cartBlurReasonRef.current = "Escape"; e.currentTarget.blur();}
+                        }}>
+                    </input>
+                    :<div className="MP_CartSandwichTop_Left MP_LargeText MP_textColor1"
+                        onClick={(e) => handleEditingSandwichName(e, sandwichIndex)}>
+                        {targetSandwich.name}
+                    </div>
+                }
+                <div className="MP_CartSandwichTop_Right MP_HorizontalContainer">
+                    <div className={`MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Toggle
+                    ${openedCartSandwichAry.includes(sandwichIndex) ? '' : 'MP_CartSandwichTop_Right_Toggle_Closed'}`}
+                        onClick={(e) => handleSandwichBoxToggleBTN(e, sandwichIndex)}>
+                    </div>
+                    <div className="MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Edit MP_textColor2"
+                        onClick={(e) => handleEditingSandwichName(e, sandwichIndex)}>
+                        N
+                    </div>
+                    <div className="MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Remove MP_textColor2"
+                        onClick={(e) => handleSandwichBoxRemoveBTN(e, sandwichIndex)}>
+                        X
+                    </div>
+                </div>
+            </div>
+            {targetSandwich.Ingredients.length > 0 &&
+                <div className={`MP_CartIngredientList MP_VerticalContainer
+                    ${openedCartSandwichAry.includes(sandwichIndex) ? 'MP_CartIngredientList_Closed' : ''}`}>
+                    
+
+                    {!isCartMode && targetSandwich.Ingredients.map((element, index) => (
+                        <CartIngredient key={index+'_Cart'} item={element} index={index}
+                            sandwichIndex={sandwichIndex} handleRemoveIngredient={handleRemoveIngredient}/>
+                    ))}
+
+                    {isCartMode && makeStackedIngredients(indList, targetSandwich.Ingredients)
+                    .map((element, index) => (
+                        <CartIngredient key={element.ingredient.uid +'_Cart_Stack'} item={element.ingredient} index={index}
+                        sandwichIndex={sandwichIndex} handleRemoveIngredient={handleRemoveIngredient}
+                        alterName={element.name} amount={element.amount}/>
+                    ))}
+                </div>
+            }
+        </div>
+    )
+}
+
+
+function IngredientList({index, indList, indType, handleAddIngredient}) {
+
+    
+    const datas = indList.filter((d)=>{
+        return d.typeUid === indType[index].uid;
+    })
+
+    return(
+        <div className='MP_IngredientList'>
+            {datas.map((element, index, array) => 
+                <IndBoxes key={"IndBoxesKey" + element.uid} ingredient={element}
+                    indList = {indList} handleAddIngredient={handleAddIngredient}></IndBoxes>)}
+            {datas.length % 2 !== 0 
+                ? <div className='MP_IngredientBox_empty'></div> 
+                : null}
+        </div>
+    )
+}
+
+function IndBoxes({ingredient, handleAddIngredient}) {
+    return(
+        <div className='MP_IngredientBox MP_HorizontalContainer'
+            onClick={() => handleAddIngredient(ingredient)}>
+            <div className='MP_TypeImageBox' 
+                style={{"backgroundColor" : ingredient.bgColor, "borderColor" : ingredient.borderColor}} ></div>
+            <div className='MP_TypeTextBox MP_VerticalContainer'>
+                <div className='MP_NormalText MP_textColor1'>{ingredient.name}</div>
+                <div className='MP_NormalText MP_textColor2'>{ingredient.price.toLocaleString()}원</div>
+            </div>
+            <div className='MP_TypeAddBtn'>
+                <div className='MP_TypeAddBtn_InnerText'>+</div>
+            </div>
+        </div>
+    )
 }
 
 function MainPage() {
@@ -58,17 +357,14 @@ function MainPage() {
     const [mobileCurrentSelectedIndBTN, setMobileCurrentSelectedIndBTN] = useState();
     const [mobileCurretnSelectedType, setMobileCurretnSelectedType] = useState(0);
     const [isMobileView, setIsMobileView] = useState(false);
+    const [isCartMode,setIsCartMode] = useState(false);
     
-    const [currentEditingSandwichName, setCurrentEditingSandwichName] = useState(-1);
-
     const [sandwichAry, setSandwichAry] = useState([
         {
             name: 'DefaultName',
             Ingredients: [],
         }
     ]);
-    const [openedCartSandwichAry, setOpenedCartSandwichAry] = useState([]);
-    
     const currentSelectedSandwich = useRef(0);
     const lastSelectedAry = useRef([[],[],[]]);
     const GGMapRef = useRef(null);
@@ -79,9 +375,23 @@ function MainPage() {
     const CartContainerRef = useRef(null);
     const SandwichMainRef = useRef(null);
 
+    const LoadRecipeRef = useRef(null);
+
     //axios
     const [indType,setIndType] = useState();
     const [indList,setIndList] = useState();
+    const [recipeList, setRecipeList] = useState([]);
+    /* 
+        {
+            recipeName: 'DefaultName',
+            recipeType: 0,
+            recipeOwner: 0,
+            totalPrice: 0,
+            ingredientsUidList: [],
+            IngredientCountsText:"",
+        } 
+    */
+
     const [isLoaded,setIsLoaded] = useState(false);
 
     useEffect(()=>{
@@ -114,17 +424,68 @@ function MainPage() {
             setIndType(indTypeResp.data);
             setIndList(indListResp.data);
             
+            return LoadRecipeDatas(indListResp.data);
+        })
+        .then(() => {
             // 4. 모든 데이터 로딩이 완료되었으므로 로딩 상태 변경
-            setIsLoaded(true);
-
-            // * 디버깅용 콘솔 로그 (개선된 코드에서는 이곳에 위치하는 것이 좋습니다)
+            setIsLoaded(true); // ⭐ 여기서 보장
         })
         .catch(error => {
             console.error('데이터 로딩 중 오류 발생:', error);
             // 필요하다면 에러 처리 (예: 에러 상태 설정, 사용자에게 메시지 표시)
         });
 
+
     },[])
+
+    function LoadRecipeDatas(indData)
+    {
+        return axios.get(`${process.env.REACT_APP_API_URL}/Recipe/getAllList`)
+        .then(response => {
+            let loadRecipeList = response.data;
+            console.log(loadRecipeList);
+
+            //
+
+            const uidIndexMap = new Map(
+                indData.map((item, index) => [item.uid, index])
+            );
+            //console.log(uidIndexMap);
+
+            //
+
+            for(let i = 0 ; i < loadRecipeList.length; i++)
+            {
+                const uidList = loadRecipeList[i].ingredientsUidList;
+                const countMap = new Map();
+
+                // 1. UID별 개수 집계
+                for (const uid of uidList) {
+                    countMap.set(uid, (countMap.get(uid) || 0) + 1);
+                }
+
+                // 2. 문자열 생성
+                const textParts = [];
+
+                for (const [uid, count] of countMap.entries()) {
+                    const index = uidIndexMap.get(uid);
+                    if (index === undefined) continue;
+
+                    const name = indData[index].name;
+                    textParts.push(`${name} x${count}`);
+                }
+
+                loadRecipeList[i].IngredientCountsText = textParts.join(", ");
+                console.log(loadRecipeList[i].IngredientCountsText)
+            }
+
+            setRecipeList(loadRecipeList);
+
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
 
     function addToLastSelected()
     {
@@ -203,7 +564,7 @@ function MainPage() {
 
     function handleAddIngredient(ingredient) {
 
-        console.log("N : " + currentSelectedSandwich.current);
+        //console.log("N : " + currentSelectedSandwich.current);
 
         if(sandwichAry[currentSelectedSandwich.current].Ingredients.length === 0
             && ingredient.typeUid !== 1
@@ -250,15 +611,11 @@ function MainPage() {
     
     function handleAddNewSandwich() {
 
-        currentSelectedSandwich.current = sandwichAry.length;
-        
-        setSandwichAry(prev => [
-                ...prev,
-                {
-                    name: 'newSandwich' + prev.length,
-                    Ingredients: []
-                }
-            ]);
+        const newEmptySandwich = {
+            name: 'newSandwich' + sandwichAry.length,
+            Ingredients: []
+        }
+        createNewSandwich(newEmptySandwich);
     }
 
     useEffect(()=>{
@@ -354,32 +711,6 @@ function MainPage() {
         );
     }
 
-    function handleRemoveIngredient(e, item, sandwichIndex) {
-
-        console.log("REMOVE");
-        e.stopPropagation();
-        
-        console.log("sandwichIndex : " + sandwichIndex);
-        console.log(sandwichAry[sandwichIndex]);
-
-        const removeIndex =
-            sandwichAry[sandwichIndex].Ingredients.findLastIndex(
-                ing => ing === item
-            );
-        
-        setSandwichAry(prev =>
-            prev.map((sandwich, index) =>
-                index === sandwichIndex
-                    ? {
-                        ...sandwich,
-                        Ingredients: sandwich.Ingredients.filter(
-                            (element, i) => i !== removeIndex
-                        )
-                    }
-                    : sandwich
-            )
-        );
-    }
 
     const [isOrdering, setIsOrdering] = useState(false);
     async function handleOrder() {
@@ -387,7 +718,7 @@ function MainPage() {
         
             
         //PageNavigate
-        navigate("/orderpay", {}); return;
+        //navigate("/orderpay", {}); return;
 
         if(isOrdering)
         {
@@ -407,14 +738,14 @@ function MainPage() {
                 let target = sandwichAry[i];
 
                 let totalPrice = 0;
-                for(let x = 0; x < target.length; x++)
+                for(let x = 0; x < target.Ingredients.length; x++)
                 {
                     totalPrice += target.Ingredients[x].price
                 }
 
                 const newData = {
                     "recipe":{
-                    recipeType: 1,
+                    recipeType: 2,
                     name: target.name,
                     totalPrice: totalPrice
                     },
@@ -442,6 +773,7 @@ function MainPage() {
             );
 
             console.log(result);
+            await LoadRecipeDatas(indList);
             alert(`성공!`);
 
         }catch(error){
@@ -467,6 +799,17 @@ function MainPage() {
         }
     }
 
+    function handleLoadRecipetoggle(input) {
+        if(input)
+        {
+            LoadRecipeRef.current.classList.remove('MP_LoadRecipePopupDisabled');
+        }
+        else
+        {
+            LoadRecipeRef.current.classList.add('MP_LoadRecipePopupDisabled');
+        }
+    }
+
     const [mobile_isCartOpen, setMobile_isCartOpen] = useState(false);
     function handleMobileCartOrderBTN() {
 
@@ -487,206 +830,58 @@ function MainPage() {
         CartContainerRef.current.classList.add('MP_CartContainer_Closed')
     }
 
-    function IngredientList({index}) {
-        
-        const datas = indList.filter((d)=>{
-            return d.typeUid === indType[index].uid;
-        })
-
-        return(
-            <div className='MP_IngredientList'>
-                {datas.map((element, index, array) => 
-                    <IndBoxes key={"IndBoxesKey" + element.uid} ingredient={element}></IndBoxes>)}
-                {datas.length % 2 !== 0 
-                    ? <div className='MP_IngredientBox_empty'></div> 
-                    : null}
-            </div>
-        )
-    }
-
-    function IndBoxes({ingredient}) {
-        return(
-            <div className='MP_IngredientBox MP_HorizontalContainer'
-                onClick={() => handleAddIngredient(indList[ingredient.uid - 1])}>
-                <div className='MP_TypeImageBox' 
-                    style={{"backgroundColor" : ingredient.bgColor, "borderColor" : ingredient.borderColor}} ></div>
-                <div className='MP_TypeTextBox MP_VerticalContainer'>
-                    <div className='MP_NormalText MP_textColor1'>{ingredient.name}</div>
-                    <div className='MP_NormalText MP_textColor2'>{ingredient.price.toLocaleString()}원</div>
-                </div>
-                <div className='MP_TypeAddBtn'>
-                    <div className='MP_TypeAddBtn_InnerText'>+</div>
-                </div>
-            </div>
-        )
-    }
 
     
-    function handleSandwichSelect(input) {
 
-        console.log("Select : " + input);
-        currentSelectedSandwich.current = input;
-        console.log("Select Name : " + sandwichAry[currentSelectedSandwich.current].name);
+    function handleLRRecipe(selectedRecipe)
+    {
 
-        lastSelectedAry.current = [];
+        handleLoadRecipetoggle(false);
 
-        setSandwichAry(prev =>
-            prev.map((sandwich, index) =>
-                index === currentSelectedSandwich.current
-                    ? {
-                        ...sandwich,
-                        Ingredients: [...sandwichAry[input].Ingredients]
-                    }
-                    : sandwich
-            )
-        );
-    }
+        let newIngredients = [];
 
-    function handleSandwichBoxToggleBTN(e, sandwichIndex) {
-
-        e.stopPropagation();
-
-        setOpenedCartSandwichAry(prev =>
-            prev.includes(sandwichIndex)
-                ? prev.filter(i => i !== sandwichIndex)
-                : [...prev, sandwichIndex]
-        );
-
-    }
-    
-    function handleSandwichBoxRemoveBTN(e, sandwichIndex) {
-
-        e.stopPropagation();
-
-        if(sandwichAry.length === 1)
+        for(let i = 0 ; i < selectedRecipe.ingredientsUidList.length; i++)
         {
-            setSandwichAry([
+            newIngredients.push(indList[selectedRecipe.ingredientsUidList[i]-1]);
+        }
+
+        const newSandwich = {
+            name: selectedRecipe.recipeName,
+            Ingredients: newIngredients
+        }
+
+        console.log(newIngredients);
+
+        createNewSandwich(newSandwich);
+    }
+
+    function createNewSandwich(input)
+    {
+        currentSelectedSandwich.current = sandwichAry.length;
+        
+        setSandwichAry(prev => [
+                ...prev,
                 {
-                    name: 'DefaultName',
-                    Ingredients: [],
+                    name: input.name,
+                    Ingredients: input.Ingredients
                 }
             ]);
-
-            currentSelectedSandwich.current = 0;
-        }
-        else
-        {
-            if (currentSelectedSandwich.current === sandwichIndex) {
-                currentSelectedSandwich.current = 0;
-            } else if (currentSelectedSandwich.current > sandwichIndex) {
-                currentSelectedSandwich.current -= 1;
-            }
-
-            setSandwichAry(prev =>
-                prev.filter((element, index) => index !== sandwichIndex)
-            );
-        }
-        
-        setOpenedCartSandwichAry(prev =>
-            prev
-                .filter(i => i !== sandwichIndex)
-                .map(i => (i > sandwichIndex ? i - 1 : i))
-        );
     }
-
-    const cartBlurReasonRef = useRef(null);
-    function SandwichBox({sandwichIndex})
-    {
-        const targetSandwich = sandwichAry[sandwichIndex];
-        const inputRef = useRef(null);
-        let readyRef =  useRef(false);
-
-        useEffect(() => {
-            if (currentEditingSandwichName === sandwichIndex && inputRef.current) {
-                
-                setTimeout(() => {
-                    inputRef.current.focus();
-                    inputRef.current.select();
-                    readyRef.current = true;
-                }, 0); 
-            }
-        }, [sandwichIndex]);
-        
-        return(
-            <div className={`MP_CartSandwichBox MP_VerticalContainer
-                ${currentSelectedSandwich.current === sandwichIndex ? 'MP_CartSandwichBox_Selected' : ''}`}
-                    onClick={() => handleSandwichSelect(sandwichIndex)}>
-                <div className='MP_CartSandwichTop MP_HorizontalContainer'>
-                    {currentEditingSandwichName === sandwichIndex?
-                        <input name={`EditInput_${sandwichIndex}`} type='text' defaultValue={targetSandwich.name} maxLength='10' ref={inputRef} 
-                            onClick={e => e.stopPropagation()}
-                            //onChange={e => handleChangeSandwichName(e.target.value)}
-                            onBlur={(e) => { if (readyRef.current) {
-                                    handleSaveSandwichName(sandwichIndex, e.target.value); }}}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {cartBlurReasonRef.current = "Enter"; e.currentTarget.blur();}
-                                if (e.key === 'Escape')  {cartBlurReasonRef.current = "Escape"; e.currentTarget.blur();}
-                            }}>
-                        </input>
-                        :<div className="MP_CartSandwichTop_Left MP_LargeText MP_textColor1"
-                            onClick={(e) => handleEditingSandwichName(e, sandwichIndex)}>
-                            {targetSandwich.name}
-                        </div>
-                    }
-                    <div className="MP_CartSandwichTop_Right MP_HorizontalContainer">
-                        <div className={`MP_CartSandwichTop_Right_Toggle
-                        ${openedCartSandwichAry.includes(sandwichIndex) ? '' : 'MP_CartSandwichTop_Right_Toggle_Closed'}`}
-                            onClick={(e) => handleSandwichBoxToggleBTN(e, sandwichIndex)}>
-                        </div>
-                        <div className="MP_CartSandwichTop_Right_Remove MP_textColor2"
-                            onClick={(e) => handleSandwichBoxRemoveBTN(e, sandwichIndex)}>
-                            X
-                        </div>
-                    </div>
-                </div>
-                {targetSandwich.Ingredients.length > 0 &&
-                    <div className={`MP_CartIngredientList MP_VerticalContainer
-                        ${openedCartSandwichAry.includes(sandwichIndex) ? 'MP_CartIngredientList_Closed' : ''}`}>
-                        {targetSandwich.Ingredients.map((element, index) => (
-                            <CartIngredient key={index+'_Cart'} item={element} index={index}
-                             sandwichIndex={sandwichIndex} handleRemoveIngredient={handleRemoveIngredient}/>
-                        ))}
-                    </div>
-                }
-            </div>
-        )
-    }
-
-    function handleEditingSandwichName(e, sandwichIndex)
-    {
-        e.stopPropagation();
-
-        setCurrentEditingSandwichName(sandwichIndex);
-    }
-
-    
-    function handleSaveSandwichName(sandwichIndex, newName)
-    {
-        if(newName==='' || cartBlurReasonRef.current === "Escape")
-        {
-            setCurrentEditingSandwichName(-1);
-            return;
-        }
-        
-        setSandwichAry(prev =>
-            prev.map((sandwich, index) =>
-                index === sandwichIndex
-                    ? {
-                        ...sandwich,
-                        name: newName
-                    }
-                    : sandwich
-            )
-        );
-
-        setCurrentEditingSandwichName(-1);
-    }
-
 
 /* //////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+    const categoryIcons = ["🍞", "🥬", "🧀", "🥓", "🥫"];
+    const categoryTexts = ["빵", "채소", "치즈", "단백질", "소스"];
+    const categoryTexts_Mobile = [
+        <>빵</>,
+        <>채<br/>소</>,
+        <>치<br/>즈</>,
+        <>단<br/>백<br/>질</>,
+        <>소<br/>스</>
+    ];
+
+    const categoryClasses = ["MP_BreadTypeHead", "MP_VegetableTypeHead", "MP_CheeseTypeHead", "MP_MeatTypeHead", "MP_SourceTypeHead"];
 
 
-    
     return(
         <div className='MP_noSelect'>
 
@@ -704,68 +899,29 @@ function MainPage() {
                     {isLoaded && 
                     <div className='MP_IngredientTypeList'>
 
-                        {(!isMobileView || mobileCurretnSelectedType === 0)  &&
-                        <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
-                            <div className='MP_IngredientsHead MP_HorizontalContainer'>
-                                <div className='MP_NormalText MP_TypeHead MP_BreadTypeHead '>🍞 빵</div>
-                                <div className='MP_NormalText MP_textColor3'>{indType[0].ingredientCount} 가지</div>
-                            </div>
-                            <IngredientList index={0}/>
-                        </div>}
-
-                        {(!isMobileView || mobileCurretnSelectedType === 1)  &&
-                        <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
-                            <div className='MP_IngredientsHead MP_HorizontalContainer'>
-                                <div className='MP_NormalText MP_TypeHead MP_VegetableTypeHead '>🥬 채소</div>
-                                <div className='MP_NormalText MP_textColor3'>{indType[1].ingredientCount} 가지</div>
-                            </div>
-                            <IngredientList index={1}/>
-                        </div>}
-
-                        {(!isMobileView || mobileCurretnSelectedType === 2)  &&
-                        <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
-                            <div className='MP_IngredientsHead MP_HorizontalContainer'>
-                                <div className='MP_NormalText MP_TypeHead MP_CheeseTypeHead '>🧀 치즈</div>
-                                <div className='MP_NormalText MP_textColor3'>{indType[2].ingredientCount} 가지</div>
-                            </div>
-                            <IngredientList index={2}/>
-                        </div>}
-                        
-                        {(!isMobileView || mobileCurretnSelectedType === 3) &&
-                        <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
-                            <div className='MP_IngredientsHead MP_HorizontalContainer'>
-                                <div className='MP_NormalText MP_TypeHead MP_MeatTypeHead '>🥓 단백질</div>
-                                <div className='MP_NormalText MP_textColor3'>{indType[3].ingredientCount} 가지</div>
-                            </div>
-                            <IngredientList index={3}/>
-                        </div>}
-
-                        {(!isMobileView || mobileCurretnSelectedType === 4) &&
-                        <div className='MP_IngredientsTypeContainer MP_VerticalContainer'>
-                            <div className='MP_IngredientsHead MP_HorizontalContainer'>
-                                <div className='MP_NormalText MP_TypeHead MP_SourceTypeHead '>🥫 소스</div>
-                                <div className='MP_NormalText MP_textColor3'>{indType[4].ingredientCount} 가지</div>
-                            </div>
-                            <IngredientList index={4}/>
-                        </div>}
-
+                        {indType.map((type, i) => (
+                            (!isMobileView || mobileCurretnSelectedType === i)  && (
+                            <div key={'IndTypeBTN_'+i} className='MP_IngredientsTypeContainer MP_VerticalContainer'>
+                                <div className='MP_IngredientsHead MP_HorizontalContainer'>
+                                    <div className={`MP_NormalText MP_TypeHead ${categoryClasses[i]}`}>{categoryIcons[i] + " " + categoryTexts[i]}</div>
+                                    <div className='MP_NormalText MP_textColor3'>{indType[i].ingredientCount} 가지</div>
+                                </div>
+                                <IngredientList index={i} indList={indList} indType={indType} handleAddIngredient={handleAddIngredient}/>
+                            </div>)
+                        ))}
                     </div>}
 
                 </div>
 
                 <div className='MP_Mobile_LeftAside'>
-                    
                     <div className='MP_Mobile_IngredientTypeBTNList'>
-                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_SourceTypeHead'
-                            onClick={(e) => handleMobileTypeSelect(e,4)}>🥫<br/><div>소<br/>스</div></div>
-                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_MeatTypeHead'
-                            onClick={(e) => handleMobileTypeSelect(e,3)}>🥓<br/><div>단<br/>백<br/>질</div></div>
-                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_CheeseTypeHead'
-                            onClick={(e) => handleMobileTypeSelect(e,2)}>🧀<br/><div>치<br/>즈</div></div>
-                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_VegetableTypeHead'
-                            onClick={(e) => handleMobileTypeSelect(e,1)}>🥬<br/><div>채<br/>소</div></div>
-                        <div className='MP_Mobile_IngredientTypeBTN MP_NormalText MP_BreadTypeHead'
-                            onClick={(e) => handleMobileTypeSelect(e,0)}>🍞<br/><div>빵</div></div>
+                        {indType && [...indType].reverse().map((type, i) => (
+                            <div key={'MobileIndTypeBTN_'+i} className={`MP_Mobile_IngredientTypeBTN MP_NormalText ${categoryClasses[indType.length - 1 - i]}`}
+                                onClick={(e) => handleMobileTypeSelect(e,indType.length - 1 - i)}>
+                                    {categoryIcons[indType.length - 1 - i]}<br/>
+                                    <br/>{categoryTexts_Mobile[indType.length - 1 - i]}
+                                </div>
+                        ))}
                     </div>
                 </div>
 
@@ -778,16 +934,18 @@ function MainPage() {
               
                     <div className='MP_SandwichTop MP_HorizontalContainer'>
 
-                        <div className='MP_SandwichTopText MP_LargeText MP_textColor1'></div>
+                        <div className='MP_SandwichTopText MP_LargeText MP_textColor1'>
+                            🥪 {sandwichAry[currentSelectedSandwich.current].name}
+                        </div>
 
                         <div className='MP_SandwichTopButtonBox'>
                             <div className='MP_SandwichTopBUttonIconBox'
                                     onClick={() => handleUndoIngredient()}>
-                                <img className='MP_SandwichTopButtonIcon' src={`${process.env.PUBLIC_URL}/images/BTN_undo.png`} alt='BTN_undo.png'/>
+                                <img className='MP_SandwichTopButtonIcon' draggable="false" src={`${process.env.PUBLIC_URL}/images/BTN_undo.png`} alt='BTN_undo.png'/>
                             </div>
                             <div className='MP_SandwichTopBUttonIconBox'
                                     onClick={() => handleResetIngredient()}>
-                                <img className='MP_SandwichTopButtonIcon' src={`${process.env.PUBLIC_URL}/images/BTN_refresh.png`} alt='BTN_refresh.png'/>
+                                <img className='MP_SandwichTopButtonIcon' draggable="false" src={`${process.env.PUBLIC_URL}/images/BTN_refresh.png`} alt='BTN_refresh.png'/>
                             </div>
                         </div>
 
@@ -807,7 +965,7 @@ function MainPage() {
 
                         {sandwichAry[currentSelectedSandwich.current].Ingredients.length === 0 && (
                             <div className='MP_SandwichMain_emptyDisplay MP_VerticalContainer'>
-                            <img src={`${process.env.PUBLIC_URL}/images/empty_sandwich.png`} alt='empty_sandwich.png'/>
+                            <img draggable="false" src={`${process.env.PUBLIC_URL}/images/empty_sandwich.png`} alt='empty_sandwich.png'/>
                             <div className='MP_SandwichMain_emptyText MP_LargeText MP_textColor3'>
                                 재료를 선택해서<br/>
                                 샌드위치를 만들어보세요!
@@ -827,15 +985,23 @@ function MainPage() {
                     </div>
                     
                     <div className='MP_CartTop'>
-                        <div className='MP_CartTopText'>
-                            <div className='MP_LargeText MP_textColor1'>
-                                🛒 장바구니 {mobile_isCartOpen && `(${sandwichAry[currentSelectedSandwich.current].Ingredients.length})`}</div>
-                            
+                        <div className='MP_CartTopHeader MP_HorizontalContainer'>
+                            <div className='MP_CartTopText'>
+                                <div className='MP_LargeText MP_textColor1'>
+                                    🛒 장바구니 {mobile_isCartOpen && `(${sandwichAry[currentSelectedSandwich.current].Ingredients.length})`}</div>
+                            </div>
+
+                            <div className='MP_CartTopModSwitchContainer'>
+                                <CartModeChangeSwitch value={isCartMode} onChange={setIsCartMode}></CartModeChangeSwitch>
+                            </div>
                         </div>
 
                         <div className='MP_CartList MP_VerticalContainer'>
                             {sandwichAry.map((element, sandwichIndex) => (
-                                <SandwichBox key={"CartListKey" + sandwichIndex} sandwichIndex={sandwichIndex}/>
+                                <SandwichBox key={"CartListKey" + sandwichIndex} sandwichIndex={sandwichIndex}
+                                currentSelectedSandwich={currentSelectedSandwich}
+                                indList={indList} sandwichAry={sandwichAry} setSandwichAry={setSandwichAry}
+                                isCartMode={isCartMode} lastSelectedAry={lastSelectedAry}/>
                             ))}
                             
                             <div className='MP_CartAddSandwichBTN MP_HorizontalContainer'>
@@ -850,7 +1016,8 @@ function MainPage() {
                                     </div>
                                 </div>
 
-                                <div className="MP_CardAddNewSandwichBTN MP_CartAddNewSandwich_RightBTN">
+                                <div className="MP_CardAddNewSandwichBTN MP_CartAddNewSandwich_RightBTN"
+                                    onClick={() => handleLoadRecipetoggle(true)}>
                                     
                                     <div className='MP_CartAddSandwichBTN_Icon MP_LargeText'>
                                         <div className='MP_CartAddSandwichBTN_IconText MP_textColor2'>+</div>
@@ -885,7 +1052,7 @@ function MainPage() {
             <div className='MP_Footer MP_HorizontalContainer'>
                 <div className='MP_Footer_Box MP_HorizontalContainer MP_Shop'
                             onClick={() => handleGPStoggle(true)}>
-                    <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
+                    <img className='MP_Footer_Img' draggable="false" src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>천호점</div>
                         <div className='MP_FooterText_Normal MP_textColor2'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
@@ -895,7 +1062,7 @@ function MainPage() {
                 <div className='MP_FooterText_Large MP_textColor1 MP_FooterArrow'> → </div>
 
                 <div className='MP_Footer_Box MP_HorizontalContainer MP_User'>
-                    <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
+                    <img className='MP_Footer_Img' draggable="false" src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
                         <div className='MP_FooterText_Normal MP_textColor2'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
@@ -904,6 +1071,7 @@ function MainPage() {
 
             </div>
 
+{/*POPUPS*/}
 
             <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
                 <div className='MP_GPSPopup'>
@@ -913,6 +1081,17 @@ function MainPage() {
                             onClick={() => handleGPStoggle(false)}>
                 </div>
             </div>
+
+            <div className='MP_LoadRecipeContainer MP_LoadRecipePopupDisabled' ref={LoadRecipeRef}>
+                <div className='MP_LoadRecipePopup'>
+                    {isLoaded && <LoadRecipe indType={indType} indList={indList} recipeList={recipeList} handleLRRecipe={handleLRRecipe}></LoadRecipe>}
+                </div>
+                <div className='MP_LoadRecipePopupBackground'
+                            onClick={() => handleLoadRecipetoggle(false)}>
+                </div>
+            </div>
+
+{/*POPUPS*/}
 
             <div className='MP_MobileFooterCartBTN'
                             onClick={() => handleMobileCartOrderBTN()}>
