@@ -7,7 +7,7 @@ import AddressSearchModal from "../components/AddressSearchModal";
 
 function UserInfo(){
     const [originUserInfo, setOriginUserInfo] = useState(null);
-
+    const [show, setShow] = useState(false);
     const [modalState, setModalState] = useState(false);
 
     const [errors, setErrors] = useState({
@@ -193,7 +193,7 @@ function UserInfo(){
                 <div className="userinfotitle">
                     <p>회원 정보</p>
                     <div>
-                        <p>나의 정보를 확인하고 주문 기록을 한눈에 볼 수 있습니다.</p>
+                        <p>나의 정보와 주문 기록을 볼 수 있습니다.</p>
                         <button
                             className={editMode ? "edit-confirm-btn" : "edit-btn"}
                             onClick={() => {
@@ -252,21 +252,26 @@ function UserInfo(){
                                 <img src="/images/lock.png" alt="이름"></img>
                                 <p>비밀번호</p>
                             </div>
-                            <input placeholder="정보 수정 시 비밀번호를 다시 설정할 수 있습니다." value={userInfo.password} readOnly={!editMode} 
-                                onChange={(e) => {
-                                const value = e.target.value;
+                            <div className="userinfoeye">
+                                <input 
+                                    type={show ? "text" : "password"}
+                                    placeholder="정보 수정 시 비밀번호를 다시 설정할 수 있습니다." value={userInfo.password} readOnly={!editMode} 
+                                    onChange={(e) => {
+                                    const value = e.target.value;
 
-                                setUserInfo(prev => ({
-                                    ...prev,
-                                    password: value
-                                }));
+                                    setUserInfo(prev => ({
+                                        ...prev,
+                                        password: value
+                                    }));
 
-                                const errorMessage = validateField("password", value);
-                                setErrors(prev => ({
-                                    ...prev,
-                                    password: errorMessage
-                                }));
-                            }}/>
+                                    const errorMessage = validateField("password", value);
+                                    setErrors(prev => ({
+                                        ...prev,
+                                        password: errorMessage
+                                    }));
+                                }}/>
+                                <img src="/images/eye.png" alt="눈" onClick={()=> setShow(!show)}></img>
+                            </div>
                             {errors.password && (
                                 <p className="error-text">{errors.password}</p>
                             )}
