@@ -715,10 +715,6 @@ function MainPage() {
     const [isOrdering, setIsOrdering] = useState(false);
     async function handleOrder() {
 
-        
-            
-        //PageNavigate
-        //navigate("/orderpay", {}); return;
 
         if(isOrdering)
         {
@@ -761,6 +757,18 @@ function MainPage() {
             return;
         }
         
+        
+        
+            
+        //PageNavigate
+        navigate("/orderpay", {
+            state: { reqDatas }
+        });
+
+
+        console.log(reqDatas);
+
+        return;
 
         try{
 
@@ -791,7 +799,19 @@ function MainPage() {
         
         if(input)
         {
-            GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
+            axios.get(`${process.env.REACT_APP_API_URL}/server-a/members/userinfo`,
+            { timeout: 3000 })
+            .then(response => {
+
+                const userInfo = response.data;
+                console.log(userInfo);
+            })
+            .catch(err => {
+                console.error('userinfo 요청 실패 또는 타임아웃', err);
+            })
+            .finally(() => {
+                GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
+            });
         }
         else
         {

@@ -163,6 +163,16 @@ export default function GGMap({handleGPStoggle}) {
     toggleUserAddrList();
   }
 
+  const [currentSelectedAddr, setCurrentSelectedAddr] = useState(0);
+  const addrInfos = [
+    {addrName : "집", addrDetailText : "서울특별시 중구 세종대로 110 (태평로1가) 401호"},
+    {addrName : "직장", addrDetailText : "서울특별시 강동구 동남로 892 (상일동)"},
+    {addrName : "학원", addrDetailText : "서울 강동구 천호대로 1027 동원천호빌딩 5층"},
+    {addrName : "집2", addrDetailText : "서울특별시 중구 세종대로 110 (태평로1가) 403호"},
+    {addrName : "집3", addrDetailText : "서울특별시 중구 세종대로 110 (태평로1가) 404호"},
+    {addrName : "집4", addrDetailText : "서울특별시 중구 세종대로 110 (태평로1가) 405호"}
+  ];
+
 
   return (
     <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
@@ -208,43 +218,23 @@ export default function GGMap({handleGPStoggle}) {
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
-                        <div className='MP_FooterText_Normal MP_textColor2'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
+                        <div className='MP_FooterText_Normal MP_textColor2'>{addrInfos[currentSelectedAddr].addrDetailText}</div>
                     </div>
                 </div>
 
                 <div className='GGMap_addrListContainer GGMap_Vertical_Container'>
-
                   <div className='GGMap_UserAddrList GGMap_addrList_Closed' ref={UserAddrListRef}>
-                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                      <div className='GGMap_addrNameText'>집</div>
-                      <div className="GGMap_addrLine"></div>
-                      <div className='GGMap_addrDetailText'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
-                    </div>
-                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                      <div className='GGMap_addrNameText'>직장</div>
-                      <div className="GGMap_addrLine"></div>
-                      <div className='GGMap_addrDetailText'>서울특별시 강동구 동남로 892 (상일동)</div>
-                    </div>
-                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                      <div className='GGMap_addrNameText'>학원</div>
-                      <div className="GGMap_addrLine"></div>
-                      <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
-                    </div>
-                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                      <div className='GGMap_addrNameText'>학원</div>
-                      <div className="GGMap_addrLine"></div>
-                      <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
-                    </div>
-                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                      <div className='GGMap_addrNameText'>학원</div>
-                      <div className="GGMap_addrLine"></div>
-                      <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
-                    </div>
-                    <div className='GGMap_addrBox GGMap_Vertical_Container'>
-                      <div className='GGMap_addrNameText'>학원</div>
-                      <div className="GGMap_addrLine"></div>
-                      <div className='GGMap_addrDetailText'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
-                    </div>
+                    {addrInfos.map((element, index) => (
+                      <div
+                        key={`addr_${index}`}
+                        className='GGMap_addrBox GGMap_Vertical_Container'
+                        onClick={(e) => setCurrentSelectedAddr(index)}
+                      >
+                        <div className='GGMap_addrNameText'>{element.addrName}</div>
+                        <div className="GGMap_addrLine"></div>
+                        <div className='GGMap_addrDetailText'>{element.addrDetailText}</div>
+                      </div>
+                    ))}
 
                     <button className="GGMap_RightDDBtn GGMap_RightDDBtn_Closed" 
                       ref={toggleListBtnRef} onClick={toggleUserAddrList}>
