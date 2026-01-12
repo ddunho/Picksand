@@ -1124,7 +1124,7 @@ function MainPage() {
 
             <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
                 <div className='MP_GPSPopup'>
-                    <GGMap handleGPStoggle={handleGPStoggle} shopInfos={shopInfos}></GGMap>
+                    {isLoaded && <GGMap handleGPStoggle={handleGPStoggle} shopInfos={shopInfos}></GGMap>}
                 </div>
                 <div className='MP_GPSPopupBackground'
                             onClick={() => handleGPStoggle(false)}>
