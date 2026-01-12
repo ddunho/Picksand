@@ -412,6 +412,7 @@ function IndBoxes({ingredient, handleAddIngredient}) {
 function MainPage() {
 
     const navigate = useNavigate();
+    const api = useAxios();
 
     const [currentTowerIndex,setCurrentTowerIndex] = useState(0);
     const [currentTotalPrice, setCurrentTotalPrice] = useState(0);
@@ -830,7 +831,7 @@ function MainPage() {
 
     async function handleGPStoggle(input) {
 
-        const api = useAxios();
+
         
         if(input)
         {
