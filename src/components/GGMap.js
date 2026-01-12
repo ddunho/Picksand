@@ -257,12 +257,12 @@ export default function GGMap({handleGPStoggle, shopInfos}) {
                       onClick={(e) => {setCurrentSelectedShopAddr(index+1); setSelectedPlace(element)}}
                     >
                       <div className='GGMap_addrTopBox GGMap_Horizontal_Container'>
-                      <div className='GGMap_addrNameText'>{element.name}</div>
+                      <div className='GGMap_addrNameText'>{element.storeName}</div>
                       <div className='GGMap_addrDistanceText'>(?m)</div>
                     </div>
                     
                     <div className="GGMap_addrLine"></div>
-                    <div className='GGMap_addrDetailText'>{element.formatted_address}</div>
+                    <div className='GGMap_addrDetailText'>{element.storeLocation}</div>
                     </div>
                   ))}
                 </div>

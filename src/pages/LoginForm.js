@@ -2,8 +2,10 @@ import { useContext, useState } from "react";
 import { Link} from "react-router-dom";
 import { useAxios } from "../api/axiosInterceptor";
 import { AuthContext } from "../context/AuthProvider";
+import { GlobalContext } from "../services/globalContext";
 
 function LoginForm({openLogin}) {
+  const { currentUserName, setCurrentUserName } = useContext(GlobalContext);
 
   const api = useAxios();
   const { login } = useContext(AuthContext);
@@ -31,10 +33,11 @@ function LoginForm({openLogin}) {
             });
 
             login(response.data.accessToken, response.data.refreshToken);
+            setCurrentUserName(form.username);
 
             console.log(response.data);
             alert("로그인 성공!");
-            window.location.href = "/";
+            window.location.href = "/";      
 
         } catch (error) {
             console.error(error);
