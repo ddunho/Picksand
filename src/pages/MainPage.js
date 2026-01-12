@@ -4,9 +4,10 @@ import LoadRecipe from '../components/LoadRecipe';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
-import { useState, useRef, useEffect } from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web'
 import { useAxios } from '../api/axiosInterceptor';
+import { GlobalContext } from "../services/globalContext";
 
 function DropIngredient({item, index}) {
 
@@ -421,7 +422,10 @@ function MainPage() {
     const [mobileCurretnSelectedType, setMobileCurretnSelectedType] = useState(0);
     const [isMobileView, setIsMobileView] = useState(false);
     const [isCartMode,setIsCartMode] = useState(false);
-    
+
+    const { currentUserName, setCurrentUserName } = useContext(GlobalContext);
+    const [userInfo, setUserInfo] = useState(null);
+
     const [sandwichAry, setSandwichAry] = useState([
         {
             name: 'DefaultName',
@@ -506,6 +510,27 @@ function MainPage() {
 
 
     },[])
+
+    useEffect(() => {
+        if (!currentUserName) return;
+
+        fetchUserInfo();
+
+    },[currentUserName])
+
+    async function fetchUserInfo() {
+        try {
+        const userRes = await api.get(
+            `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`
+        );
+
+        setUserInfo(userRes.data);
+        console.log(userRes.data);
+
+        } catch (err) {
+        console.error("유저 정보 조회 실패", err);
+        }
+    };
 
     function LoadRecipeDatas(indData)
     {
@@ -1113,8 +1138,11 @@ function MainPage() {
                             onClick={() => handleGPStoggle(true)}>
                     <img className='MP_Footer_Img' draggable="false" src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
-                        <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
-                        <div className='MP_FooterText_Normal MP_textColor2'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
+                        <div className='MP_FooterText_Large MP_textColor1'>
+                             {userInfo?.name ? `${userInfo.name}님` : "로그인이 필요합니다"}
+                        </div>
+                        <div className='MP_FooterText_Normal MP_textColor2'>
+                             {userInfo?.address ? `${userInfo.address + " " + userInfo.addressDetail}` : ""}</div>
                     </div>
                 </div>
 
@@ -1124,7 +1152,7 @@ function MainPage() {
 
             <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
                 <div className='MP_GPSPopup'>
-                    {isLoaded && <GGMap handleGPStoggle={handleGPStoggle} shopInfos={shopInfos}></GGMap>}
+                    {isLoaded && <GGMap handleGPStoggle={handleGPStoggle} userInfo={userInfo} shopInfos={shopInfos}></GGMap>}
                 </div>
                 <div className='MP_GPSPopupBackground'
                             onClick={() => handleGPStoggle(false)}>
