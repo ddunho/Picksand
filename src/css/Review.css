@@ -105,14 +105,14 @@
     color: #000000;
 }
 
-.reviewcard2 :nth-child(2){
+/* .reviewcard2 :nth-child(2){
     border-bottom: 1px solid #DEA88B;
     padding-bottom: 10px;
     box-sizing: border-box;
-}
+} */
 
 .reviewcard2 :nth-child(3){
-    margin-top: 10px;
+    
     margin-bottom: 20px;
     
 }
@@ -224,6 +224,20 @@
 
 .reviewtext{
     white-space: pre-wrap;
+}
+
+.nm{
+    display: flex;
+    gap: 5px;
+    
+}
+
+.dt{
+    width: 98%;
+    font-size: 13px;
+    border-bottom: 1px solid #DEA88B;
+    padding-bottom: 10px;
+    box-sizing: border-box;
 }
 
 

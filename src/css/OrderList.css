@@ -46,7 +46,17 @@
 
 .mname2>p{
     font-size: 18px;
+    
 }
+
+.mname2>p:hover {
+  color: #F54A00;
+}
+
+.mname2>p:active {
+  color: #000;
+}
+
 .mlist{
     display: flex;
     /* flex-direction: column; */
@@ -54,7 +64,8 @@
     /* justify-content: center; */
     /* gap: 15px; */
     width: 90%;
-    height: 200px;
+    min-height: 200px;
+    height: auto;
     border-radius: 10px;
     background: linear-gradient(to right, #d17e02, #df5f04);
 }
@@ -66,7 +77,8 @@
     flex-direction: column;
     gap: 15px;
     width: 85%;
-    height: 200px;
+    min-height: 200px;
+    height: auto;
     border-radius: 10px 0px 0px 10px;
     background-color: #ffffff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -88,13 +100,22 @@
     justify-content: center;
     border-radius: 0px 10px 10px 0px;
     width: 15%;
-    height: 200px;
+    min-height: 200px;
+    height: auto;
     font-size: 23px;
     font-weight: bold;
+    transition: transform 0.1s ease;
     color: #ffffff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     background: linear-gradient(to right, #FF6B00, #FE9800);
 }
+
+.ordstat:active {
+  transform: scale(0.95);
+}
+
+
+
 
 .oitem{
     color: #000000;

@@ -22,9 +22,21 @@ function ItemManage() {
     const targetStore = storeInfoList.find(store => store.storeUid === storeUid);
 
     const [index, setindex] = useState(0);
+    const [stock, setStock] = useState([]);
+    const ITEMS_PER_PAGE = 7;
+    const [currentPage, setCurrentPage] = useState(1);
+    const totalPages = Math.ceil(stock.length / ITEMS_PER_PAGE);
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+
+    const currentStock = stock.slice(startIndex, endIndex);
+
+
 
     const api = axios.create({
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
+        baseURL: "http://localhost:8080/server-c",
+        // baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
         withCredentials: true,
     });
 
@@ -130,7 +142,7 @@ function ItemManage() {
 
 
 
-    const [stock, setStock] = useState([]);
+
     useEffect(() => {
         const stockList = async () => {
             const sto = await api.get("/stock/findStock");
@@ -201,17 +213,17 @@ function ItemManage() {
                 <div className='itemlist'>
                     {stock?.length === 0 ? (
                         <p className="empty">재고가 없습니다.</p>
-                    ) : stock.map((item, index) => (
+                    ) : currentStock.map((item, index) => (
                         <div className='itemlist2' key={index}>
                             <div>
                                 <div className='mdec'>
-                                <MdFoodBank />
-                                <p>{item.stockName}</p>
+                                    <MdFoodBank />
+                                    <p>{item.stockName}</p>
                                 </div>
                                 <p className='itemcount'>수량/{item.stockQuantity}개</p>
                             </div>
                             <label className='mlabel'>
-                            <CgUnavailable color='#F54A00'/>
+                                <CgUnavailable color='#F54A00' />
                                 품절여부
                                 <input
                                     type='checkbox'
@@ -222,10 +234,26 @@ function ItemManage() {
 
                             </label>
                         </div>
-                        
+
                     ))}
 
+                    <div className="pagination2">
+                        <button
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(prev => prev - 1)}
+                        >
+                            이전
+                        </button>
 
+                        <span>{currentPage} / {totalPages}</span>
+
+                        <button
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(prev => prev + 1)}
+                        >
+                            다음
+                        </button>
+                    </div>
 
                 </div>
                 <div className='savebutton'>
@@ -243,8 +271,14 @@ function ItemManage() {
                     <button onClick={change}>{targetStore ? message[targetStore.storeState ? 0 : 1] : "Loading..."}</button>
                 </div>
             </div>
+
+
+
+
         </div>
     );
+
+
 }
 
 export default ItemManage;

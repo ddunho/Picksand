@@ -70,8 +70,8 @@
 }
 
 .itemsave {
-    width: 15%;
-    height: 70px;
+    width: 10%;
+    height: 60px;
     color: #ffffff;
     font-size: 25px;
     font-weight: bold;
@@ -91,6 +91,18 @@
     display: flex;
     color: #F54A00;
 }
+
+.pagination2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+    color: #ffffff;
+    
+}
+
+
 
 @media (max-width: 1100px) {
     .itemlist2 {

@@ -1,5 +1,6 @@
 import '../css/Review.css'
 import { FaStar } from "react-icons/fa";
+import { FaUserPen } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 import { HiArrowLeft } from "react-icons/hi";
 import { useState } from 'react';
@@ -12,15 +13,17 @@ function Review() {
     const goBack = () => {
         navigate(-1);
     };
+    // const [memberNm, setMemberNm] = useState();
     // const items = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
     // const [reviewTxt, setReviewTxt] = useState("");
     // const [star, setStar] = useState();
     const [starAvg, setStarAvg] = useState();
     const [countReview, setCountReview] = useState();
     const [review, setReview] = useState([]);
-    const [MemberId ,setMemberId] = useState();
+    // const [MemberId ,setMemberId] = useState();
     const api = axios.create({
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
+        baseURL: "http://localhost:8080/server-c",
+        // baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
         withCredentials: true,
     });
 
@@ -132,15 +135,15 @@ function Review() {
             setReview(rev.data);
         }
 
-        const getMemberId = async () => {
-            const mid = await api.get("/review/getMemberId");
-            setMemberId(mid.data);
-        }
-        getMemberId();
+        // const getMemberId = async () => {
+        //     const mid = await api.get("/review/getMemberId");
+        //     setMemberId(mid.data);
+        // }
+        // getMemberId();
         allReview();
         reviewCount();
         avgStar();
-    }, [api, MemberId])
+    }, [api])
 
 
 
@@ -218,8 +221,11 @@ function Review() {
                                 <p>{item.starPoint}</p>
                             </div>
                             <div className='reviewcard2'>
-                                <p>닉네임</p>
-                                <p>{item.reviewDate.slice(0, 10)}</p>
+                                <div className='nm'>
+                                <FaUserPen size={18}/>
+                                <p>{item.memberNickname}</p>
+                                </div>
+                                <p className='dt'>{item.reviewDate.slice(0, 10)}</p>
                                 <p className='reviewtext'>{item.reviewTxt}</p>
                             </div>
                         </div>

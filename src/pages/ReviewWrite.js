@@ -1,5 +1,6 @@
 import '../css/Review.css'
 import { FaStar } from "react-icons/fa";
+import { FaUserPen } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 import { HiArrowLeft } from "react-icons/hi";
 import { useState } from 'react';
@@ -18,9 +19,11 @@ function Review() {
     const [starAvg, setStarAvg] = useState();
     const [countReview, setCountReview] = useState();
     const [review, setReview] = useState([]);
-    const [memberId, setMemberId] = useState();
+
+    const [memberNm, setMemberNm] = useState();
     const api = axios.create({
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
+        baseURL: "http://localhost:8080/server-c",
+        // baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
         withCredentials: true,
     });
 
@@ -34,6 +37,7 @@ function Review() {
     const indexOfLast = currentPage * reviewsPerPage;
     const indexOfFirst = indexOfLast - reviewsPerPage;
     const currentReviews = sortedReview.slice(indexOfFirst, indexOfLast);
+
 
     const totalPages = Math.ceil(sortedReview.length / reviewsPerPage);
 
@@ -108,7 +112,7 @@ function Review() {
         const review = {
             reviewTxt: reviewTxt,
             starPoint: star,
-            memberId: memberId
+            memberNickname: memberNm
         };
         await api.post("/review/addReview", review);
 
@@ -132,14 +136,16 @@ function Review() {
             setReview(rev.data);
         }
 
-        const getMemberId = async () => {
-            const mid = await api.get("/review/getMemberId");
-            setMemberId(mid.data);
-        }
-        getMemberId();
+        const getNickname = async () => {
+            const res = await api.get("/user/findNM");
+            setMemberNm(res.data);
+        };
+
+
         allReview();
         reviewCount();
         avgStar();
+        getNickname();
     }, [])
 
 
@@ -218,8 +224,11 @@ function Review() {
                                 <p>{item.starPoint}</p>
                             </div>
                             <div className='reviewcard2'>
-                                <p>닉네임</p>
-                                <p>{item.reviewDate.slice(0, 10)}</p>
+                                <div className='nm'>
+                                    <FaUserPen size={18} />
+                                    <p>{item.memberNickname}</p>
+                                </div>
+                                <p className='dt'>{item.reviewDate.slice(0, 10)}</p>
                                 <p className='reviewtext'>{item.reviewTxt}</p>
                             </div>
                         </div>

@@ -34,7 +34,8 @@ function OrderList() {
     const [index, setindex] = useState(0);
 
     const api = axios.create({
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
+        baseURL: "http://localhost:8080/server-c",
+        // baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
         withCredentials: true,
     });
 
@@ -205,8 +206,13 @@ function OrderList() {
 
                         </div>
 
-                        <div className='ordstat'>
-                            <p
+                        <div
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleStatusClick(item.orderUid, item.orderState)} 
+                            className='ordstat'
+                        >
+                            <p  
+                                style={{ cursor: "pointer" }}
                                 onClick={() => handleStatusClick(item.orderUid, item.orderState)}
                             >
                                 {item.orderState}
