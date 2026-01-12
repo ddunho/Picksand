@@ -4,9 +4,9 @@ import LoadRecipe from '../components/LoadRecipe';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
-import { useContext, useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web'
-import { GlobalContext } from "../services/globalContext";
+import { useAxios } from '../api/axiosInterceptor';
 
 function DropIngredient({item, index}) {
 
@@ -412,8 +412,7 @@ function IndBoxes({ingredient, handleAddIngredient}) {
 function MainPage() {
 
     const navigate = useNavigate();
-
-    const { currentUserName, setCurrentUserName } = useContext(GlobalContext);
+    const api = useAxios();
 
     const [currentTowerIndex,setCurrentTowerIndex] = useState(0);
     const [currentTotalPrice, setCurrentTotalPrice] = useState(0);
@@ -422,7 +421,6 @@ function MainPage() {
     const [mobileCurretnSelectedType, setMobileCurretnSelectedType] = useState(0);
     const [isMobileView, setIsMobileView] = useState(false);
     const [isCartMode,setIsCartMode] = useState(false);
-    const [userInfo, setUserInfo] = useState(null);
     
     const [sandwichAry, setSandwichAry] = useState([
         {
@@ -445,7 +443,6 @@ function MainPage() {
     //axios
     const [indType,setIndType] = useState();
     const [indList,setIndList] = useState();
-    const [shopInfos, setShopInfos] = useState(null);
     const [recipeList, setRecipeList] = useState([]);
     /* 
         {
@@ -481,19 +478,14 @@ function MainPage() {
             `${process.env.REACT_APP_API_URL}/server-b/Ingredient/findAll`
         );
 
-        const loadShopListPromise = axios.get(
-            `${process.env.REACT_APP_API_URL}/server-c/store/getStore`
-        )
-
         // 2. Promise.all로 모든 요청을 묶고, 모두 완료되면 then 블록 실행
-        Promise.all([loadIngredientTypePromise, loadIngredientListPromise, loadShopListPromise])
-            .then(([indTypeResp, indListResp, shopRes]) => {
+        Promise.all([loadIngredientTypePromise, loadIngredientListPromise])
+            .then(([indTypeResp, indListResp]) => {
             // 응답 순서는 Promise 배열의 순서와 같습니다.
 
             // 3. 상태 업데이트
             setIndType(indTypeResp.data);
             setIndList(indListResp.data);
-            setShopInfos(shopRes.data);
             
             return LoadRecipeDatas(indListResp.data);
         })
@@ -508,18 +500,6 @@ function MainPage() {
 
 
     },[])
-
-    useEffect(() => {
-        
-        const userRes = axios.get(
-            `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`
-        );
-
-        console.log(userRes.data);
-
-        setUserInfo(userRes.data);
-
-    },[currentUserName])
 
     function LoadRecipeDatas(indData)
     {
@@ -847,13 +827,34 @@ function MainPage() {
 
     }
 
+//
 
     async function handleGPStoggle(input) {
 
+
+        
         if(input)
         {
+            try {
+                const [userRes, serverCRes] = await Promise.all([
+                    api.get(
+                        `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`,
+                        { timeout: 3000 }
+                    ),
+                    api.get(
+                        `${process.env.REACT_APP_API_URL}/server-c/store/getStore`,
+                        { timeout: 3000 }
+                    )
+                ]);
 
-            GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
+                console.log(userRes.data);
+                console.log(serverCRes.data);
+
+            } catch (err) {
+                console.error('API 요청 실패', err);
+            } finally {
+                GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
+            }
         }
         else
         {
@@ -1127,11 +1128,8 @@ function MainPage() {
                             onClick={() => handleGPStoggle(true)}>
                     <img className='MP_Footer_Img' draggable="false" src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
-                        <div className='MP_FooterText_Large MP_textColor1'>
-                             {userInfo?.name ? `${userInfo.name}님` : "로그인이 필요합니다"}
-                        </div>
-                        <div className='MP_FooterText_Normal MP_textColor2'>
-                             {userInfo?.address ? `${userInfo.address + " " + userInfo.addressDetail}` : ""}</div>
+                        <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
+                        <div className='MP_FooterText_Normal MP_textColor2'>서울특별시 중구 세종대로 110 (태평로1가) 401호</div>
                     </div>
                 </div>
 
@@ -1141,7 +1139,7 @@ function MainPage() {
 
             <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
                 <div className='MP_GPSPopup'>
-                    {isLoaded && <GGMap handleGPStoggle={handleGPStoggle} shopInfos={shopInfos}></GGMap>}
+                    <GGMap handleGPStoggle={handleGPStoggle}></GGMap>
                 </div>
                 <div className='MP_GPSPopupBackground'
                             onClick={() => handleGPStoggle(false)}>
