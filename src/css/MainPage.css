@@ -580,7 +580,7 @@
 
 .MP_CartSandwichTop_EditInput {
   padding: 0;
-  width: calc(100% - 120px);
+  width: calc(100% - 155px);
 
     border: 1px solid #8B8B8B; 
     border-radius: 4px; 
@@ -610,7 +610,7 @@
     right: 12px;
     gap: 12px;
 
-    width: 100px;
+    width: 135px;
     height: 32px;
 }
 

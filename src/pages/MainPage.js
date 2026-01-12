@@ -100,7 +100,7 @@ function CartModeChangeSwitch({ value, onChange }) {
 
 function SandwichBox({sandwichIndex,
     currentSelectedSandwich, 
-    indList, 
+    indList, LoadRecipeDatas,
     sandwichAry, setSandwichAry,isCartMode,
     lastSelectedAry})
 {
@@ -220,6 +220,63 @@ function SandwichBox({sandwichIndex,
         );
     }
 
+    const [isSaving, setIsSaving] = useState(false);
+    async function handleSandwichBoxSaveBTN(e, sandwichIndex)
+    {
+        if(isSaving)
+        {
+            return;
+        }
+
+        setIsSaving(true);
+
+        //이하는 레시피 저장시
+
+        let target = sandwichAry[sandwichIndex];
+        if(target.Ingredients.length < 1)
+        {
+            return;
+        }
+        
+        let totalPrice = 0;
+        for(let x = 0; x < target.Ingredients.length; x++)
+        {
+            totalPrice += target.Ingredients[x].price
+        }
+
+        const reqData = {
+            "recipe":{
+            recipeType: 2,
+            name: target.name,
+            totalPrice: totalPrice
+            },
+            "inds": target.Ingredients
+        }
+
+
+        try{
+
+            let result = await axios.post(`${process.env.REACT_APP_API_URL}/server-b/Recipe/addNewWithInds`,
+                reqData,
+                { 
+                    headers: {'Content-Type': 'application/json'},
+                    withCredentials: true
+                }
+            );
+
+            console.log(result);
+            await LoadRecipeDatas(indList);
+            alert(`성공!`);
+
+        }catch(error){
+            const errorMassage = error.response && error.response.data ? error.response.data : '개별 처리에 실패 했습니다.';
+            alert(`${errorMassage}`);
+        }
+        finally{
+            setIsSaving(false);
+        }
+    }
+
     
 
     function handleEditingSandwichName(e, sandwichIndex)
@@ -281,6 +338,10 @@ function SandwichBox({sandwichIndex,
                     <div className="MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Edit MP_textColor2"
                         onClick={(e) => handleEditingSandwichName(e, sandwichIndex)}>
                         N
+                    </div>
+                    <div className="MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Remove MP_textColor2"
+                        onClick={(e) => handleSandwichBoxSaveBTN(e, sandwichIndex)}>
+                        +
                     </div>
                     <div className="MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Remove MP_textColor2"
                         onClick={(e) => handleSandwichBoxRemoveBTN(e, sandwichIndex)}>
@@ -712,16 +773,8 @@ function MainPage() {
     }
 
 
-    const [isOrdering, setIsOrdering] = useState(false);
-    async function handleOrder() {
+    function handleOrder() {
 
-
-        if(isOrdering)
-        {
-            return;
-        }
-
-        setIsOrdering(true);
 
         //
 
@@ -770,48 +823,33 @@ function MainPage() {
 
         return;
 
-        try{
-
-            let result = await axios.post(`${process.env.REACT_APP_API_URL}/server-b/Recipe/addALLNewWithInds`,
-                reqDatas,
-                { 
-                    headers: {'Content-Type': 'application/json'},
-                    withCredentials: true
-                }
-            );
-
-            console.log(result);
-            await LoadRecipeDatas(indList);
-            alert(`성공!`);
-
-        }catch(error){
-            const errorMassage = error.response && error.response.data ? error.response.data : '개별 처리에 실패 했습니다.';
-            alert(`${errorMassage}`);
-        }
-        finally{
-            setIsOrdering(false);
-        }
     }
 
 //
 
-    function handleGPStoggle(input) {
+    async function handleGPStoggle(input) {
         
         if(input)
         {
-            axios.get(`${process.env.REACT_APP_API_URL}/server-a/members/userinfo`,
-            { timeout: 3000 })
-            .then(response => {
+            try {
+                const [userRes, serverCRes] = await Promise.all([
+                    axios.get(
+                        `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`,
+                        { timeout: 3000 }
+                    ),
+                    axios.get(
+                        `${process.env.REACT_APP_API_URL}/server-c/?/?`,
+                        { timeout: 3000 }
+                    )
+                ]);
 
-                const userInfo = response.data;
-                console.log(userInfo);
-            })
-            .catch(err => {
-                console.error('userinfo 요청 실패 또는 타임아웃', err);
-            })
-            .finally(() => {
+                console.log(userRes.data);
+
+            } catch (err) {
+                console.error('API 요청 실패', err);
+            } finally {
                 GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
-            });
+            }
         }
         else
         {
@@ -1019,7 +1057,7 @@ function MainPage() {
                         <div className='MP_CartList MP_VerticalContainer'>
                             {sandwichAry.map((element, sandwichIndex) => (
                                 <SandwichBox key={"CartListKey" + sandwichIndex} sandwichIndex={sandwichIndex}
-                                currentSelectedSandwich={currentSelectedSandwich}
+                                currentSelectedSandwich={currentSelectedSandwich} LoadRecipeDatas={LoadRecipeDatas}
                                 indList={indList} sandwichAry={sandwichAry} setSandwichAry={setSandwichAry}
                                 isCartMode={isCartMode} lastSelectedAry={lastSelectedAry}/>
                             ))}
@@ -1081,7 +1119,8 @@ function MainPage() {
 
                 <div className='MP_FooterText_Large MP_textColor1 MP_FooterArrow'> → </div>
 
-                <div className='MP_Footer_Box MP_HorizontalContainer MP_User'>
+                <div className='MP_Footer_Box MP_HorizontalContainer MP_User'
+                            onClick={() => handleGPStoggle(true)}>
                     <img className='MP_Footer_Img' draggable="false" src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
