@@ -2,7 +2,7 @@ import styled from "styled-components";
 import "../css/LoginModal.css";
 import LoginForm from "../pages/LoginForm.js";
 import "../css/SignupModal.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SignupForm from "../pages/SignupForm.js";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider.js";
@@ -148,7 +148,8 @@ function Header(){
     }
 
     const handleLogout = async () => {
-        const response = await api.post("members/logout", {}, {
+
+        const response = await api.post("server-a/members/logout", {}, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`
             }
@@ -158,7 +159,6 @@ function Header(){
         alert("로그아웃 성공!");
         logout();
         window.location.href = "/";
-    
 };
     
     if (location.pathname === "/signup") {
