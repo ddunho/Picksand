@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 import { useContext, useState, useRef, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web'
-import { useAxios } from '../api/axiosInterceptor';
 import { GlobalContext } from "../services/globalContext";
 
 function DropIngredient({item, index}) {
@@ -413,7 +412,6 @@ function IndBoxes({ingredient, handleAddIngredient}) {
 function MainPage() {
 
     const navigate = useNavigate();
-    const api = useAxios();
 
     const { currentUserName, setCurrentUserName } = useContext(GlobalContext);
 
@@ -483,7 +481,7 @@ function MainPage() {
             `${process.env.REACT_APP_API_URL}/server-b/Ingredient/findAll`
         );
 
-        const loadShopListPromise = api.get(
+        const loadShopListPromise = axios.get(
             `${process.env.REACT_APP_API_URL}/server-c/store/getStore`
         )
 
@@ -513,7 +511,7 @@ function MainPage() {
 
     useEffect(() => {
         
-        const userRes = api.get(
+        const userRes = axios.get(
             `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`
         );
 
