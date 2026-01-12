@@ -213,7 +213,9 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                 <div className='MP_Footer_Box MP_HorizontalContainer MP_User' onClick={toggleUserAddrList_Mobile}>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
-                        <div className='MP_FooterText_Large MP_textColor1'>{userInfo.name}</div>
+                        <div className='MP_FooterText_Large MP_textColor1'>
+                          {userInfo?.name ? `${userInfo.name}님` : "로그인이 필요합니다"}
+                        </div>
                         <div className='MP_FooterText_Normal MP_textColor2'>{userAddrInfos[currentSelectedUserAddr].addrDetailText}</div>
                     </div>
                 </div>
