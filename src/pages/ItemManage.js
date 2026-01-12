@@ -195,7 +195,7 @@ function ItemManage() {
 
 
     return (
-        <div className='mmainpage'>
+        <div className='mmainpage2'>
             <div className="mmain">
                 <div className='mnamespace'>
                     <div className='in'>

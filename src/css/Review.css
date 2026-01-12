@@ -1,3 +1,11 @@
+.mmainpage2{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #FEFAEA;
+    width: 100%;
+}
+
 .reviewmain{
     display: flex;
     flex-direction: column;

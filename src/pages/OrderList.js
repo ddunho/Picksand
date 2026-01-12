@@ -222,13 +222,6 @@ function OrderList() {
 
                     </div>
                 ))}
-                <div className="mfoot">
-                    <div>
-                        <img className="mimg" src="/images/sandwichlogo.png" alt="로고"></img>
-                        <p>{targetStore?.storeName}</p>
-                    </div>
-                    <button onClick={change}>{targetStore ? message[targetStore.storeState ? 0 : 1] : "Loading..."}</button>
-                </div>
 
                 <div className="pagination">
                     {Array.from({ length: totalPages }, (_, i) => (
@@ -241,7 +234,17 @@ function OrderList() {
                         </button>
                     ))}
                 </div>
+                <div className="mfoot">
+                    <div>
+                        <img className="mimg" src="/images/sandwichlogo.png" alt="로고"></img>
+                        <p>{targetStore?.storeName}</p>
+                    </div>
+                    <button onClick={change}>{targetStore ? message[targetStore.storeState ? 0 : 1] : "Loading..."}</button>
+                </div>
+
+                
             </div>
+            
         </div>
     );
 }

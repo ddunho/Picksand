@@ -152,7 +152,7 @@ function Review() {
 
 
     return (
-        <div className="mmainpage">
+        <div className="mmainpage2">
             <div className='reviewmain'>
                 <p
                     style={{ cursor: "pointer" }}
