@@ -4,6 +4,13 @@ import '../css/GGMap.css';
 
 const libraries = ["places"];
 
+const CurrentPosition = {
+  lat : 37.5381679,
+  lng : 127.1262834,
+  storeId :'currentPosition',
+  storeLocation : '',
+  storeName: "현위치",
+}
 const shopAddrInfos = [{
   name: "현위치", formatted_address: "서울 강동구 천호대로 1027 동원천호빌딩 5층",
   place_id: "mock_place_id_001",
@@ -45,7 +52,7 @@ const shopAddrInfos = [{
   //37.5394772 127.1248288
 ];
 
-export default function GGMap({handleGPStoggle}) {
+export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
 
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
   const mapId = process.env.REACT_APP_GOOGLE_MAP_ID;
@@ -70,53 +77,75 @@ export default function GGMap({handleGPStoggle}) {
   {
     const { AdvancedMarkerElement } = await window.google.maps.importLibrary("marker");
 
-    for(let i = 0; i < shopAddrInfos.length; i ++)
-    {
-      const newMarker = new AdvancedMarkerElement({
-        position: {
-          lat: shopAddrInfos[i].geometry.location.lat(),
-          lng: shopAddrInfos[i].geometry.location.lng()
-        },
-        map: mapRef.current,
-        title: i === 0 ? "현위치" : "지점",
-        content: (() => {
-          const pin = document.createElement("div");
-          pin.style.width = i === 0 ? "34px" : "28px";
-          pin.style.height =  i === 0 ? "34px" : "28px";
-          pin.style.borderRadius = i === 0 ? "50%" : "0%";
-          pin.style.backgroundColor = "#ff543c"; // 원하는 색상
-          pin.style.border = "3px solid white";
-          pin.style.boxShadow = "0 0 6px rgba(0,0,0,0.4)";
-          
-          pin.style.display = "flex";
-          pin.style.justifyContent = "center";
-          pin.style.alignItems = "center";
-          pin.innerText = i === 0 ? "◈" : "🥪";
-          pin.style.color = "white";
-          pin.style.fontSize = "24px";
+    const currentPosMarker = createNewPin(CurrentPosition, AdvancedMarkerElement,0);
+      currentPosMarker.addListener("click", () => {
 
-          return pin;
-        })()
+        const newPos = { 
+          lat: CurrentPosition.lat, 
+          lng: CurrentPosition.lng 
+        };
+
+        mapRef.current.setCenter(newPos);
+        setSelectedPlace(CurrentPosition);
+
       });
+      
+      markersRef.current.push(currentPosMarker);
+
+
+    for(let i = 0; i < shopInfos.length; i ++)
+    {
+      const newMarker = createNewPin(shopInfos[i], AdvancedMarkerElement);
 
       newMarker.addListener("click", () => {
 
         const newPos = { 
-          lat: shopAddrInfos[i].geometry.location.lat(), 
-          lng: shopAddrInfos[i].geometry.location.lng() 
+          lat: shopInfos[i].lat, 
+          lng: shopInfos[i].lng 
         };
 
         mapRef.current.setCenter(newPos);
-        setSelectedPlace(shopAddrInfos[i]);
+        setSelectedPlace(shopInfos[i]);
 
       });
       
-
       markersRef.current.push(newMarker);
     }
     
-    setSelectedPlace(shopAddrInfos[0]);
+    setSelectedPlace(CurrentPosition);
     mapRef.current.setCenter({lat: 37.5381679, lng: 127.1262834});
+  }
+
+  function createNewPin(input, AdvancedMarkerElement, type = 1)
+  {
+    const result = new AdvancedMarkerElement({
+      position: {
+        lat: input.lat,
+        lng: input.lng
+      },
+      map: mapRef.current,
+      title: type === 0 ? "현위치" : "지점",
+      content: (() => {
+        const pin = document.createElement("div");
+        pin.style.width = type === 0 ? "34px" : "28px";
+        pin.style.height =  type === 0 ? "34px" : "28px";
+        pin.style.borderRadius = type === 0 ? "50%" : "0%";
+        pin.style.backgroundColor = "#ff543c"; // 원하는 색상
+        pin.style.border = "3px solid white";
+        pin.style.boxShadow = "0 0 6px rgba(0,0,0,0.4)";
+        
+        pin.style.display = "flex";
+        pin.style.justifyContent = "center";
+        pin.style.alignItems = "center";
+        pin.innerText = type === 0 ? "◈" : "🥪";
+        pin.style.color = "white";
+        pin.style.fontSize = "24px";
+
+        return pin;
+      })()
+    })
+
+    return result;
   }
 
 
@@ -155,11 +184,11 @@ export default function GGMap({handleGPStoggle}) {
                     
             {selectedPlace && (
               <InfoWindow style={{ marginTop: "16px", padding: "8px", border: "1px solid #888"}}
-                position =   {{lat: selectedPlace.geometry.location.lat(),
-                              lng: selectedPlace.geometry.location.lng(),}}
+                position =   {{lat: selectedPlace.lat,
+                              lng: selectedPlace.lng,}}
                               zIndex={99}
                               
-                key={selectedPlace.place_id} // 이 부분을 추가
+                key={selectedPlace.storeId} // 이 부분을 추가
                 options={{
                   pixelOffset: new window.google.maps.Size(0, -30), // X축 0, Y축 -30만큼 위로 이동
                 }}
@@ -168,10 +197,10 @@ export default function GGMap({handleGPStoggle}) {
                 }}>
                                 
                 <div>             
-                  <h4>{selectedPlace.name}</h4>
-                  <div>주소: {selectedPlace.formatted_address}</div>
-                  <div>위도: {selectedPlace.geometry.location.lat()}</div>
-                  <div>경도: {selectedPlace.geometry.location.lng()}</div>
+                  <h4>{selectedPlace.storeName}</h4>
+                  <div>주소: {selectedPlace.storeLocation}</div>
+                  <div>위도: {selectedPlace.lat}</div>
+                  <div>경도: {selectedPlace.lng}</div>
                 </div>
               </InfoWindow>
             )}
@@ -184,7 +213,7 @@ export default function GGMap({handleGPStoggle}) {
                 <div className='MP_Footer_Box MP_HorizontalContainer MP_User' onClick={toggleUserAddrList_Mobile}>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
-                        <div className='MP_FooterText_Large MP_textColor1'>OOO님</div>
+                        <div className='MP_FooterText_Large MP_textColor1'>{userInfo.nickname}</div>
                         <div className='MP_FooterText_Normal MP_textColor2'>{userAddrInfos[currentSelectedUserAddr].addrDetailText}</div>
                     </div>
                 </div>
@@ -215,13 +244,13 @@ export default function GGMap({handleGPStoggle}) {
                 <div className='MP_Footer_Box MP_HorizontalContainer MP_Shop' onClick={toggleShopAddrList_Mobile}>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
-                        <div className='MP_FooterText_Large MP_textColor1'>{shopAddrInfos[currentSelectedShopAddr].name}</div>
-                        <div className='MP_FooterText_Normal MP_textColor2'>{shopAddrInfos[currentSelectedShopAddr].formatted_address}</div>
+                        <div className='MP_FooterText_Large MP_textColor1'>{shopInfos[currentSelectedShopAddr].storeName}</div>
+                        <div className='MP_FooterText_Normal MP_textColor2'>{shopInfos[currentSelectedShopAddr].storeLocation}</div>
                     </div>
                 </div>
 
                 <div className='GGMap_ShopAddrList GGMap_ShopAddrList_Closed' ref={ShopAddrListRef}>
-                  {shopAddrInfos.slice(1).map((element, index) => (
+                  {shopInfos.slice(1).map((element, index) => (
                     <div
                       key={`shopAddr_${index+1}`}
                       className='GGMap_addrBox GGMap_Vertical_Container'

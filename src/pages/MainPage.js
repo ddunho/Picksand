@@ -828,15 +828,15 @@ function MainPage() {
     }
 
 //
+    const [userInfo, setUserInfo] = useState(null);
+    const [shopInfos, setShopInfos] = useState(null);
 
     async function handleGPStoggle(input) {
 
-
-        
         if(input)
         {
             try {
-                const [userRes, serverCRes] = await Promise.all([
+                const [userRes, shopRes] = await Promise.all([
                     api.get(
                         `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`,
                         { timeout: 3000 }
@@ -848,7 +848,10 @@ function MainPage() {
                 ]);
 
                 console.log(userRes.data);
-                console.log(serverCRes.data);
+                console.log(shopRes.data);
+
+                setUserInfo(userRes.data);
+                setShopInfos(shopRes.data);
 
             } catch (err) {
                 console.error('API 요청 실패', err);
@@ -1139,7 +1142,7 @@ function MainPage() {
 
             <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
                 <div className='MP_GPSPopup'>
-                    <GGMap handleGPStoggle={handleGPStoggle}></GGMap>
+                    <GGMap handleGPStoggle={handleGPStoggle} userInfo={userInfo} shopInfos={shopInfos}></GGMap>
                 </div>
                 <div className='MP_GPSPopupBackground'
                             onClick={() => handleGPStoggle(false)}>
