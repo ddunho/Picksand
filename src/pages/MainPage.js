@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useState, useRef, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web'
+import { useAxios } from '../api/axiosInterceptor';
 
 function DropIngredient({item, index}) {
 
@@ -828,16 +829,18 @@ function MainPage() {
 //
 
     async function handleGPStoggle(input) {
+
+        const api = useAxios();
         
         if(input)
         {
             try {
                 const [userRes, serverCRes] = await Promise.all([
-                    axios.get(
+                    api.get(
                         `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`,
                         { timeout: 3000 }
                     ),
-                    axios.get(
+                    api.get(
                         `${process.env.REACT_APP_API_URL}/server-c/store/getStore`,
                         { timeout: 3000 }
                     )
