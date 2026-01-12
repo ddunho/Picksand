@@ -148,7 +148,6 @@ function Header(){
     }
 
     const handleLogout = async () => {
-    try {
         const response = await api.post("members/logout", {}, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`
@@ -157,16 +156,9 @@ function Header(){
 
         console.log(response.data);
         alert("로그아웃 성공!");
-
         logout();
         window.location.href = "/";
-    } catch (e) {
-        console.log("서버 로그아웃 실패", e);
-        alert("서버 로그아웃 실패 (클라이언트에서는 로그아웃 처리됨)");
-        
-        logout(); 
-        window.location.href = "/";
-    }
+    
 };
     
     if (location.pathname === "/signup") {
