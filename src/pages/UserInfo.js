@@ -79,7 +79,7 @@ function UserInfo(){
     const [editMode, setEditMode] = useState(false);
 
     useEffect(() => {
-        api.get("/members/userinfo")
+        api.get("server-a/members/userinfo")
             .then((res) => {
                 setUserInfo({
                     ...res.data,
@@ -120,7 +120,7 @@ function UserInfo(){
     if (isPhoneChanged()) {
         try {
             await api.get(
-                `/members/check-phone?phoneNumber=${encodeURIComponent(userInfo.phoneNumber)}`
+                `server-a/members/check-phone?phoneNumber=${encodeURIComponent(userInfo.phoneNumber)}`
             );
     
         } catch (err) {
@@ -151,7 +151,7 @@ function UserInfo(){
         return;
     }
 
-    api.patch("/members/me", {
+    api.patch("server-a/members/me", {
         nickname: userInfo.nickname,
         password: userInfo.password || null,
         phoneNumber: userInfo.phoneNumber,
@@ -172,7 +172,7 @@ function UserInfo(){
     const handleDelete = () => {
         if (!window.confirm("정말로 회원 탈퇴하시겠습니까?")) return;
 
-        api.delete("/members/me")
+        api.delete("server-a/members/me")
             .then(() => {
             alert("회원 탈퇴가 완료되었습니다.");
             // localStorage 삭제

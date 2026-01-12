@@ -182,7 +182,7 @@ function Signup(){
         }
 
         try {
-            const response = await api.post("/members/signup", {
+            const response = await api.post("server-a/members/signup", {
                 username: form.username,
                 password: form.password,
                 nickname: form.nickname,
@@ -211,7 +211,7 @@ function Signup(){
         }
 
         try {
-            const res = await api.get(`/members/check-username?username=${form.username}`);
+            const res = await api.get(`server-a/members/check-username?username=${form.username}`);
 
             // 사용 가능
             setUsernameChecked(true);

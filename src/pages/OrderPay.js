@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../css/OrderPay.css";
 import { useAxios } from "../api/axiosInterceptor";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 
@@ -24,7 +25,7 @@ function OrderPay(){
         }, []);
 
     useEffect(() => {
-        api.get("/members/userinfo")
+        api.get("server-a/members/userinfo")
             .then(res => {
             setUserInfo(res.data);
             })

@@ -25,7 +25,7 @@ function LoginForm({openLogin}) {
         e.preventDefault();
 
         try {
-            const response = await api.post("/members/login", {
+            const response = await api.post("server-a/members/login", {
             username: form.username,
             password: form.password,
             });

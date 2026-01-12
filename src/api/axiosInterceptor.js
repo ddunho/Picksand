@@ -9,7 +9,7 @@ export const useAxios = () => {
   // Axios 인스턴스 생성
   const api = useMemo(() => {
   return axios.create({
-    baseURL: `${process.env.REACT_APP_API_URL}/server-a`,
+    baseURL: `${process.env.REACT_APP_API_URL}`,
   });
 }, []);
 
