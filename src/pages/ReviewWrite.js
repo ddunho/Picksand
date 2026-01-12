@@ -22,8 +22,8 @@ function Review() {
 
     const [memberNm, setMemberNm] = useState();
     const api = axios.create({
-        baseURL: "http://localhost:8080/server-c",
-        // baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1730005711.ap-northeast-2.elb.amazonaws.com/server-c",
+        // baseURL: "http://localhost:8080/server-c",
+        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/server-c",
         withCredentials: true,
     });
 
