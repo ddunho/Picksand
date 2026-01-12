@@ -120,30 +120,21 @@ function Review() {
 
 
     useEffect(() => {
+  const fetchData = async () => {
+    const [avg, count, reviews] = await Promise.all([
+      api.get("/review/avgStar"),
+      api.get("/review/reviewCount"),
+      api.get("/review/allReview"),
+    ]);
 
-        const avgStar = async () => {
-            const res = await api.get("/review/avgStar");
-            setStarAvg(res.data);
-        };
-        const reviewCount = async () => {
-            const cou = await api.get("/review/reviewCount");
-            setCountReview(cou.data);
-        };
+    setStarAvg(avg.data);
+    setCountReview(count.data);
+    setReview(reviews.data);
+  };
 
-        const allReview = async () => {
-            const rev = await api.get("/review/allReview");
-            setReview(rev.data);
-        }
+  fetchData();
+}, []);
 
-        // const getMemberId = async () => {
-        //     const mid = await api.get("/review/getMemberId");
-        //     setMemberId(mid.data);
-        // }
-        // getMemberId();
-        allReview();
-        reviewCount();
-        avgStar();
-    }, [api])
 
 
 
