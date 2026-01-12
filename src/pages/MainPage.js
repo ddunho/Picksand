@@ -838,12 +838,13 @@ function MainPage() {
                         { timeout: 3000 }
                     ),
                     axios.get(
-                        `${process.env.REACT_APP_API_URL}/server-c/?/?`,
+                        `${process.env.REACT_APP_API_URL}/server-c/store/getStore`,
                         { timeout: 3000 }
                     )
                 ]);
 
                 console.log(userRes.data);
+                console.log(serverCRes.data);
 
             } catch (err) {
                 console.error('API 요청 실패', err);
