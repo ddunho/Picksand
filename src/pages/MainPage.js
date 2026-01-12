@@ -443,6 +443,7 @@ function MainPage() {
     //axios
     const [indType,setIndType] = useState();
     const [indList,setIndList] = useState();
+    const [shopInfos, setShopInfos] = useState(null);
     const [recipeList, setRecipeList] = useState([]);
     /* 
         {
@@ -478,14 +479,19 @@ function MainPage() {
             `${process.env.REACT_APP_API_URL}/server-b/Ingredient/findAll`
         );
 
+        const loadShopListPromise = api.get(
+            `${process.env.REACT_APP_API_URL}/server-c/store/getStore`
+        )
+
         // 2. Promise.all로 모든 요청을 묶고, 모두 완료되면 then 블록 실행
-        Promise.all([loadIngredientTypePromise, loadIngredientListPromise])
-            .then(([indTypeResp, indListResp]) => {
+        Promise.all([loadIngredientTypePromise, loadIngredientListPromise, loadShopListPromise])
+            .then(([indTypeResp, indListResp, shopRes]) => {
             // 응답 순서는 Promise 배열의 순서와 같습니다.
 
             // 3. 상태 업데이트
             setIndType(indTypeResp.data);
             setIndList(indListResp.data);
+            setShopInfos(shopRes.data);
             
             return LoadRecipeDatas(indListResp.data);
         })
@@ -827,37 +833,13 @@ function MainPage() {
 
     }
 
-//
-    const [userInfo, setUserInfo] = useState(null);
-    const [shopInfos, setShopInfos] = useState(null);
 
     async function handleGPStoggle(input) {
 
         if(input)
         {
-            try {
-                const [userRes, shopRes] = await Promise.all([
-                    api.get(
-                        `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`,
-                        { timeout: 3000 }
-                    ),
-                    api.get(
-                        `${process.env.REACT_APP_API_URL}/server-c/store/getStore`,
-                        { timeout: 3000 }
-                    )
-                ]);
 
-                console.log(userRes.data);
-                console.log(shopRes.data);
-
-                setUserInfo(userRes.data);
-                setShopInfos(shopRes.data);
-
-            } catch (err) {
-                console.error('API 요청 실패', err);
-            } finally {
-                GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
-            }
+            GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
         }
         else
         {
@@ -1142,7 +1124,7 @@ function MainPage() {
 
             <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
                 <div className='MP_GPSPopup'>
-                    <GGMap handleGPStoggle={handleGPStoggle} userInfo={userInfo} shopInfos={shopInfos}></GGMap>
+                    <GGMap handleGPStoggle={handleGPStoggle} shopInfos={shopInfos}></GGMap>
                 </div>
                 <div className='MP_GPSPopupBackground'
                             onClick={() => handleGPStoggle(false)}>

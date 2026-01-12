@@ -52,7 +52,7 @@ const shopAddrInfos = [{
   //37.5394772 127.1248288
 ];
 
-export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
+export default function GGMap({handleGPStoggle, shopInfos}) {
 
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
   const mapId = process.env.REACT_APP_GOOGLE_MAP_ID;
@@ -213,7 +213,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                 <div className='MP_Footer_Box MP_HorizontalContainer MP_User' onClick={toggleUserAddrList_Mobile}>
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
-                        <div className='MP_FooterText_Large MP_textColor1'>{userInfo.nickname}</div>
+                        <div className='MP_FooterText_Large MP_textColor1'>XXX 님</div>
                         <div className='MP_FooterText_Normal MP_textColor2'>{userAddrInfos[currentSelectedUserAddr].addrDetailText}</div>
                     </div>
                 </div>
