@@ -514,6 +514,8 @@ function MainPage() {
     useEffect(() => {
         if (!currentUserName) return;
 
+        console.log("fetchUserInfo");
+
         fetchUserInfo();
 
     },[currentUserName])
@@ -861,9 +863,10 @@ function MainPage() {
 
     async function handleGPStoggle(input) {
 
+        console.log(localStorage);
+
         if(input)
         {
-
             GGMapRef.current.classList.remove('MP_GPSPopupDisabled');
         }
         else

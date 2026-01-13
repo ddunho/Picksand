@@ -252,7 +252,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                 </div>
 
                 <div className='GGMap_ShopAddrList GGMap_ShopAddrList_Closed' ref={ShopAddrListRef}>
-                  {shopInfos.slice(1).map((element, index) => (
+                  {shopInfos.map((element, index) => (
                     <div
                       key={`shopAddr_${index+1}`}
                       className='GGMap_addrBox GGMap_Vertical_Container'
