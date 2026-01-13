@@ -348,9 +348,9 @@ function SandwichBox({sandwichIndex,
                         onClick={(e) => handleEditingSandwichName(e, sandwichIndex)}>
                         N
                     </div>
-                    <div className="MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Remove MP_textColor2"
+                    <div className="MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Save MP_textColor2"
                         onClick={(e) => handleSandwichBoxSaveBTN(e, sandwichIndex)}>
-                        +
+                        <div>+</div>
                     </div>
                     <div className="MP_CartSandwichTop_BTNs MP_CartSandwichTop_Right_Remove MP_textColor2"
                         onClick={(e) => handleSandwichBoxRemoveBTN(e, sandwichIndex)}>
@@ -547,7 +547,9 @@ function MainPage() {
     {
         return axios.get(`${process.env.REACT_APP_API_URL}/server-b/Recipe/getAllList`,
         {
-            params: {inputUserUid: userInfo.id}
+            params: userInfo?.id != null
+                ? { inputUserUid: userInfo.id }
+                : {}
         })
         .then(response => {
             let loadRecipeList = response.data;

@@ -654,6 +654,15 @@
     display: none;
 }
 
+.MP_CartSandwichTop_Right_Save
+{
+    font-size: 24px;
+}
+.MP_CartSandwichTop_Right_Save div
+{
+    padding-bottom: 5px;
+}
+
 .MP_CartSandwichTop_Right_Remove:hover{
     border: 2px solid #F54A00;
 }
