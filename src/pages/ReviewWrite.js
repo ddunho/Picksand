@@ -51,32 +51,14 @@ function Review() {
         return config;
     });
 
-    api.interceptors.response.use(
-        (response) => response,
-        (error) => {
-
-            if (!error.response) {
-                alert("서버에 연결할 수 없습니다.");
-            }
-
-            else if (error.response.status === 401) {
-                alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-                localStorage.removeItem("accessToken");
-            }
-
-            else if (error.response.status === 403) {
-                alert("접근 권한이 없습니다.");
-            }
-            return Promise.reject(error);
-        }
-    );
+    let isAlertShown = false;
 
     api.interceptors.response.use(
         response => response,
-
         async error => {
             const originalRequest = error.config;
 
+            // ✅ Access Token 만료 → refresh
             if (
                 error.response?.status === 401 &&
                 error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
@@ -85,27 +67,51 @@ function Review() {
                 originalRequest._retry = true;
 
                 try {
-                    // ⭐ refreshToken 쿠키는 자동 포함됨
                     const res = await api.post("/auth/refresh");
-
                     const newAccessToken = res.data.accessToken;
-                    localStorage.setItem("accessToken", newAccessToken);
 
+                    localStorage.setItem("accessToken", newAccessToken);
                     originalRequest.headers.Authorization =
                         `Bearer ${newAccessToken}`;
 
                     return api(originalRequest);
 
                 } catch (e) {
-                    // Refresh Token 만료/위조
+                    // ⛔ refresh 실패 → alert 한 번만
+                    if (!isAlertShown) {
+                        isAlertShown = true;
+                        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                    }
+
                     localStorage.clear();
                     window.location.href = "/login";
+                    return Promise.reject(e);
+                }
+            }
+
+            // ❌ refresh 대상이 아닌 401
+            if (error.response?.status === 401) {
+                if (!isAlertShown) {
+                    isAlertShown = true;
+                    alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                }
+
+                localStorage.clear();
+                window.location.href = "/login";
+            }
+
+            // ❌ 권한 없음
+            if (error.response?.status === 403) {
+                if (!isAlertShown) {
+                    isAlertShown = true;
+                    alert("접근 권한이 없습니다.");
                 }
             }
 
             return Promise.reject(error);
         }
     );
+
 
 
     const admitButton = async () => {
@@ -120,23 +126,23 @@ function Review() {
 
 
 
-useEffect(() => {
-  const fetchData = async () => {
-    const [avg, count, reviews, nm] = await Promise.all([
-      api.get("/review/avgStar"),
-      api.get("/review/reviewCount"),
-      api.get("/review/allReview"),
-      api.get("/user/findNM"),
-    ]);
+    useEffect(() => {
+        const fetchData = async () => {
+            const [avg, count, reviews, nm] = await Promise.all([
+                api.get("/review/avgStar"),
+                api.get("/review/reviewCount"),
+                api.get("/review/allReview"),
+                api.get("/user/findNM"),
+            ]);
 
-    setStarAvg(avg.data);
-    setCountReview(count.data);
-    setReview(reviews.data);
-    setMemberNm(nm.data);
-  };
+            setStarAvg(avg.data);
+            setCountReview(count.data);
+            setReview(reviews.data);
+            setMemberNm(nm.data);
+        };
 
-  fetchData();
-}, []);
+        fetchData();
+    }, []);
 
 
 

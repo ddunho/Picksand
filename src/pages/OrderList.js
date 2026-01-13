@@ -49,66 +49,66 @@ function OrderList() {
         return config;
     });
 
-let isAlertShown = false;
+    let isAlertShown = false;
 
-api.interceptors.response.use(
-  response => response,
-  async error => {
-    const originalRequest = error.config;
+    api.interceptors.response.use(
+        response => response,
+        async error => {
+            const originalRequest = error.config;
 
-    // ✅ Access Token 만료 → refresh
-    if (
-      error.response?.status === 401 &&
-      error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
+            // ✅ Access Token 만료 → refresh
+            if (
+                error.response?.status === 401 &&
+                error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
+                !originalRequest._retry
+            ) {
+                originalRequest._retry = true;
 
-      try {
-        const res = await api.post("/auth/refresh");
-        const newAccessToken = res.data.accessToken;
+                try {
+                    const res = await api.post("/auth/refresh");
+                    const newAccessToken = res.data.accessToken;
 
-        localStorage.setItem("accessToken", newAccessToken);
-        originalRequest.headers.Authorization =
-          `Bearer ${newAccessToken}`;
+                    localStorage.setItem("accessToken", newAccessToken);
+                    originalRequest.headers.Authorization =
+                        `Bearer ${newAccessToken}`;
 
-        return api(originalRequest);
+                    return api(originalRequest);
 
-      } catch (e) {
-        // ⛔ refresh 실패 → alert 한 번만
-        if (!isAlertShown) {
-          isAlertShown = true;
-          alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                } catch (e) {
+                    // ⛔ refresh 실패 → alert 한 번만
+                    if (!isAlertShown) {
+                        isAlertShown = true;
+                        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                    }
+
+                    localStorage.clear();
+                    window.location.href = "/login";
+                    return Promise.reject(e);
+                }
+            }
+
+            // ❌ refresh 대상이 아닌 401
+            if (error.response?.status === 401) {
+                if (!isAlertShown) {
+                    isAlertShown = true;
+                    alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                }
+
+                localStorage.clear();
+                window.location.href = "/login";
+            }
+
+            // ❌ 권한 없음
+            if (error.response?.status === 403) {
+                if (!isAlertShown) {
+                    isAlertShown = true;
+                    alert("접근 권한이 없습니다.");
+                }
+            }
+
+            return Promise.reject(error);
         }
-
-        localStorage.clear();
-        window.location.href = "/login";
-        return Promise.reject(e);
-      }
-    }
-
-    // ❌ refresh 대상이 아닌 401
-    if (error.response?.status === 401) {
-      if (!isAlertShown) {
-        isAlertShown = true;
-        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-      }
-
-      localStorage.clear();
-      window.location.href = "/login";
-    }
-
-    // ❌ 권한 없음
-    if (error.response?.status === 403) {
-      if (!isAlertShown) {
-        isAlertShown = true;
-        alert("접근 권한이 없습니다.");
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
+    );
 
 
 
@@ -224,10 +224,10 @@ api.interceptors.response.use(
 
                         <div
                             style={{ cursor: "pointer" }}
-                            onClick={() => handleStatusClick(item.orderUid, item.orderState)} 
+                            onClick={() => handleStatusClick(item.orderUid, item.orderState)}
                             className='ordstat'
                         >
-                            <p  
+                            <p
                                 style={{ cursor: "pointer" }}
                                 onClick={() => handleStatusClick(item.orderUid, item.orderState)}
                             >
@@ -258,9 +258,9 @@ api.interceptors.response.use(
                     <button onClick={change}>{targetStore ? message[targetStore.storeState ? 0 : 1] : "Loading..."}</button>
                 </div>
 
-                
+
             </div>
-            
+
         </div>
     );
 }

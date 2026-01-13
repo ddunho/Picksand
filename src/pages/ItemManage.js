@@ -40,42 +40,14 @@ function ItemManage() {
         withCredentials: true,
     });
 
-    api.interceptors.request.use((config) => {
-        const token = localStorage.getItem("accessToken");
-
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-
-        return config;
-    });
-
-    api.interceptors.response.use(
-        (response) => response,
-        (error) => {
-
-            if (!error.response) {
-                alert("서버에 연결할 수 없습니다.");
-            }
-
-            else if (error.response.status === 401) {
-                alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-                localStorage.removeItem("accessToken");
-            }
-
-            else if (error.response.status === 403) {
-                alert("접근 권한이 없습니다.");
-            }
-            return Promise.reject(error);
-        }
-    );
+    let isAlertShown = false;
 
     api.interceptors.response.use(
         response => response,
-
         async error => {
             const originalRequest = error.config;
 
+            // ✅ Access Token 만료 → refresh
             if (
                 error.response?.status === 401 &&
                 error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
@@ -84,27 +56,51 @@ function ItemManage() {
                 originalRequest._retry = true;
 
                 try {
-                    // ⭐ refreshToken 쿠키는 자동 포함됨
                     const res = await api.post("/auth/refresh");
-
                     const newAccessToken = res.data.accessToken;
-                    localStorage.setItem("accessToken", newAccessToken);
 
+                    localStorage.setItem("accessToken", newAccessToken);
                     originalRequest.headers.Authorization =
                         `Bearer ${newAccessToken}`;
 
                     return api(originalRequest);
 
                 } catch (e) {
-                    // Refresh Token 만료/위조
+                    // ⛔ refresh 실패 → alert 한 번만
+                    if (!isAlertShown) {
+                        isAlertShown = true;
+                        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                    }
+
                     localStorage.clear();
                     window.location.href = "/login";
+                    return Promise.reject(e);
+                }
+            }
+
+            // ❌ refresh 대상이 아닌 401
+            if (error.response?.status === 401) {
+                if (!isAlertShown) {
+                    isAlertShown = true;
+                    alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                }
+
+                localStorage.clear();
+                window.location.href = "/login";
+            }
+
+            // ❌ 권한 없음
+            if (error.response?.status === 403) {
+                if (!isAlertShown) {
+                    isAlertShown = true;
+                    alert("접근 권한이 없습니다.");
                 }
             }
 
             return Promise.reject(error);
         }
     );
+
 
     const change = async () => {
         const newIndex = (index + 1) % message.length;
