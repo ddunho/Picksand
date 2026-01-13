@@ -505,7 +505,7 @@ function MainPage() {
             setIndList(indListResp.data);
             setShopInfos(shopRes.data);
             
-            if(!userInfo)
+            if(!userInfo || Object.keys(userInfo).length === 0)
               return LoadRecipeDatas(indListResp.data);
         })
         .then(() => {
@@ -532,7 +532,6 @@ function MainPage() {
 
             setUserInfo(userRes.data);
             console.log(userRes.data);
-            await LoadRecipeDatas(indList);
 
             } catch (err) {
             console.error("유저 정보 조회 실패", err);
@@ -542,6 +541,12 @@ function MainPage() {
         fetchUserInfo();
 
     }, [accessToken, api]);
+
+    useEffect(() => {
+
+        LoadRecipeDatas(indList);
+
+    }, [userInfo]);
 
 
     function LoadRecipeDatas(indData)
