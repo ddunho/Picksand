@@ -42,7 +42,7 @@ const shopAddrInfos = [{
   geometry: { location: { lat: () => 37.539315, lng: () => 127.127047 } }
 }];
   const userAddrInfos = [
-  {addrName : "집", addrDetailText : "서울특별시 강동구 천호대로 1005"},
+  {addrName : "집", addrDetailText : "서울 강동구 구천면로 77 1층"},
   //37.538851 127.124463
   {addrName : "직장", addrDetailText : "서울특별시 강동구 천호옛길 85"},
   //37.5366673 127.1253673
@@ -214,7 +214,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                     <img className='MP_Footer_Img' src={`${process.env.PUBLIC_URL}/images/profile_temp.png`} alt='profile_temp.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
                         <div className='MP_FooterText_Large MP_textColor1'>
-                          {userInfo?.name ? `${userInfo.name}님` : "로그인이 필요합니다"}
+                          {userInfo?.nickname ? `${userInfo.nickname}님` : "로그인이 필요합니다"}
                         </div>
                         <div className='MP_FooterText_Normal MP_textColor2'>{userAddrInfos[currentSelectedUserAddr].addrDetailText}</div>
                     </div>
