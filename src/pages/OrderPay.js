@@ -13,6 +13,10 @@ function OrderPay(){
     const { reqDatas } = location.state || {};
 
     console.log(reqDatas);
+
+    const data = reqDatas?.[0];
+    const inds = data?.inds || [];
+    const recipe = data?.recipe || {};
     const [userInfo, setUserInfo] = useState({
         nickname: "",
         phoneNumber: "",
@@ -81,50 +85,50 @@ function OrderPay(){
                                 <img src="/images/shopping_bag.png" alt="상품"></img>
                                 <p>주문상품</p>
                             </div>
-                            <button>3개</button>
+                            <button>{reqDatas?.length || 0}개</button>
                         </div>
                         <div className="ordersandwichcontainer">
-                            <div className="ordercontent">
-                                <p>커스텀 샌드위치</p>
-                                <p>베이컨,양상추,토마토,마요네즈</p>
-                                <div className="orderquantity">
+                            {reqDatas.map((data, index) => {
+                                const { inds, recipe } = data;
+
+                                return (
+                                <div className="ordercontent" key={index}>
+                                    {/* 샌드위치 이름 */}
+                                    <p>{recipe.name}</p>
+
+                                    {/* 재료 목록 */}
+                                    <p>
+                                    {inds.map(ind => ind.name).join(", ")}
+                                    </p>
+
+                                    <div className="orderquantity">
                                     <div className="quantitycontainer">
                                         <p>1</p>
                                         <p className="quantityminus">-</p>
                                         <p className="quantityplus">+</p>
                                     </div>
-                                    <div>
-                                        <p>6,500원 x 2</p>
-                                        <p>13,000원</p>
-                                    </div>
-                                </div>
-                                <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
 
-                            </div>
-                            <div className="ordercontent">
-                                <p>커스텀 샌드위치</p>
-                                <p>베이컨,양상추,토마토,마요네즈</p>
-                                <div className="orderquantity">
-                                    <div className="quantitycontainer">
-                                        <p>1</p>
-                                        <p className="quantityminus">-</p>
-                                        <p className="quantityplus">+</p>
-                                    </div>
                                     <div>
-                                        <p>6,500원 x 2</p>
-                                        <p>13,000원</p>
+                                        <p>{recipe.totalPrice.toLocaleString()}원 x 1</p>
+                                        <p>{recipe.totalPrice.toLocaleString()}원</p>
                                     </div>
-                                </div>
-                                <img src="/images/Trash.png" alt="삭제" className="ordertrash"></img>
-                            </div>
-                        </div>
+                                    </div>
 
+                                    <img
+                                    src="/images/Trash.png"
+                                    alt="삭제"
+                                    className="ordertrash"
+                                    />
+                                </div>
+                                );
+                            })}
+                            </div>
                         <div className="orderline"></div>
 
                         <div className="paycontainer">
                             <div className="productprice">
                                 <p>상품 금액</p>
-                                <p>26,500원</p>
+                                <p>{recipe.totalPrice.toLocaleString()}원</p>
                             </div>
 
                             <div className="deliverprice">
@@ -135,7 +139,7 @@ function OrderPay(){
                         <div className="orderline"></div>
                             <div className="totalprice">
                                 <p>총 결제 금액</p>
-                                <p>26,500원</p>
+                                <p>{recipe.totalPrice.toLocaleString()}원</p>
                             </div>
 
                         <button
