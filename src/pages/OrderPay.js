@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import "../css/OrderPay.css";
 import { useAxios } from "../api/axiosInterceptor";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation} from "react-router-dom";
 
 
 
 function OrderPay(){
 
     const api = useAxios();
+    const location = useLocation();
+    const { reqDatas } = location.state || {};
 
+    console.log(reqDatas);
     const [userInfo, setUserInfo] = useState({
         nickname: "",
         phoneNumber: "",

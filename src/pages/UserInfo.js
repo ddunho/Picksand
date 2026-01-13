@@ -270,7 +270,7 @@ function UserInfo(){
                                         password: errorMessage
                                     }));
                                 }}/>
-                                <img src="/images/eye.png" alt="눈" onClick={()=> setShow(!show)}></img>
+                                <img src="/images/Eye.png" alt="눈" onClick={()=> setShow(!show)}></img>
                             </div>
                             {errors.password && (
                                 <p className="error-text">{errors.password}</p>

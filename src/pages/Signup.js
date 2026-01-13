@@ -287,7 +287,7 @@ function Signup(){
                                     value={form.password}
                                     onChange={handleChange}
                                 />
-                                <img src="/images/eye.png" alt="눈" onClick={()=> setShow(!show)}></img>
+                                <img src="/images/Eye.png" alt="눈" onClick={()=> setShow(!show)}></img>
                             </div>
                             {errors.password && (
                                 <div style={{ color: "red", fontSize: "10px", marginLeft: "4px", marginTop: "2px"}}>
@@ -303,7 +303,7 @@ function Signup(){
                                     value={form.passwordCheck}
                                     onChange={handleChange}
                                 />
-                                <img src="/images/eye.png" alt="눈" onClick={()=> setShowCheck(!showcheck)}></img>
+                                <img src="/images/Eye.png" alt="눈" onClick={()=> setShowCheck(!showcheck)}></img>
                             </div>
                             {errors.passwordCheck && (
                                 <div style={{ color: "red", fontSize: "10px", marginLeft: "4px", marginTop: "2px" }}>
