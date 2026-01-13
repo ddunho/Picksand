@@ -36,7 +36,7 @@ function LoginForm({openLogin}) {
 
             console.log(response.data);
             alert("로그인 성공!");
-            window.location.href = "/";    
+            navigate("/");     
 
         } catch (error) {
             console.error(error);

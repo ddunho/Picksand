@@ -104,7 +104,7 @@ function SandwichBox({sandwichIndex,
     currentSelectedSandwich, 
     indList, LoadRecipeDatas,
     sandwichAry, setSandwichAry,isCartMode,
-    lastSelectedAry})
+    lastSelectedAry, api})
 {
     const [openedCartSandwichAry, setOpenedCartSandwichAry] = useState([]);
     const [currentEditingSandwichName, setCurrentEditingSandwichName] = useState(-1);
@@ -258,7 +258,7 @@ function SandwichBox({sandwichIndex,
 
         try{
 
-            let result = await axios.post(`${process.env.REACT_APP_API_URL}/server-b/Recipe/addNewWithInds`,
+            let result = await api.post(`${process.env.REACT_APP_API_URL}/server-b/Recipe/addNewWithInds`,
                 reqData,
                 { 
                     headers: {'Content-Type': 'application/json'}
@@ -1077,7 +1077,7 @@ function MainPage() {
                                 <SandwichBox key={"CartListKey" + sandwichIndex} sandwichIndex={sandwichIndex}
                                 currentSelectedSandwich={currentSelectedSandwich} LoadRecipeDatas={LoadRecipeDatas}
                                 indList={indList} sandwichAry={sandwichAry} setSandwichAry={setSandwichAry}
-                                isCartMode={isCartMode} lastSelectedAry={lastSelectedAry}/>
+                                isCartMode={isCartMode} lastSelectedAry={lastSelectedAry} api={api}/>
                             ))}
                             
                             <div className='MP_CartAddSandwichBTN MP_HorizontalContainer'>
