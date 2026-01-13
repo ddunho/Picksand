@@ -65,7 +65,7 @@ function OrderList() {
                 originalRequest._retry = true;
 
                 try {
-                    const res = await api.post("/auth/refresh");
+                    const res = await api.post("/members/reissue");
                     const newAccessToken = res.data.accessToken;
 
                     localStorage.setItem("accessToken", newAccessToken);
