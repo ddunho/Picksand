@@ -87,24 +87,33 @@ export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe
                     <div className="LR_Main">
                         <div className="LR_RecipeLists">
                             {recipeList.map((element, recipeIndex) => {
-                                // 1. 상단 타입 필터 (기본/나만의 메뉴)
+                                // 1. 레시피 타입 필터
                                 const isTypeMatch = currentSelectedRecipeType === -1 || element.recipeType === currentSelectedRecipeType;
 
+                                // 1-1. 타입이 2일 때만 userUid 필터 추가
+                                const isUserMatch = currentSelectedRecipeType !== 2 || element.userUid === userInfo.userUid;
+
                                 // 2. 사이드 재료 타입 필터
-                                // 레시피의 재료 UID 리스트를 '타입 UID 리스트'로 변환합니다.
                                 const recipeIngredientTypes = element.ingredientsUidList.map(uid => {
                                     const targetInd = indList.find(ind => ind.uid === uid);
                                     return targetInd ? targetInd.typeUid : null;
                                 });
 
-                                // 3. 사용자가 선택한 사이드 필터(currentSelectedIndType)가 포함되어 있는지 확인
-                                const isIndMatch = currentSelectedIndType.length === 0 || 
-                                    currentSelectedIndType.every(selectedTypeUid => recipeIngredientTypes.includes(selectedTypeUid + 1)); 
-                                    // +1은 indType의 uid가 1부터 시작할 경우를 대비한 것이니 데이터 구조에 맞춰 조절하세요!
+                                const isIndMatch =
+                                    currentSelectedIndType.length === 0 ||
+                                    currentSelectedIndType.every(
+                                        selectedTypeUid => recipeIngredientTypes.includes(selectedTypeUid + 1)
+                                    );
 
-                                if (isTypeMatch && isIndMatch) {
-                                    return <RecipeBox key={"RecipeListKey" + recipeIndex} element={element} />;
+                                if (isTypeMatch && isUserMatch && isIndMatch) {
+                                    return (
+                                        <RecipeBox
+                                            key={"RecipeListKey" + recipeIndex}
+                                            element={element}
+                                        />
+                                    );
                                 }
+
                                 return null;
                             })}
                         </div>
