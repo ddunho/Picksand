@@ -261,8 +261,7 @@ function SandwichBox({sandwichIndex,
             let result = await axios.post(`${process.env.REACT_APP_API_URL}/server-b/Recipe/addNewWithInds`,
                 reqData,
                 { 
-                    headers: {'Content-Type': 'application/json'},
-                    withCredentials: true
+                    headers: {'Content-Type': 'application/json'}
                 }
             );
 
