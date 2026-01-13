@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from 'react';
 import { useSpring, animated } from '@react-spring/web'
 import { useAxios } from '../api/axiosInterceptor';
-import { GlobalContext } from "../services/globalContext";
+import { AuthContext } from "../context/AuthProvider";
 
 function DropIngredient({item, index}) {
 
@@ -415,6 +415,8 @@ function MainPage() {
     const navigate = useNavigate();
     const api = useAxios();
 
+    const { accessToken } = useContext(AuthContext);
+
     const [currentTowerIndex,setCurrentTowerIndex] = useState(0);
     const [currentTotalPrice, setCurrentTotalPrice] = useState(0);
     const [currentTotalIndCount, setCurrentTotalIndCount] = useState(0);
@@ -423,7 +425,6 @@ function MainPage() {
     const [isMobileView, setIsMobileView] = useState(false);
     const [isCartMode,setIsCartMode] = useState(false);
 
-    const { currentUserName, setCurrentUserName } = useContext(GlobalContext);
     const [userInfo, setUserInfo] = useState(null);
 
     const [sandwichAry, setSandwichAry] = useState([
@@ -483,7 +484,7 @@ function MainPage() {
             `${process.env.REACT_APP_API_URL}/server-b/Ingredient/findAll`
         );
 
-        const loadShopListPromise = api.get(
+        const loadShopListPromise = axios.get(
             `${process.env.REACT_APP_API_URL}/server-c/store/getStore`
         )
 
@@ -512,27 +513,27 @@ function MainPage() {
     },[])
 
     useEffect(() => {
-        if (!currentUserName) return;
 
-        console.log("fetchUserInfo");
+        if (!accessToken) return;
+            
+        async function fetchUserInfo() {
+            try {
+            const userRes = await api.get(
+                `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`
+            );
+
+            setUserInfo(userRes.data);
+            console.log(userRes.data);
+
+            } catch (err) {
+            console.error("유저 정보 조회 실패", err);
+            }
+        };
 
         fetchUserInfo();
 
-    },[currentUserName])
+    }, [accessToken, api]);
 
-    async function fetchUserInfo() {
-        try {
-        const userRes = await api.get(
-            `${process.env.REACT_APP_API_URL}/server-a/members/userinfo`
-        );
-
-        setUserInfo(userRes.data);
-        console.log(userRes.data);
-
-        } catch (err) {
-        console.error("유저 정보 조회 실패", err);
-        }
-    };
 
     function LoadRecipeDatas(indData)
     {
@@ -863,7 +864,7 @@ function MainPage() {
 
     async function handleGPStoggle(input) {
 
-        console.log("localStorage : " + localStorage);
+        console.log(localStorage);
 
         if(input)
         {
