@@ -254,9 +254,9 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                 <div className='GGMap_ShopAddrList GGMap_ShopAddrList_Closed' ref={ShopAddrListRef}>
                   {shopInfos.map((element, index) => (
                     <div
-                      key={`shopAddr_${index+1}`}
+                      key={`shopAddr_${index}`}
                       className='GGMap_addrBox GGMap_Vertical_Container'
-                      onClick={(e) => {setCurrentSelectedShopAddr(index+1); setSelectedPlace(element)}}
+                      onClick={(e) => {setCurrentSelectedShopAddr(index); setSelectedPlace(element)}}
                     >
                       <div className='GGMap_addrTopBox GGMap_Horizontal_Container'>
                       <div className='GGMap_addrNameText'>{element.storeName}</div>
