@@ -257,7 +257,7 @@ function SandwichBox({sandwichIndex,
             recipeType: 2,
             name: target.name,
             totalPrice: totalPrice,
-            userUid: userInfo.uid
+            userUid: userInfo.id
             },
             "inds": target.Ingredients
         }
@@ -580,7 +580,7 @@ function MainPage() {
                 }
 
                 loadRecipeList[i].IngredientCountsText = textParts.join(", ");
-                console.log(loadRecipeList[i].IngredientCountsText)
+                //console.log(loadRecipeList[i].IngredientCountsText)
             }
 
             setRecipeList(loadRecipeList);
@@ -1170,7 +1170,8 @@ function MainPage() {
 
             <div className='MP_LoadRecipeContainer MP_LoadRecipePopupDisabled' ref={LoadRecipeRef}>
                 <div className='MP_LoadRecipePopup'>
-                    {isLoaded && <LoadRecipe indType={indType} indList={indList} recipeList={recipeList} handleLRRecipe={handleLRRecipe}></LoadRecipe>}
+                    {isLoaded && <LoadRecipe indType={indType} indList={indList} recipeList={recipeList} 
+                        handleLRRecipe={handleLRRecipe} userInfo={userInfo}></LoadRecipe>}
                 </div>
                 <div className='MP_LoadRecipePopupBackground'
                             onClick={() => handleLoadRecipetoggle(false)}>

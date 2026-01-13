@@ -2,7 +2,7 @@
 import '../css/LoadRecipe.css';
 import {useState} from 'react';
 
-export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe})
+export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe, userInfo})
 {
     function RecipeBox({element}) {
         return(
