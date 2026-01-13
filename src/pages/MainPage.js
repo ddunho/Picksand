@@ -543,6 +543,8 @@ function MainPage() {
 
     useEffect(() => {
 
+        console.log("LoadRecipe By UserInfo");
+
         LoadRecipeDatas(indList);
 
     }, [userInfo]);
