@@ -49,51 +49,67 @@ function OrderList() {
         return config;
     });
 
-    api.interceptors.response.use(
-        response => response,
-        async error => {
-            const originalRequest = error.config;
+let isAlertShown = false;
 
-            // ✅ Access Token 만료 → refresh
-            if (
-                error.response?.status === 401 &&
-                error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
-                !originalRequest._retry
-            ) {
-                originalRequest._retry = true;
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config;
 
-                try {
-                    const res = await api.post("/auth/refresh");
-                    const newAccessToken = res.data.accessToken;
+    // ✅ Access Token 만료 → refresh
+    if (
+      error.response?.status === 401 &&
+      error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
 
-                    localStorage.setItem("accessToken", newAccessToken);
-                    originalRequest.headers.Authorization =
-                        `Bearer ${newAccessToken}`;
+      try {
+        const res = await api.post("/auth/refresh");
+        const newAccessToken = res.data.accessToken;
 
-                    return api(originalRequest);
+        localStorage.setItem("accessToken", newAccessToken);
+        originalRequest.headers.Authorization =
+          `Bearer ${newAccessToken}`;
 
-                } catch (e) {
-                    localStorage.clear();
-                    window.location.href = "/login";
-                    return Promise.reject(e);
-                }
-            }
+        return api(originalRequest);
 
-            // ❌ refresh 대상이 아닌 401
-            if (error.response?.status === 401) {
-                alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-                localStorage.clear();
-                window.location.href = "/login";
-            }
-
-            // ❌ 권한 없음
-            if (error.response?.status === 403) {
-                alert("접근 권한이 없습니다.");
-            }
-
-            return Promise.reject(error);
+      } catch (e) {
+        // ⛔ refresh 실패 → alert 한 번만
+        if (!isAlertShown) {
+          isAlertShown = true;
+          alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
         }
-    );
+
+        localStorage.clear();
+        window.location.href = "/login";
+        return Promise.reject(e);
+      }
+    }
+
+    // ❌ refresh 대상이 아닌 401
+    if (error.response?.status === 401) {
+      if (!isAlertShown) {
+        isAlertShown = true;
+        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+      }
+
+      localStorage.clear();
+      window.location.href = "/login";
+    }
+
+    // ❌ 권한 없음
+    if (error.response?.status === 403) {
+      if (!isAlertShown) {
+        isAlertShown = true;
+        alert("접근 권한이 없습니다.");
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 
 
     const change = async () => {
