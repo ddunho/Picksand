@@ -21,7 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
+      - name: Build (with env)
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
         run: CI=false npm run build
 
       - name: Configure AWS credentials
