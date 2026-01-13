@@ -24,6 +24,8 @@ jobs:
       - name: Build (with env)
         env:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_GOOGLE_API_KEY: ${{ secrets.REACT_APP_GOOGLE_API_KEY }}
+          REACT_APP_GOOGLE_MAP_ID: ${{ secrets.REACT_APP_GOOGLE_MAP_ID }}
         run: CI=false npm run build
 
       - name: Configure AWS credentials
@@ -34,4 +36,4 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to S3
-        run: aws s3 sync build s3://${{ secrets.S3_BUCKET_NAME }} --delete
+        run: aws s3 sync build s3://${{ secrets.S3_BUCKET_N
