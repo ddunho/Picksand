@@ -531,6 +531,7 @@ function MainPage() {
 
             setUserInfo(userRes.data);
             console.log(userRes.data);
+            await LoadRecipeDatas(indList);
 
             } catch (err) {
             console.error("유저 정보 조회 실패", err);
@@ -544,7 +545,10 @@ function MainPage() {
 
     function LoadRecipeDatas(indData)
     {
-        return axios.get(`${process.env.REACT_APP_API_URL}/server-b/Recipe/getAllList`)
+        return axios.get(`${process.env.REACT_APP_API_URL}/server-b/Recipe/getAllList`,
+        {
+            params: {inputUserUid: userInfo.id}
+        })
         .then(response => {
             let loadRecipeList = response.data;
             console.log(loadRecipeList);

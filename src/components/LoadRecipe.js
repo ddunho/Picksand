@@ -87,34 +87,18 @@ export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe
                     <div className="LR_Main">
                         <div className="LR_RecipeLists">
                             {recipeList.map((element, recipeIndex) => {
-                                // 1. 레시피 타입 필터
-                                const isTypeMatch = currentSelectedRecipeType === -1 || element.recipeType === currentSelectedRecipeType;
+                                const isTypeMatch =
+                                    currentSelectedRecipeType === -1 ||
+                                    element.recipeType === currentSelectedRecipeType;
 
-                                // 1-1. 타입이 2일 때만 userUid 필터 추가
-                                const isUserMatch = currentSelectedRecipeType !== 2 || element.userUid === userInfo.id;
+                                if (!isTypeMatch) return null;
 
-                                // 2. 사이드 재료 타입 필터
-                                const recipeIngredientTypes = element.ingredientsUidList.map(uid => {
-                                    const targetInd = indList.find(ind => ind.uid === uid);
-                                    return targetInd ? targetInd.typeUid : null;
-                                });
-
-                                const isIndMatch =
-                                    currentSelectedIndType.length === 0 ||
-                                    currentSelectedIndType.every(
-                                        selectedTypeUid => recipeIngredientTypes.includes(selectedTypeUid + 1)
-                                    );
-
-                                if (isTypeMatch && isUserMatch && isIndMatch) {
-                                    return (
-                                        <RecipeBox
-                                            key={"RecipeListKey" + recipeIndex}
-                                            element={element}
-                                        />
-                                    );
-                                }
-
-                                return null;
+                                return (
+                                    <RecipeBox
+                                        key={`RecipeListKey${recipeIndex}`}
+                                        element={element}
+                                    />
+                                );
                             })}
                         </div>
                     </div>
