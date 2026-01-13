@@ -863,7 +863,7 @@ function MainPage() {
 
     async function handleGPStoggle(input) {
 
-        console.log(localStorage);
+        console.log("localStorage : " + localStorage);
 
         if(input)
         {
