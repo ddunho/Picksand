@@ -230,7 +230,6 @@ function SandwichBox({sandwichIndex,
             return;
         }
 
-        setIsSaving(true);
 
         //이하는 레시피 저장시
 
@@ -240,6 +239,7 @@ function SandwichBox({sandwichIndex,
             return;
         }
         
+        setIsSaving(true);
         let totalPrice = 0;
         for(let x = 0; x < target.Ingredients.length; x++)
         {
@@ -261,7 +261,8 @@ function SandwichBox({sandwichIndex,
             let result = await axios.post(`${process.env.REACT_APP_API_URL}/server-b/Recipe/addNewWithInds`,
                 reqData,
                 { 
-                    headers: {'Content-Type': 'application/json'}
+                    headers: {'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`}
                 }
             );
 
