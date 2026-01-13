@@ -104,7 +104,7 @@ function SandwichBox({sandwichIndex,
     currentSelectedSandwich, 
     indList, LoadRecipeDatas,
     sandwichAry, setSandwichAry,isCartMode,
-    lastSelectedAry})
+    lastSelectedAry, userInfo})
 {
     const [openedCartSandwichAry, setOpenedCartSandwichAry] = useState([]);
     const [currentEditingSandwichName, setCurrentEditingSandwichName] = useState(-1);
@@ -230,6 +230,12 @@ function SandwichBox({sandwichIndex,
             return;
         }
 
+        if(!userInfo || Object.keys(userInfo).length === 0)
+        {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+
 
         //이하는 레시피 저장시
 
@@ -250,7 +256,8 @@ function SandwichBox({sandwichIndex,
             "recipe":{
             recipeType: 2,
             name: target.name,
-            totalPrice: totalPrice
+            totalPrice: totalPrice,
+            userUid: userInfo.uid
             },
             "inds": target.Ingredients
         }
@@ -266,9 +273,9 @@ function SandwichBox({sandwichIndex,
                 }
             );
 
-            console.log(result);
+            console.log(result.data);
             await LoadRecipeDatas(indList);
-            alert(`성공!`);
+            alert(result.data);
 
         }catch(error){
             const errorMassage = error.response && error.response.data ? error.response.data : '개별 처리에 실패 했습니다.';
@@ -1076,7 +1083,7 @@ function MainPage() {
                                 <SandwichBox key={"CartListKey" + sandwichIndex} sandwichIndex={sandwichIndex}
                                 currentSelectedSandwich={currentSelectedSandwich} LoadRecipeDatas={LoadRecipeDatas}
                                 indList={indList} sandwichAry={sandwichAry} setSandwichAry={setSandwichAry}
-                                isCartMode={isCartMode} lastSelectedAry={lastSelectedAry}/>
+                                isCartMode={isCartMode} lastSelectedAry={lastSelectedAry} userInfo={userInfo}/>
                             ))}
                             
                             <div className='MP_CartAddSandwichBTN MP_HorizontalContainer'>

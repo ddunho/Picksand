@@ -97,8 +97,7 @@ export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe
                                     return targetInd ? targetInd.typeUid : null;
                                 });
 
-                                // 3. 사용자가 선택한 사이드 필터(currentSelectedIndType)가 
-                                // 위에서 구한 recipeIngredientTypes 안에 '하나라도' 포함되어 있는지 확인
+                                // 3. 사용자가 선택한 사이드 필터(currentSelectedIndType)가 포함되어 있는지 확인
                                 const isIndMatch = currentSelectedIndType.length === 0 || 
                                     currentSelectedIndType.every(selectedTypeUid => recipeIngredientTypes.includes(selectedTypeUid + 1)); 
                                     // +1은 indType의 uid가 1부터 시작할 경우를 대비한 것이니 데이터 구조에 맞춰 조절하세요!

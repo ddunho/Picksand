@@ -1,5 +1,5 @@
 import { GoogleMap, InfoWindow, LoadScript } from "@react-google-maps/api";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import '../css/GGMap.css';
 
 const libraries = ["places"];
@@ -11,36 +11,7 @@ const CurrentPosition = {
   storeLocation : '',
   storeName: "현위치",
 }
-const shopAddrInfos = [{
-  name: "현위치", formatted_address: "서울 강동구 천호대로 1027 동원천호빌딩 5층",
-  place_id: "mock_place_id_001",
 
-  geometry: { location: { lat: () => 37.5381679, lng: () => 127.1262834 } }
-},
-{
-  name: "천호점", formatted_address: "서대한민국 서울특별시 강동구 천호대로 1024",
-  place_id: "mock_place_id_002",
-
-  geometry: { location: { lat: () => 37.537869, lng: () => 127.125649 } }
-},
-{
-  name: "광나루점", formatted_address: "대한민국 서울특별시 광진구 광장동 200-2",
-  place_id: "mock_place_id_003",
-
-  geometry: { location: { lat: () => 37.5451255, lng: () => 127.1035741 } }
-},
-{
-  name: "한강 공원점", formatted_address: "대한민국 서울특별시 강동구 선사로 83-66",
-  place_id: "mock_place_id_004",
-
-  geometry: { location: { lat: () => 37.5476362, lng: () => 127.1165831 } }
-},
-{
-  name: "천호 위브점", formatted_address: "대한민국 서울특별시 강동구 천호동 414",
-  place_id: "mock_place_id_005",
-
-  geometry: { location: { lat: () => 37.539315, lng: () => 127.127047 } }
-}];
   const userAddrInfos = [
   {addrName : "집", addrDetailText : "서울 강동구 구천면로 77 1층"},
   //37.538851 127.124463
@@ -222,7 +193,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
 
                 <div className='GGMap_addrListContainer GGMap_Vertical_Container'>
                   <div className='GGMap_UserAddrList GGMap_addrList_Closed' ref={UserAddrListRef}>
-                    {userAddrInfos.map((element, index) => (
+                    {userInfo?.nickname ?? userAddrInfos.map((element, index) => (
                       <div
                         key={`addr_${index}`}
                         className='GGMap_addrBox GGMap_Vertical_Container'
