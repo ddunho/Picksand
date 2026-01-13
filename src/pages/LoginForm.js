@@ -3,9 +3,11 @@ import { Link} from "react-router-dom";
 import { useAxios } from "../api/axiosInterceptor";
 import { AuthContext } from "../context/AuthProvider";
 import { GlobalContext } from "../services/globalContext";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm({openLogin}) {
   const { currentUserName, setCurrentUserName } = useContext(GlobalContext);
+  const navigate = useNavigate();
 
   const api = useAxios();
   const { login } = useContext(AuthContext);
