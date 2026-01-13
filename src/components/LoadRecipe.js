@@ -91,7 +91,7 @@ export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe
                                 const isTypeMatch = currentSelectedRecipeType === -1 || element.recipeType === currentSelectedRecipeType;
 
                                 // 1-1. 타입이 2일 때만 userUid 필터 추가
-                                const isUserMatch = currentSelectedRecipeType !== 2 || element.userUid === userInfo.userUid;
+                                const isUserMatch = currentSelectedRecipeType !== 2 || element.userUid === userInfo.id;
 
                                 // 2. 사이드 재료 타입 필터
                                 const recipeIngredientTypes = element.ingredientsUidList.map(uid => {
