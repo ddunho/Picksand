@@ -77,6 +77,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
 
         mapRef.current.setCenter(newPos);
         setSelectedPlace(shopInfos[i]);
+        setCurrentSelectedShopAddr(i)
 
       });
       
