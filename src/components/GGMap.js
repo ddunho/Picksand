@@ -173,11 +173,11 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                 }}>
                                 
                 <div>             
-                  <div className="GGMap_PinStoreNameText">{selectedPlace.storeName}</div>
-                  <div>{selectedPlace.id !== -1 && ('주소:' + selectedPlace.storeLocation)}</div>
+                  <div className="GGMap_PinStoreNameText MP_textColor2">{selectedPlace.storeName}</div>
+                  <div>{selectedPlace.storeUid !== -1 && ('주소:' + selectedPlace.storeLocation)}</div>
                   <div>위도: {selectedPlace.lat}</div>
                   <div>경도: {selectedPlace.lng}</div>
-                  {selectedPlace.id !== -1 && <div className="GGMap_PinReview" 
+                  {selectedPlace.storeUid !== -1 && <div className="GGMap_PinReview" 
                     onClick={handleReviewOnClick(selectedPlace)}>리뷰 n개</div>}
                 </div>
               </InfoWindow>
