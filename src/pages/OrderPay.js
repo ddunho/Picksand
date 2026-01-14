@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import "../css/OrderPay.css";
 import { useAxios } from "../api/axiosInterceptor";
-import { loadTossPayments } from "@tosspayments/payment-sdk";
-import { useLocation} from "react-router-dom";
-
-
+import { useLocation, useNavigate } from "react-router-dom";
 
 function OrderPay(){
 
     const api = useAxios();
     const location = useLocation();
+    const navigate = useNavigate();
     const { reqDatas } = location.state || {};
 
     console.log(reqDatas);
@@ -23,26 +21,18 @@ function OrderPay(){
         nickname: "",
         phoneNumber: "",
         address: "",
-        addressDeatil: ""
-        });
-
-    useEffect(() => {
-        if (window.location.search) {
-            alert("결제가 취소되었거나 실패했습니다.");
-            window.history.replaceState({}, "", "/orderpay"); // 쿼리 제거
-        }
-        }, []);
+        addressDetail: ""
+    });
 
     useEffect(() => {
         api.get("server-a/members/userinfo")
             .then(res => {
-            setUserInfo(res.data);
+                setUserInfo(res.data);
             })
             .catch(err => console.error(err));
     }, [api]);
 
     const [showAddress, setShowAddress] = useState(true);
-
 
     const innerWidth = window.innerWidth;
 
@@ -61,41 +51,63 @@ function OrderPay(){
     const totalProductPrice = (reqDatas ?? []).reduce(
         (sum, data) => sum + (data?.recipe?.totalPrice ?? 0),
         0
-        );
-
-    
+    );
 
     const handlePay = async () => {
-    // 받는 사람 성함과 배송 요청사항 가져오기
-    const receiverNameInput = document.querySelector('.changenameinput');
-    const deliveryMessageInput = document.querySelector('.delivermessage');
+        const receiverNameValue = receiverName || userInfo.nickname;
+        const deliveryMessageValue = deliveryMessage || "";
 
-    const receiverNameValue = receiverNameInput?.value || userInfo.nickname;
-    const deliveryMessageValue = deliveryMessageInput?.value || "";
+        if (!receiverNameValue) {
+            alert("받으시는 분 성함을 입력해주세요.");
+            return;
+        }
 
-    if (!receiverNameValue) {
-        alert("받으시는 분 성함을 입력해주세요.");
-        return;
-    }
+        // 결제 확인 알럿
+        const confirmPayment = window.confirm(
+            `총 ${totalProductPrice.toLocaleString()}원을 결제하시겠습니까?`
+        );
 
-    // 주문 데이터 임시 저장
-    sessionStorage.setItem("orderData", JSON.stringify(reqDatas));
-    sessionStorage.setItem("totalPrice", totalProductPrice);  // ← 수정!
-    sessionStorage.setItem("receiverName", receiverNameValue);
-    sessionStorage.setItem("deliveryMessage", deliveryMessageValue);
+        if (!confirmPayment) {
+            return; // 취소 시 아무것도 안 함
+        }
 
-    const tossPayments = await loadTossPayments("test_ck_5OWRapdA8ddBLEl9mY998o1zEqZK");
+        try {
+            // 서버로 보낼 데이터 가공
+            const orderItems = reqDatas.map(item => ({
+                recipeId: item.recipe.id,
+                recipeName: item.recipe.name,
+                price: item.recipe.totalPrice,
+                ingredients: item.inds.map(ind => ({
+                    ingredientId: ind.id,
+                    ingredientName: ind.name
+                }))
+            }));
 
-    tossPayments.requestPayment("카드", {
-        amount: totalProductPrice,
-        orderId: "order_" + new Date().getTime(),
-        orderName: "커스텀 샌드위치 주문",
-        customerName: userInfo.nickname || "고객",
-        successUrl: "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/paySuccess",
-        failUrl: "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/orderpay",
-    });
-};
+            // 주문 생성 API 호출
+            await api.post("/server-a/orders", {
+                totalPrice: totalProductPrice,
+                receiverName: receiverNameValue,
+                deliveryMessage: deliveryMessageValue,
+                orderItems
+            });
 
+            alert("결제가 완료되었습니다!");
+            
+            // PaySuccess 페이지로 이동 (주문 정보 전달)
+            navigate("/paySuccess", {
+                state: {
+                    orderData: reqDatas,
+                    totalPrice: totalProductPrice,
+                    receiverName: receiverNameValue,
+                    deliveryMessage: deliveryMessageValue
+                }
+            });
+
+        } catch (err) {
+            console.error("결제 실패:", err);
+            alert("결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+        }
+    };
 
     return(
         <main>
@@ -119,10 +131,7 @@ function OrderPay(){
 
                                 return (
                                 <div className="ordercontent" key={index}>
-                                    {/* 샌드위치 이름 */}
                                     <p>{recipe.name}</p>
-
-                                    {/* 재료 목록 */}
                                     <p>
                                     {inds.map(ind => ind.name).join(", ")}
                                     </p>
@@ -148,7 +157,7 @@ function OrderPay(){
                                 </div>
                                 );
                             })}
-                            </div>
+                        </div>
                         <div className="orderline"></div>
 
                         <div className="paycontainer">
@@ -163,48 +172,50 @@ function OrderPay(){
                             </div>
                         </div>
                         <div className="orderline"></div>
-                            <div className="totalprice">
-                                <p>총 결제 금액</p>
-                                <p>{totalProductPrice.toLocaleString()}원</p>
-                            </div>
+                        <div className="totalprice">
+                            <p>총 결제 금액</p>
+                            <p>{totalProductPrice.toLocaleString()}원</p>
+                        </div>
 
                         <button
                             className="finalorderbutton"
                             onClick={handlePay}
-                            >
+                        >
                             결제하기
                         </button>
                     </div>
                     {showAddress &&
                     <div className={`addresswrapper ${showAddress ? "open" : "close"}`}>
                         <div className="deliverinfo">
-                        <div className="addresstitle">
-                            <img src="/images/place.png" alt="위치"></img>
-                            <p>배송지 정보</p>
-                        </div>
+                            <div className="addresstitle">
+                                <img src="/images/place.png" alt="위치"></img>
+                                <p>배송지 정보</p>
+                            </div>
 
-                        <p>닉네임</p>
+                            <p>닉네임</p>
                             <input
-                            type="text"
-                            value={userInfo.nickname}
-                            readOnly></input>
+                                type="text"
+                                value={userInfo.nickname}
+                                readOnly
+                            />
                         </div>
 
-                        
                         <div className="deliverinfo">
                             <p>휴대폰 번호</p>
                             <input
-                            type="text"
-                            value={userInfo.phoneNumber}
-                            readOnly></input>
+                                type="text"
+                                value={userInfo.phoneNumber}
+                                readOnly
+                            />
                         </div>
 
                         <div className="deliverinfo">
                             <p>배송 주소</p>
                             <input
-                            type="text"
-                            value={`${userInfo.address} ${userInfo.addressDetail}`}
-                            readOnly></input>
+                                type="text"
+                                value={`${userInfo.address} ${userInfo.addressDetail}`}
+                                readOnly
+                            />
                         </div>
 
                         <div className="deliverinfo">
@@ -214,7 +225,7 @@ function OrderPay(){
                                 className="changenameinput"
                                 value={receiverName}
                                 onChange={(e) => setReceiverName(e.target.value)}
-                                />
+                            />
                         </div>
 
                         <div className="deliverrequest">
@@ -226,14 +237,14 @@ function OrderPay(){
                                 placeholder="배송 요청 사항을 적어주세요."
                                 value={deliveryMessage}
                                 onChange={(e) => setDeliveryMessage(e.target.value)}
-                                />
+                            />
                         </div>  
 
                         <button className="checkdeliverspot" onClick={handleAddress}>
                             배송지 정보를 확인하였습니다. 
                         </button>            
                     </div>
-}
+                    }
                 </div>
             </div>
         </main>

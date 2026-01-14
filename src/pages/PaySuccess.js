@@ -1,74 +1,164 @@
-// PaySuccess.jsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import "../css/PaySuccess.css";
 import { useAxios } from "../api/axiosInterceptor";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-function PaySuccess() {
-  const api = useAxios();
-  const navigate = useNavigate();
+function PaySuccess(){
 
-  useEffect(() => {
-    const processOrder = async () => {
-      try {
-        const orderData = JSON.parse(sessionStorage.getItem("orderData"));
-        const totalPrice = Number(sessionStorage.getItem("totalPrice"));
-        const receiverName = sessionStorage.getItem("receiverName");
-        const deliveryMessage = sessionStorage.getItem("deliveryMessage");
+    const api = useAxios();
+    const location = useLocation();
+    
+    const { orderData, totalPrice, receiverName, deliveryMessage } = location.state || {};
 
-        if (!orderData || !totalPrice || !receiverName) {
-          alert("주문 정보가 올바르지 않습니다.");
-          navigate("/orderpay", { replace: true });
-          return;
+    const [userInfo, setUserInfo] = useState({
+        nickname: "",
+        phoneNumber: "",
+        address: "",
+        addressDetail: ""
+    });
+
+    useEffect(() => {
+        api.get("server-a/members/userinfo")
+            .then(res => {
+                setUserInfo(res.data);
+            })
+            .catch(err => console.error(err));
+    }, [api]);
+
+    const [showAddress, setShowAddress] = useState(true);
+
+    const innerWidth = window.innerWidth;
+
+    useEffect(() => {
+        if(window.innerWidth > 426){
+            setShowAddress(true);
+        }else{
+            setShowAddress(false);
         }
+    }, [innerWidth])
 
-        const orderItems = orderData.map(item => ({
-          recipeId: item.recipe.id,
-          recipeName: item.recipe.name,
-          price: item.recipe.totalPrice,
-          ingredients: item.inds.map(ind => ({
-            ingredientId: ind.id,
-            ingredientName: ind.name
-          }))
-        }));
+    const handleAddress = () => {
+        setShowAddress(prev => !prev)
+    }
 
-        await api.post("/server-a/orders", {
-          totalPrice,
-          receiverName,
-          deliveryMessage,
-          orderItems
-        });
+    return(
+        <main>
+            <div className="orderpaywrapperp">
+                <div>
+                    <div onClick={handleAddress}>배송지 확인</div>
+                </div>
+                <div className="orderaddresscontainerp">
+                    <div className="orderwrapperp">
+                        <div className="ordertitlep">
+                            <div>
+                                <img src="/images/shopping_bag.png" alt="상품"></img>
+                                <p>주문상품</p>
+                            </div>
+                            <button>{orderData?.length || 0}개</button>
+                        </div>
+                        <div className="ordersandwichcontainerp">
+                            {orderData?.map((data, index) => {
+                                const { inds, recipe } = data;
 
-        alert("결제가 완료되었습니다!");
+                                return (
+                                <div className="ordercontentp" key={index}>
+                                    <p>{recipe.name}</p>
+                                    <p>{inds.map(ind => ind.name).join(", ")}</p>
 
-        sessionStorage.removeItem("orderData");
-        sessionStorage.removeItem("totalPrice");
-        sessionStorage.removeItem("receiverName");
-        sessionStorage.removeItem("deliveryMessage");
+                                    <div>
+                                        <p>{recipe.totalPrice.toLocaleString()}원</p>
+                                    </div>
+                                </div>
+                                );
+                            })}
+                        </div>
 
-        navigate("/mypage", { replace: true });
+                        <div className="orderlinep"></div>
 
-      } catch (err) {
-        console.error("주문 저장 실패:", err);
-        alert("결제는 완료되었지만 주문 저장에 실패했습니다.");
-        navigate("/mypage", { replace: true });
-      }
-    };
+                        <div className="paycontainerp">
+                            <div className="productpricep">
+                                <p>상품 금액</p>
+                                <p>{totalPrice?.toLocaleString()}원</p>
+                            </div>
 
-    processOrder();
-  }, [api, navigate]);
+                            <div className="deliverpricep">
+                                <p>배송비</p>
+                                <p>무료</p>
+                            </div>
+                        </div>
+                        <div className="orderlinep"></div>
+                        <div className="totalpricep">
+                            <p>총 결제 금액</p>
+                            <p>{totalPrice?.toLocaleString()}원</p>
+                        </div>
+                        <p className="payfinish">결제가 완료되었습니다.</p>
+                    </div>
+                    
+                    {showAddress &&
+                    <div className={`addresswrapperp ${showAddress ? "open" : "close"}`}>
+                        <div className="deliverinfop">
+                            <div className="addresstitlep">
+                                <img src="/images/place.png" alt="위치"></img>
+                                <p>배송지 정보</p>
+                            </div>
 
-  return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      flexDirection: 'column'
-    }}>
-      <h2>결제 처리 중...</h2>
-      <p>잠시만 기다려주세요.</p>
-    </div>
-  );
+                            <p>닉네임</p>
+                            <input
+                                type="text"
+                                value={userInfo.nickname}
+                                readOnly
+                            />
+                        </div>
+
+                        <div className="deliverinfop">
+                            <p>휴대폰 번호</p>
+                            <input
+                                type="text"
+                                value={userInfo.phoneNumber}
+                                readOnly
+                            />
+                        </div>
+
+                        <div className="deliverinfop">
+                            <p>배송 주소</p>
+                            <input
+                                type="text"
+                                value={`${userInfo.address} ${userInfo.addressDetail}`}
+                                readOnly
+                            />
+                        </div>
+
+                        <div className="deliverinfop">
+                            <p>받으시는 분 성함</p>
+                            <input 
+                                placeholder="받으시는 분 성함을 입력해 주세요." 
+                                className="changenameinputp"
+                                value={receiverName}
+                                readOnly
+                            />
+                        </div>
+
+                        <div className="deliverrequestp">
+                            <p>배송 요청 사항</p>
+                            <textarea 
+                                cols="30" 
+                                rows="3" 
+                                className="delivermessagep" 
+                                placeholder="배송 요청 사항을 적어주세요."
+                                value={deliveryMessage}
+                                readOnly
+                            />
+                        </div>  
+
+                        <button className="checkdeliverspotp" onClick={handleAddress}>
+                            배송지 정보를 확인하였습니다. 
+                        </button>            
+                    </div>
+                    }
+                </div>
+            </div>
+        </main>
+    );
 }
 
 export default PaySuccess;

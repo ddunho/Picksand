@@ -23,7 +23,7 @@ function App() {
     <>
     <AuthProvider>
       <GlobalProvider>
-      <HashRouter>
+      <BrowserRouter>
           <Header></Header>
           <Routes>
             <Route path="/" element={<Navigate to="/mainpage" replace />} />
@@ -39,7 +39,7 @@ function App() {
             <Route path='/paySuccess' element={<PaySuccess/>}/>
             <Route path='/ReviewWrite' element={<ReviewWrite />} />
           </Routes>
-      </HashRouter>
+      </BrowserRouter>
       </GlobalProvider>
     </AuthProvider>
     </>
