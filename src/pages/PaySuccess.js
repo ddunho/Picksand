@@ -6,7 +6,7 @@ function PaySuccess() {
 
     // userinfo로 이동
     window.location.href =
-      "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/userinfo";
+      "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/userinfo";
   }, []);
 
   return null; // 화면 안 보여도 됨
