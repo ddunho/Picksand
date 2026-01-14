@@ -543,7 +543,7 @@ function MainPage() {
 
     useEffect(() => {
 
-        console.log("LoadRecipe By UserInfo");
+        //console.log("LoadRecipe By UserInfo");
 
         LoadRecipeDatas(indList);
 
@@ -562,7 +562,7 @@ function MainPage() {
             let loadRecipeList = response.data;
             console.log(loadRecipeList);
 
-            console.log(" inputUserUid: " + userInfo.id);
+            //console.log(" inputUserUid: " + userInfo.id);
             //
 
             const uidIndexMap = new Map(

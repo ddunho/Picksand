@@ -30,6 +30,8 @@ export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe
         if(currentSelectedRecipeType === input)
         {
             setCurrentSelectedRecipeType(-1);
+
+            console.log(recipeList);
         }
         else
         {
