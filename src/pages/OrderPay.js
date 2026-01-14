@@ -60,7 +60,7 @@ function OrderPay(){
         const tossPayments = await loadTossPayments("test_ck_5OWRapdA8ddBLEl9mY998o1zEqZK");
 
         tossPayments.requestPayment("카드", {
-        amount: 1,
+         amount: totalProductPrice,
         orderId: "order_" + new Date().getTime(), // 유니크한 ID
         orderName: "커스텀 샌드위치 주문",
         customerName: userInfo.nickname || "고객",
