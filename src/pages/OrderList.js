@@ -65,14 +65,18 @@ function OrderList() {
                 originalRequest._retry = true;
 
                 try {
-                    const res = await api.post("/members/reissue");
-                    const newAccessToken = res.data.accessToken;
 
-                    localStorage.setItem("accessToken", newAccessToken);
+                    const refreshToken = localStorage.getItem("refreshToken");
+                    const res = await api.post("/members/reissue", {
+                        refreshToken: refreshToken
+                    });
+
+                    localStorage.setItem("accessToken", res.data.accessToken);
+                    localStorage.setItem("refreshToken", res.data.refreshToken);
                     originalRequest.headers.Authorization =
                         `Bearer ${newAccessToken}`;
 
-                    return api(originalRequest);
+                    return api(res.data.accessToken);
 
                 } catch (e) {
                     // ⛔ refresh 실패 → alert 한 번만
