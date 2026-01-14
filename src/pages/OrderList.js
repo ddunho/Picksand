@@ -71,7 +71,7 @@ function OrderList() {
                     const res = await api.post("server-a/members/reissue", {
                         refreshToken: refreshToken
                     });
-
+                    alert(refreshToken);
                     localStorage.setItem("accessToken", res.data.accessToken);
                     localStorage.setItem("refreshToken", res.data.refreshToken);
                     originalRequest.headers.Authorization =
