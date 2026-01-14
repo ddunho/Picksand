@@ -65,8 +65,8 @@ function OrderList() {
 
                 if (
                     error.response?.status === 401 &&
-                    error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
-                    !originalRequest._retry
+                    !originalRequest._retry &&
+                    !originalRequest.url.includes("server-a/members/reissue")
                 ) {
                     originalRequest._retry = true;
 
