@@ -23,11 +23,7 @@ function OrderPay(){
             setTotalPrice(Number(savedTotal));
         }
     }, []);
-
-    useEffect(() => {
-        console.log("orderData raw:", sessionStorage.getItem("orderData"));
-        console.log("totalPrice raw:", sessionStorage.getItem("totalPrice"));
-        }, []);
+    
 
     const [userInfo, setUserInfo] = useState({
         nickname: "",

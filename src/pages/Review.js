@@ -27,6 +27,15 @@ function Review() {
         withCredentials: true,
     });
 
+     api.interceptors.request.use((config) => {
+        const token = localStorage.getItem("accessToken");
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return config;
+    });
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 7;
 
