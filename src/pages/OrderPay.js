@@ -64,8 +64,8 @@ function OrderPay(){
         orderId: "order_" + new Date().getTime(), // 유니크한 ID
         orderName: "커스텀 샌드위치 주문",
         customerName: userInfo.nickname || "고객",
-        successUrl: "http://localhost:3000/paySuccess",
-        failUrl: "http://localhost:3000/orderpay",
+        successUrl: "http://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/paySuccess",
+        failUrl: "http://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/orderpay",
         });
         };
 
