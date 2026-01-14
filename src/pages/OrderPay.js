@@ -69,6 +69,10 @@ function OrderPay(){
         });
         };
 
+    const totalProductPrice = reqDatas.reduce(
+        (sum, data) => sum + data.recipe.totalPrice,
+        0
+        );
 
 
     return(
@@ -128,7 +132,7 @@ function OrderPay(){
                         <div className="paycontainer">
                             <div className="productprice">
                                 <p>상품 금액</p>
-                                <p>{recipe.totalPrice.toLocaleString()}원</p>
+                                <p>{totalProductPrice.toLocaleString()}원</p>
                             </div>
 
                             <div className="deliverprice">
@@ -139,7 +143,7 @@ function OrderPay(){
                         <div className="orderline"></div>
                             <div className="totalprice">
                                 <p>총 결제 금액</p>
-                                <p>{recipe.totalPrice.toLocaleString()}원</p>
+                                <p>{totalProductPrice.toLocaleString()}원</p>
                             </div>
 
                         <button
