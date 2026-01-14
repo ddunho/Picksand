@@ -76,7 +76,7 @@ function OrderList() {
                     originalRequest.headers.Authorization =
                         `Bearer ${res.data.accessToken}`;
 
-                    return api(res.data.accessToken);
+                    return api(originalRequest);
 
                 } catch (e) {
                     // ⛔ refresh 실패 → alert 한 번만

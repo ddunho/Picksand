@@ -56,12 +56,15 @@ function Review() {
                 originalRequest._retry = true;
 
                 try {
-                    const res = await api.post("/members/reissue");
-                    const newAccessToken = res.data.accessToken;
+                    const refreshToken = localStorage.getItem("refreshToken");
+                    const res = await api.post("/members/reissue", {
+                        refreshToken: refreshToken
+                    });
 
-                    localStorage.setItem("accessToken", newAccessToken);
+                    localStorage.setItem("accessToken", res.data.accessToken);
+                    localStorage.setItem("refreshToken", res.data.refreshToken);
                     originalRequest.headers.Authorization =
-                        `Bearer ${newAccessToken}`;
+                        `Bearer ${res.data.accessToken}`;
 
                     return api(originalRequest);
 
