@@ -67,7 +67,10 @@ export const useAxios = () => {
             console.error("토큰 갱신 실패:", refreshError);
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            window.location.href = "/login";
+            
+            // 모달 방식이므로 홈으로 이동 후 알림
+            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+            window.location.href = "/";
             return Promise.reject(refreshError);
           }
         }
