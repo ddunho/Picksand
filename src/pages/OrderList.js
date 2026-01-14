@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 function OrderList() {
     const navigate = useNavigate();
-    const isAlertShownRef = useRef(false); // ✅ useRef로 변경
+    const isAlertShownRef = useRef(false);
     
     const message = ["OPEN", "CLOSE"];
     const alertmessage = ["개점처리되었습니다.", "마감처리되었습니다."];
@@ -19,7 +19,7 @@ function OrderList() {
     const [isLoading, setIsLoading] = useState(false);
     
     const reviewsPerPage = 7;
-    const storeUid = 1; // TODO: props나 context로 받아오기
+    const storeUid = 1;
 
     const targetStore = storeInfoList.find(store => store.storeUid === storeUid);
 
@@ -32,30 +32,39 @@ function OrderList() {
     const currentOrders = sortedOrder.slice(indexOfFirst, indexOfLast);
     const totalPages = Math.ceil(sortedOrder.length / reviewsPerPage);
 
-    // ✅ API 인스턴스를 useRef로 관리
-    const api = useRef(
-        axios.create({
+    // ✅ API 인스턴스를 한 번만 생성
+    const apiRef = useRef(null);
+    
+    if (!apiRef.current) {
+        apiRef.current = axios.create({
             baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/",
             withCredentials: true,
-        })
-    ).current;
+        });
+    }
+    
+    const api = apiRef.current;
 
-    // ✅ 인터셉터를 useEffect에서 설정
+    // ✅ 인터셉터를 한 번만 등록
     useEffect(() => {
+        // Request 인터셉터
         const requestInterceptor = api.interceptors.request.use((config) => {
             const token = localStorage.getItem("accessToken");
-            if (token && !config.url?.includes('server-a/members/reissue')) {
+            
+            // 재발급 API는 토큰 제외
+            if (token && !config.url?.includes('members/reissue')) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
+            
             return config;
         });
 
+        // Response 인터셉터
         const responseInterceptor = api.interceptors.response.use(
             response => response,
             async error => {
                 const originalRequest = error.config;
 
-                // ✅ Access Token 만료 → 자동 갱신 시도 (알람 없음)
+                // ✅ 401 에러 && ACCESS_TOKEN_EXPIRED && 재시도 안 한 경우
                 if (
                     error.response?.status === 401 &&
                     error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
@@ -65,29 +74,52 @@ function OrderList() {
 
                     try {
                         const refreshToken = localStorage.getItem("refreshToken");
-                        const res = await api.post("server-a/members/reissue", {
-                            refreshToken: refreshToken
-                        });
+                        
+                        if (!refreshToken) {
+                            throw new Error("No refresh token");
+                        }
 
-                        localStorage.setItem("accessToken", res.data.accessToken);
-                        localStorage.setItem("refreshToken", res.data.refreshToken);
-                        originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
+                        console.log("🔄 토큰 재발급 시도 중...");
 
+                        // ✅ 재발급 요청 (withCredentials 포함)
+                        const response = await axios.post(
+                            "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/server-a/members/reissue",
+                            { refreshToken: refreshToken },
+                            { 
+                                withCredentials: true,
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        );
+
+                        console.log("✅ 토큰 재발급 성공");
+
+                        // 새 토큰 저장
+                        const { accessToken, refreshToken: newRefreshToken } = response.data;
+                        localStorage.setItem("accessToken", accessToken);
+                        localStorage.setItem("refreshToken", newRefreshToken);
+
+                        // 원래 요청 재시도
+                        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
                         return api(originalRequest);
 
-                    } catch (e) {
-                        // ⛔ refresh 실패 시에만 알람
+                    } catch (refreshError) {
+                        console.error("❌ 토큰 재발급 실패:", refreshError);
+                        
+                        // 재발급 실패 시 로그아웃
                         if (!isAlertShownRef.current) {
                             isAlertShownRef.current = true;
                             alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
                         }
+                        
                         localStorage.clear();
                         window.location.href = "/mainpage";
-                        return Promise.reject(e);
+                        return Promise.reject(refreshError);
                     }
                 }
 
-                // ❌ refresh 대상이 아닌 401
+                // ❌ 다른 401 에러 (재발급 대상 아님)
                 if (error.response?.status === 401) {
                     if (!isAlertShownRef.current) {
                         isAlertShownRef.current = true;
@@ -109,13 +141,13 @@ function OrderList() {
             }
         );
 
+        // 클린업: 컴포넌트 언마운트 시 인터셉터 제거
         return () => {
             api.interceptors.request.eject(requestInterceptor);
             api.interceptors.response.eject(responseInterceptor);
         };
-    }, [api]);
+    }, []); // ✅ 빈 배열: 마운트 시 한 번만 실행
 
-    // ✅ 데이터 로드
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
@@ -133,14 +165,13 @@ function OrderList() {
             }
         };
         fetchData();
-    }, [api]);
+    }, []);
 
-    // ✅ 개점/마감 처리
     const change = useCallback(async () => {
         if (!targetStore) return;
 
         const newState = !targetStore.storeState;
-        const newIndex = newState ? 0 : 1; // true면 OPEN(0), false면 CLOSE(1)
+        const newIndex = newState ? 0 : 1;
 
         setStoreInfoList(prev =>
             prev.map(store =>
@@ -159,25 +190,24 @@ function OrderList() {
             });
         } catch (e) {
             console.error("상태 변경 오류:", e);
-            alert("상태 변경에 실패했습니다.");
-            // 롤백
-            setStoreInfoList(prev =>
-                prev.map(store =>
-                    store.storeUid === storeUid
-                        ? { ...store, storeState: !newState }
-                        : store
-                )
-            );
+            if (e.response?.status !== 401) {
+                alert("상태 변경에 실패했습니다.");
+                setStoreInfoList(prev =>
+                    prev.map(store =>
+                        store.storeUid === storeUid
+                            ? { ...store, storeState: !newState }
+                            : store
+                    )
+                );
+            }
         }
-    }, [targetStore, storeUid, api, alertmessage]);
+    }, [targetStore, storeUid, alertmessage]);
 
-    // ✅ 주문 상태 변경
     const handleStatusClick = useCallback(async (orderId, currentState) => {
         if (currentState === "배달완료") return;
 
         const newState = currentState === "주문확인" ? "배달중" : "배달완료";
 
-        // 낙관적 업데이트
         setOrder(prev =>
             prev.map(o =>
                 o.orderUid === orderId
@@ -190,23 +220,24 @@ function OrderList() {
             await api.patch(`server-c/order/${orderId}/status`);
         } catch (e) {
             console.error("상태 변경 실패:", e);
-            alert("상태 변경 실패");
-            // 롤백
-            setOrder(prev =>
-                prev.map(o =>
-                    o.orderUid === orderId
-                        ? { ...o, orderState: currentState }
-                        : o
-                )
-            );
+            if (e.response?.status !== 401) {
+                alert("상태 변경 실패");
+                setOrder(prev =>
+                    prev.map(o =>
+                        o.orderUid === orderId
+                            ? { ...o, orderState: currentState }
+                            : o
+                    )
+                );
+            }
         }
-    }, [api]);
+    }, []);
 
     if (isLoading) {
         return (
             <div className='mmainpage'>
                 <div className="mmain">
-                    <p className="empty">로딩 중...</p>
+                    <p style={{textAlign: 'center', padding: '20px'}}>로딩 중...</p>
                 </div>
             </div>
         );
@@ -235,7 +266,7 @@ function OrderList() {
                 </div>
 
                 {currentOrders.length === 0 ? (
-                    <p className="empty">주문이 없습니다.</p>
+                    <p style={{textAlign: 'center', padding: '20px'}}>주문이 없습니다.</p>
                 ) : (
                     currentOrders.map((item) => (
                         <div className='mlist' key={item.orderUid}>
