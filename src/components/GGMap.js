@@ -1,6 +1,7 @@
 import { GoogleMap, InfoWindow, LoadScript } from "@react-google-maps/api";
 import { useState, useRef } from "react";
 import '../css/GGMap.css';
+import { useNavigate } from "react-router-dom";
 
 const libraries = ["places"];
 
@@ -25,6 +26,8 @@ const CurrentPosition = {
 
 export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
 
+  const navigate = useNavigate(); 
+  
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
   const mapId = process.env.REACT_APP_GOOGLE_MAP_ID;
 
@@ -149,6 +152,10 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
   function handleReviewOnClick(Store)
   {
     console.log(Store);
+
+    navigate("/Review", {
+        state: { Store }
+    });
   }
 
 
