@@ -4,7 +4,7 @@ import { useAxios } from "../api/axiosInterceptor";
 
 
 
-function OrderPay(){
+function PaySuccess(){
 
     const api = useAxios();
 
@@ -16,7 +16,12 @@ function OrderPay(){
         const savedTotal = sessionStorage.getItem("totalPrice");
 
         if (savedOrder) {
-            setOrderDatas(JSON.parse(savedOrder));
+            try {
+                setOrderDatas(JSON.parse(savedOrder));
+            } catch (error) {
+                console.error("주문 데이터 파싱 실패:", error);
+                setOrderDatas([]);
+            }
         }
 
         if (savedTotal) {
@@ -28,37 +33,32 @@ function OrderPay(){
         nickname: "",
         phoneNumber: "",
         address: "",
-        addressDeatil: ""
-        });
+        addressDetail: ""
+    });
 
     useEffect(() => {
         api.get("server-a/members/userinfo")
             .then(res => {
-            setUserInfo(res.data);
+                setUserInfo(res.data);
             })
             .catch(err => console.error(err));
     }, [api]);
 
     const [showAddress, setShowAddress] = useState(true);
 
-
     const innerWidth = window.innerWidth;
 
-    useEffect(()=>{
+    useEffect(() => {
         if(window.innerWidth > 426){
             setShowAddress(true);
         }else{
             setShowAddress(false);
         }
-    },[innerWidth])
+    }, [innerWidth])
 
     const handleAddress = () => {
         setShowAddress(prev => !prev)
     }
-
-    
-
-
 
     return(
         <main>
@@ -73,25 +73,23 @@ function OrderPay(){
                                 <img src="/images/shopping_bag.png" alt="상품"></img>
                                 <p>주문상품</p>
                             </div>
-                            <button>3개</button>
+                            <button>{orderDatas?.length || 0}개</button>
                         </div>
                         <div className="ordersandwichcontainerp">
-                            <div className="ordersandwichcontainerp">
-                                {orderDatas.map((data, index) => {
-                                    const { inds, recipe } = data;
+                            {orderDatas.map((data, index) => {
+                                const { inds, recipe } = data;
 
-                                    return (
-                                    <div className="ordercontentp" key={index}>
-                                        <p>{recipe.name}</p>
-                                        <p>{inds.map(ind => ind.name).join(", ")}</p>
+                                return (
+                                <div className="ordercontentp" key={index}>
+                                    <p>{recipe.name}</p>
+                                    <p>{inds.map(ind => ind.name).join(", ")}</p>
 
-                                        <div>
+                                    <div>
                                         <p>{recipe.totalPrice.toLocaleString()}원</p>
-                                        </div>
                                     </div>
-                                    );
-                                })}
                                 </div>
+                                );
+                            })}
                         </div>
 
                         <div className="orderlinep"></div>
@@ -99,7 +97,7 @@ function OrderPay(){
                         <div className="paycontainerp">
                             <div className="productpricep">
                                 <p>상품 금액</p>
-                                <p>26,500원</p>
+                                <p>{totalPrice.toLocaleString()}원</p>
                             </div>
 
                             <div className="deliverpricep">
@@ -108,65 +106,74 @@ function OrderPay(){
                             </div>
                         </div>
                         <div className="orderlinep"></div>
-                            <div className="totalpricep">
-                                <p>총 결제 금액</p>
-                                <p>26,500원</p>
-                            </div>
-                            <p className="payfinish">결제가 완료되었습니다.</p>
-
-                       
+                        <div className="totalpricep">
+                            <p>총 결제 금액</p>
+                            <p>{totalPrice.toLocaleString()}원</p>
+                        </div>
+                        <p className="payfinish">결제가 완료되었습니다.</p>
                     </div>
+                    
                     {showAddress &&
                     <div className={`addresswrapperp ${showAddress ? "open" : "close"}`}>
                         <div className="deliverinfop">
-                        <div className="addresstitlep">
-                            <img src="/images/place.png" alt="위치"></img>
-                            <p>배송지 정보</p>
-                        </div>
+                            <div className="addresstitlep">
+                                <img src="/images/place.png" alt="위치"></img>
+                                <p>배송지 정보</p>
+                            </div>
 
-                        <p>닉네임</p>
+                            <p>닉네임</p>
                             <input
-                            type="text"
-                            value={userInfo.nickname}
-                            readOnly></input>
+                                type="text"
+                                value={userInfo.nickname}
+                                readOnly
+                            />
                         </div>
 
-                        
                         <div className="deliverinfop">
                             <p>휴대폰 번호</p>
                             <input
-                            type="text"
-                            value={userInfo.phoneNumber}
-                            readOnly></input>
+                                type="text"
+                                value={userInfo.phoneNumber}
+                                readOnly
+                            />
                         </div>
 
                         <div className="deliverinfop">
                             <p>배송 주소</p>
                             <input
-                            type="text"
-                            value={`${userInfo.address} ${userInfo.addressDetail}`}
-                            readOnly></input>
+                                type="text"
+                                value={`${userInfo.address} ${userInfo.addressDetail}`}
+                                readOnly
+                            />
                         </div>
 
                         <div className="deliverinfop">
                             <p>받으시는 분 성함</p>
-                            <input placeholder="받으시는 분 성함을 입력해 주세요." className="changenameinputp"></input>
+                            <input 
+                                placeholder="받으시는 분 성함을 입력해 주세요." 
+                                className="changenameinputp"
+                            />
                         </div>
 
                         <div className="deliverrequestp">
                             <p>배송 요청 사항</p>
-                            <textarea cols="30" rows="3" className="delivermessagep" placeholder="배송 요청 사항을 적어주세요."></textarea>
+                            <textarea 
+                                cols="30" 
+                                rows="3" 
+                                className="delivermessagep" 
+                                placeholder="배송 요청 사항을 적어주세요."
+                            />
                         </div>  
 
                         <button className="checkdeliverspotp" onClick={handleAddress}>
                             배송지 정보를 확인하였습니다. 
                         </button>            
                     </div>
-}
+                    }
                 </div>
             </div>
         </main>
     );
 }
 
-export default OrderPay;
+export default PaySuccess;
