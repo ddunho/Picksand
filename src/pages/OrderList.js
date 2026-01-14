@@ -1,4 +1,5 @@
-import axios from 'axios';
+// import axios from 'axios';
+import { useAxios } from "../api/axiosInterceptor";
 import '../css/OrderList.css'
 import { GoChecklist } from "react-icons/go";
 import { CiClock1, CiLocationOn } from "react-icons/ci";
@@ -33,87 +34,83 @@ function OrderList() {
 
     const [index, setindex] = useState(0);
 
-    const api = axios.create({
-        // baseURL: "http://localhost:8080/server-c",
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/server-c",
-        withCredentials: true,
-    });
+    const api = useAxios();
 
-    api.interceptors.request.use((config) => {
-        const token = localStorage.getItem("accessToken");
+    // api.interceptors.request.use((config) => {
+    //     const token = localStorage.getItem("accessToken");
 
 
-        if (token && !config.url?.includes('/members/reissue')) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+    //     if (token && !config.url?.includes('/members/reissue')) {
+    //         config.headers.Authorization = `Bearer ${token}`;
+    //     }
 
-        return config;
-    });
+    //     return config;
+    // });
 
-    let isAlertShown = false;
+    // let isAlertShown = false;
 
-    api.interceptors.response.use(
-        response => response,
-        async error => {
-            const originalRequest = error.config;
+    // api.interceptors.response.use(
+    //     response => response,
+    //     async error => {
+    //         const originalRequest = error.config;
 
-            // ✅ Access Token 만료 → refresh
-            if (
-                error.response?.status === 401 &&
-                error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
-                !originalRequest._retry
-            ) {
-                originalRequest._retry = true;
+    //         // ✅ Access Token 만료 → refresh
+    //         if (
+    //             error.response?.status === 401 &&
+    //             error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
+    //             !originalRequest._retry
+    //         ) {
+    //             originalRequest._retry = true;
 
-                try {
+    //             try {
 
-                    const refreshToken = localStorage.getItem("refreshToken");
-                    const res = await api.post("/members/reissue", {
-                        refreshToken: refreshToken
-                    });
+    //                 const refreshToken = localStorage.getItem("refreshToken");
+    //                 const res = await api.post("/members/reissue", {
+    //                     refreshToken: refreshToken
+    //                 });
 
-                    localStorage.setItem("accessToken", res.data.accessToken);
-                    localStorage.setItem("refreshToken", res.data.refreshToken);
-                    originalRequest.headers.Authorization =
-                        `Bearer ${res.data.accessToken}`;
+    //                 localStorage.setItem("accessToken", res.data.accessToken);
+    //                 localStorage.setItem("refreshToken", res.data.refreshToken);
+    //                 originalRequest.headers.Authorization =
+    //                     `Bearer ${res.data.accessToken}`;
 
-                    return api(originalRequest);
+    //                 return api(originalRequest);
 
-                } catch (e) {
-                    // ⛔ refresh 실패 → alert 한 번만
-                    if (!isAlertShown) {
-                        isAlertShown = true;
-                        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-                    }
+    //             } catch (e) {
+    //                 // ⛔ refresh 실패 → alert 한 번만
+    //                 if (!isAlertShown) {
+    //                     isAlertShown = true;
+    //                     alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+    //                 }
 
-                    localStorage.clear();
-                    window.location.href = "/login";
-                    return Promise.reject(e);
-                }
-            }
+    //                 localStorage.clear();
+    //                 window.location.href = "/login";
+    //                 return Promise.reject(e);
+    //             }
+    //         }
 
-            // ❌ refresh 대상이 아닌 401
-            if (error.response?.status === 401) {
-                if (!isAlertShown) {
-                    isAlertShown = true;
-                    alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-                }
+    //         // ❌ refresh 대상이 아닌 401
+    //         if (error.response?.status === 401) {
+    //             if (!isAlertShown) {
+    //                 isAlertShown = true;
+    //                 alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+    //             }
 
-                localStorage.clear();
-                window.location.href = "/login";
-            }
+    //             localStorage.clear();
+    //             window.location.href = "/login";
+    //         }
 
-            // ❌ 권한 없음
-            if (error.response?.status === 403) {
-                if (!isAlertShown) {
-                    isAlertShown = true;
-                    alert("접근 권한이 없습니다.");
-                }
-            }
+    //         // ❌ 권한 없음
+    //         if (error.response?.status === 403) {
+    //             if (!isAlertShown) {
+    //                 isAlertShown = true;
+    //                 alert("접근 권한이 없습니다.");
+    //             }
+    //         }
 
-            return Promise.reject(error);
-        }
-    );
+    //         return Promise.reject(error);
+    //     }
+    // );
 
 
 
@@ -133,7 +130,7 @@ function OrderList() {
         alert(alertmessage[newIndex]);
 
         try {
-            await api.post("/store/storeManage", {
+            await api.post("server-c/store/storeManage", {
                 storeUid: storeUid,
                 storeState: newState
             });
@@ -146,12 +143,12 @@ function OrderList() {
 
     useEffect(() => {
         const storeList = async () => {
-            const sto = await api.get("/store/getStore")
+            const sto = await api.get("server-c/store/getStore")
             setStoreInfoList(sto.data)
         }
 
         const orderList = async () => {
-            const ord = await api.get("/order/getOrder")
+            const ord = await api.get("server-c/order/getOrder")
             setOrder(ord.data)
         }
         storeList();
@@ -162,7 +159,7 @@ function OrderList() {
         if (currentState === "배달완료") return;
 
         try {
-            await api.patch(`/order/${orderId}/status`);
+            await api.patch(`server-c/order/${orderId}/status`);
 
             setOrder(prev =>
                 prev.map(o =>
