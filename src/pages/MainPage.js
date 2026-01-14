@@ -505,7 +505,7 @@ function MainPage() {
             setIndList(indListResp.data);
             setShopInfos(shopRes.data);
             
-            //return LoadRecipeDatas(indListResp.data);
+            return LoadRecipeDatas(indListResp.data);
         })
         .then(() => {
             // 4. 모든 데이터 로딩이 완료되었으므로 로딩 상태 변경
@@ -543,7 +543,9 @@ function MainPage() {
 
     useEffect(() => {
 
-        //console.log("LoadRecipe By UserInfo");
+        if (!userInfo) return;
+
+        console.log("LoadRecipe By UserInfo");
 
         LoadRecipeDatas(indList);
 
