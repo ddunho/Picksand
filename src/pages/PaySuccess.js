@@ -15,7 +15,7 @@ function PaySuccess() {
 
         if (!orderData || !totalPrice || !receiverName) {
           alert("주문 정보가 올바르지 않습니다.");
-          window.location.href = "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/orderpay";
+          window.location.href = "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/orderpay";
           return;
         }
 
@@ -47,14 +47,14 @@ function PaySuccess() {
         sessionStorage.removeItem("deliveryMessage");
 
         // 마이페이지로 이동
-        window.location.href = "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/userinfo";
+        window.location.href = "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/userinfo";
 
       } catch (err) {
         console.error("주문 저장 실패:", err);
         alert("결제는 완료되었지만 주문 저장에 실패했습니다. 고객센터에 문의해주세요.");
         
         // 에러 시에도 마이페이지로 이동 (결제는 완료됨)
-        window.location.href = "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/userinfo";
+        window.location.href = "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/userinfo";
       }
     };
 
