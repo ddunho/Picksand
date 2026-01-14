@@ -7,9 +7,9 @@ const libraries = ["places"];
 const CurrentPosition = {
   lat : 37.5381679,
   lng : 127.1262834,
-  storeId :'currentPosition',
-  storeLocation : '',
+  storeLocation :'currentPosition',
   storeName: "현위치",
+  storeUid : -1
 }
 
   const userAddrInfos = [
@@ -173,11 +173,12 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                 }}>
                                 
                 <div>             
-                  <h4>{selectedPlace.storeName}</h4>
-                  <div>주소: {selectedPlace.storeLocation}</div>
+                  <div className="GGMap_PinStoreNameText">{selectedPlace.storeName}</div>
+                  <div>{selectedPlace.id !== -1 && ('주소:' + selectedPlace.storeLocation)}</div>
                   <div>위도: {selectedPlace.lat}</div>
                   <div>경도: {selectedPlace.lng}</div>
-                  <div className="GGMap_PinReview" onClick={handleReviewOnClick(selectedPlace)}>리뷰 n개</div>
+                  {selectedPlace.id !== -1 && <div className="GGMap_PinReview" 
+                    onClick={handleReviewOnClick(selectedPlace)}>리뷰 n개</div>}
                 </div>
               </InfoWindow>
             )}

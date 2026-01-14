@@ -52,10 +52,22 @@
     justify-content: space-between;
 }
 
+.GGMap_PinStoreNameText
+{
+    font-size: 18px;
+    padding-top: -24px;
+    position: absolute;
+    margin-top: -34px;
+}
+
 .GGMap_PinReview
 {
     color: #415ac9;
     cursor: pointer;
+    
+    margin-top: 12px;
+    font-size: 15px;
+    FONT-WEIGHT: 400;
 }
 
 
