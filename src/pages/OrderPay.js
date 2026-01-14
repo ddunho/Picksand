@@ -56,6 +56,11 @@ function OrderPay(){
         setShowAddress(prev => !prev)
     }
 
+    const totalProductPrice = (reqDatas ?? []).reduce(
+        (sum, data) => sum + (data?.recipe?.totalPrice ?? 0),
+        0
+        );
+
     
 
     const handlePay = async () => {
