@@ -1,14 +1,14 @@
-import { useAxios } from '../api/axiosInterceptor';
+import axios from 'axios';
 import '../css/OrderList.css'
 import { GoChecklist } from "react-icons/go";
 import { CiClock1, CiLocationOn } from "react-icons/ci";
 import { LuSandwich } from "react-icons/lu";
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 
 function OrderList() {
     const navigate = useNavigate();
-    const api = useAxios();
+    const isAlertShownRef = useRef(false);
     
     const message = ["OPEN", "CLOSE"];
     const alertmessage = ["개점처리되었습니다.", "마감처리되었습니다."];
@@ -19,7 +19,7 @@ function OrderList() {
     const [isLoading, setIsLoading] = useState(false);
     
     const reviewsPerPage = 7;
-    const storeUid = 1; //지점uid
+    const storeUid = 1;
 
     const targetStore = storeInfoList.find(store => store.storeUid === storeUid);
 
@@ -32,14 +32,49 @@ function OrderList() {
     const currentOrders = sortedOrder.slice(indexOfFirst, indexOfLast);
     const totalPages = Math.ceil(sortedOrder.length / reviewsPerPage);
 
+    // ✅ API 인스턴스 생성
+    const api = useRef(
+        axios.create({
+            baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/",
+            withCredentials: true,
+        })
+    ).current;
+
+    // ✅ API 호출 래퍼 함수 (401 에러 처리)
+    const apiCall = useCallback(async (requestFn) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const config = token ? {
+                headers: { Authorization: `Bearer ${token}` }
+            } : {};
+            
+            return await requestFn(config);
+        } catch (error) {
+            if (error.response?.status === 401) {
+                if (!isAlertShownRef.current) {
+                    isAlertShownRef.current = true;
+                    alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                    localStorage.clear();
+                    window.location.href = "/mainpage";
+                }
+            } else if (error.response?.status === 403) {
+                if (!isAlertShownRef.current) {
+                    isAlertShownRef.current = true;
+                    alert("접근 권한이 없습니다.");
+                }
+            }
+            throw error;
+        }
+    }, []);
+
     // ✅ 데이터 로드
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
                 const [storeRes, orderRes] = await Promise.all([
-                    api.get("server-c/store/getStore"),
-                    api.get("server-c/order/getOrder")
+                    apiCall((config) => api.get("server-c/store/getStore", config)),
+                    apiCall((config) => api.get("server-c/order/getOrder", config))
                 ]);
                 setStoreInfoList(storeRes.data);
                 setOrder(orderRes.data);
@@ -50,16 +85,15 @@ function OrderList() {
             }
         };
         fetchData();
-    }, [api]);
+    }, [apiCall, api]);
 
     // ✅ 개점/마감 처리
     const change = useCallback(async () => {
         if (!targetStore) return;
 
         const newState = !targetStore.storeState;
-        const newIndex = newState ? 0 : 1; // true면 OPEN(0), false면 CLOSE(1)
+        const newIndex = newState ? 0 : 1;
 
-        // 낙관적 업데이트
         setStoreInfoList(prev =>
             prev.map(store =>
                 store.storeUid === storeUid
@@ -71,23 +105,26 @@ function OrderList() {
         alert(alertmessage[newIndex]);
 
         try {
-            await api.post("server-c/store/storeManage", {
-                storeUid: storeUid,
-                storeState: newState
-            });
+            await apiCall((config) => 
+                api.post("server-c/store/storeManage", {
+                    storeUid: storeUid,
+                    storeState: newState
+                }, config)
+            );
         } catch (e) {
             console.error("상태 변경 오류:", e);
-            // 실패 시 롤백
-            alert("상태 변경에 실패했습니다.");
-            setStoreInfoList(prev =>
-                prev.map(store =>
-                    store.storeUid === storeUid
-                        ? { ...store, storeState: !newState }
-                        : store
-                )
-            );
+            if (e.response?.status !== 401) {
+                alert("상태 변경에 실패했습니다.");
+                setStoreInfoList(prev =>
+                    prev.map(store =>
+                        store.storeUid === storeUid
+                            ? { ...store, storeState: !newState }
+                            : store
+                    )
+                );
+            }
         }
-    }, [targetStore, storeUid, api, alertmessage]);
+    }, [targetStore, storeUid, alertmessage, apiCall, api]);
 
     // ✅ 주문 상태 변경
     const handleStatusClick = useCallback(async (orderId, currentState) => {
@@ -95,7 +132,6 @@ function OrderList() {
 
         const newState = currentState === "주문확인" ? "배달중" : "배달완료";
 
-        // 낙관적 업데이트
         setOrder(prev =>
             prev.map(o =>
                 o.orderUid === orderId
@@ -105,20 +141,23 @@ function OrderList() {
         );
 
         try {
-            await api.patch(`server-c/order/${orderId}/status`);
+            await apiCall((config) => 
+                api.patch(`server-c/order/${orderId}/status`, {}, config)
+            );
         } catch (e) {
             console.error("상태 변경 실패:", e);
-            alert("상태 변경 실패");
-            // 실패 시 롤백
-            setOrder(prev =>
-                prev.map(o =>
-                    o.orderUid === orderId
-                        ? { ...o, orderState: currentState }
-                        : o
-                )
-            );
+            if (e.response?.status !== 401) {
+                alert("상태 변경 실패");
+                setOrder(prev =>
+                    prev.map(o =>
+                        o.orderUid === orderId
+                            ? { ...o, orderState: currentState }
+                            : o
+                    )
+                );
+            }
         }
-    }, [api]);
+    }, [apiCall, api]);
 
     if (isLoading) {
         return (
