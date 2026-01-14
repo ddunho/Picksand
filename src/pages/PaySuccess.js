@@ -24,6 +24,11 @@ function OrderPay(){
         }
     }, []);
 
+    useEffect(() => {
+        console.log("orderData raw:", sessionStorage.getItem("orderData"));
+        console.log("totalPrice raw:", sessionStorage.getItem("totalPrice"));
+        }, []);
+
     const [userInfo, setUserInfo] = useState({
         nickname: "",
         phoneNumber: "",
@@ -55,9 +60,6 @@ function OrderPay(){
     const handleAddress = () => {
         setShowAddress(prev => !prev)
     }
-
-    
-
 
 
     return(
