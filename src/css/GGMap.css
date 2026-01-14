@@ -52,6 +52,13 @@
     justify-content: space-between;
 }
 
+.GGMap_PinReview
+{
+    color: #415ac9;
+    cursor: pointer;
+}
+
+
 .GGMap_addrListContainer
 {
     background-color: #FFFEFB;

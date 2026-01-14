@@ -145,6 +145,11 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
     toggleUserAddrList();
   }
 
+  function handleReviewOnClick(Store)
+  {
+    console.log(Store);
+  }
+
 
   return (
     <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
@@ -172,6 +177,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                   <div>주소: {selectedPlace.storeLocation}</div>
                   <div>위도: {selectedPlace.lat}</div>
                   <div>경도: {selectedPlace.lng}</div>
+                  <div className="GGMap_PinReview" onClick={handleReviewOnClick(selectedPlace)}>리뷰 n개</div>
                 </div>
               </InfoWindow>
             )}
@@ -193,7 +199,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
 
                 <div className='GGMap_addrListContainer GGMap_Vertical_Container'>
                   <div className='GGMap_UserAddrList GGMap_addrList_Closed' ref={UserAddrListRef}>
-                    {userInfo?.nickname ?? userAddrInfos.map((element, index) => (
+                    {userInfo?.nickname && userAddrInfos.map((element, index) => (
                       <div
                         key={`addr_${index}`}
                         className='GGMap_addrBox GGMap_Vertical_Container'
