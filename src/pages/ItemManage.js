@@ -40,6 +40,16 @@ function ItemManage() {
         withCredentials: true,
     });
 
+     api.interceptors.request.use((config) => {
+        const token = localStorage.getItem("accessToken");
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return config;
+    });
+
     let isAlertShown = false;
 
     api.interceptors.response.use(
