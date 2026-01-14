@@ -74,7 +74,7 @@ function OrderList() {
                     localStorage.setItem("accessToken", res.data.accessToken);
                     localStorage.setItem("refreshToken", res.data.refreshToken);
                     originalRequest.headers.Authorization =
-                        `Bearer ${newAccessToken}`;
+                        `Bearer ${res.data.accessToken}`;
 
                     return api(res.data.accessToken);
 
