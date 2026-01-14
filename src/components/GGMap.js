@@ -27,7 +27,7 @@ const CurrentPosition = {
 export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
 
   const navigate = useNavigate(); 
-  
+
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
   const mapId = process.env.REACT_APP_GOOGLE_MAP_ID;
 
@@ -186,7 +186,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
                   <div>위도: {selectedPlace.lat}</div>
                   <div>경도: {selectedPlace.lng}</div>
                   {selectedPlace.storeUid !== -1 && <div className="GGMap_PinReview" 
-                    onClick={handleReviewOnClick(selectedPlace)}>리뷰 n개</div>}
+                    onClick={() => handleReviewOnClick(selectedPlace)}>리뷰 n개</div>}
                 </div>
               </InfoWindow>
             )}

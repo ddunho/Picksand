@@ -75,7 +75,7 @@ function OrderPay(){
             totalProductPrice
         );
 
-        const tossPayments = await loadTossPayments("test_ck_...");
+        const tossPayments = await loadTossPayments("test_ck_5OWRapdA8ddBLEl9mY998o1zEqZK");
 
         tossPayments.requestPayment("카드", {
             amount: totalProductPrice,
