@@ -42,7 +42,8 @@ function OrderList() {
     api.interceptors.request.use((config) => {
         const token = localStorage.getItem("accessToken");
 
-        if (token) {
+
+        if (token && !config.url?.includes('/members/reissue')) {
             config.headers.Authorization = `Bearer ${token}`;
         }
 
