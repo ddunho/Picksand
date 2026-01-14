@@ -13,6 +13,8 @@ function OrderPay(){
     const { reqDatas } = location.state || {};
 
     console.log(reqDatas);
+    const [receiverName, setReceiverName] = useState("");
+    const [deliveryMessage, setDeliveryMessage] = useState("");
 
     const data = reqDatas?.[0];
     const inds = data?.inds || [];
@@ -64,28 +66,35 @@ function OrderPay(){
     
 
     const handlePay = async () => {
-        // 🔹 주문 데이터 임시 저장
-        sessionStorage.setItem(
-            "orderData",
-            JSON.stringify(reqDatas)
-        );
+    // 받는 사람 성함과 배송 요청사항 가져오기
+    const receiverNameInput = document.querySelector('.changenameinput');
+    const deliveryMessageInput = document.querySelector('.delivermessage');
 
-        sessionStorage.setItem(
-            "totalPrice",
-            totalProductPrice
-        );
+    const receiverNameValue = receiverNameInput?.value || userInfo.nickname;
+    const deliveryMessageValue = deliveryMessageInput?.value || "";
 
-        const tossPayments = await loadTossPayments("test_ck_5OWRapdA8ddBLEl9mY998o1zEqZK");
+    if (!receiverNameValue) {
+        alert("받으시는 분 성함을 입력해주세요.");
+        return;
+    }
 
-        tossPayments.requestPayment("카드", {
-            amount: totalProductPrice,
-            orderId: "order_" + new Date().getTime(),
-            orderName: "커스텀 샌드위치 주문",
-            customerName: userInfo.nickname || "고객",
-            successUrl: "http://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/paySuccess",
-            failUrl: "http://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/orderpay",
-        });
-        };
+    // 주문 데이터 임시 저장
+    sessionStorage.setItem("orderData", JSON.stringify(reqDatas));
+    sessionStorage.setItem("totalPrice", totalProductPrice);  // ← 수정!
+    sessionStorage.setItem("receiverName", receiverNameValue);
+    sessionStorage.setItem("deliveryMessage", deliveryMessageValue);
+
+    const tossPayments = await loadTossPayments("test_ck_5OWRapdA8ddBLEl9mY998o1zEqZK");
+
+    tossPayments.requestPayment("카드", {
+        amount: totalProductPrice,
+        orderId: "order_" + new Date().getTime(),
+        orderName: "커스텀 샌드위치 주문",
+        customerName: userInfo.nickname || "고객",
+        successUrl: "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/paySuccess",
+        failUrl: "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/orderpay",
+    });
+};
 
 
     return(
@@ -200,12 +209,24 @@ function OrderPay(){
 
                         <div className="deliverinfo">
                             <p>받으시는 분 성함</p>
-                            <input placeholder="받으시는 분 성함을 입력해 주세요." className="changenameinput"></input>
+                            <input
+                                placeholder="받으시는 분 성함을 입력해 주세요."
+                                className="changenameinput"
+                                value={receiverName}
+                                onChange={(e) => setReceiverName(e.target.value)}
+                                />
                         </div>
 
                         <div className="deliverrequest">
                             <p>배송 요청 사항</p>
-                            <textarea cols="30" rows="3" className="delivermessage" placeholder="배송 요청 사항을 적어주세요."></textarea>
+                            <textarea
+                                cols="30"
+                                rows="3"
+                                className="delivermessage"
+                                placeholder="배송 요청 사항을 적어주세요."
+                                value={deliveryMessage}
+                                onChange={(e) => setDeliveryMessage(e.target.value)}
+                                />
                         </div>  
 
                         <button className="checkdeliverspot" onClick={handleAddress}>
