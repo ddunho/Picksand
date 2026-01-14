@@ -90,7 +90,7 @@ function OrderList() {
                         }
 
                         localStorage.clear();
-                        window.location.href = "mainpage";
+                        // window.location.href = "mainpage";
                         return Promise.reject(e);
                     }
                 }
