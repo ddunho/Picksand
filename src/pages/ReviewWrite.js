@@ -23,7 +23,7 @@ function Review() {
     const [memberNm, setMemberNm] = useState();
     const api = axios.create({
         // baseURL: "http://localhost:8080/server-c",
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/server-c",
+        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/",
         withCredentials: true,
     });
 
@@ -41,10 +41,11 @@ function Review() {
 
     const totalPages = Math.ceil(sortedReview.length / reviewsPerPage);
 
-    api.interceptors.request.use((config) => {
+     api.interceptors.request.use((config) => {
         const token = localStorage.getItem("accessToken");
 
-        if (token) {
+
+        if (token && !config.url?.includes('server-a/members/reissue')) {
             config.headers.Authorization = `Bearer ${token}`;
         }
 
@@ -68,7 +69,7 @@ function Review() {
 
                 try {
                     const refreshToken = localStorage.getItem("refreshToken");
-                    const res = await api.post("/members/reissue", {
+                    const res = await api.post("server-a/members/reissue", {
                         refreshToken: refreshToken
                     });
 
@@ -76,7 +77,7 @@ function Review() {
                     localStorage.setItem("refreshToken", res.data.refreshToken);
                     originalRequest.headers.Authorization =
                         `Bearer ${res.data.accessToken}`;
-                        
+
                     return api(originalRequest);
 
                 } catch (e) {
@@ -87,7 +88,7 @@ function Review() {
                     }
 
                     localStorage.clear();
-                    window.location.href = "/login";
+                    window.location.href = "server-a/members/logout";
                     return Promise.reject(e);
                 }
             }
@@ -100,7 +101,7 @@ function Review() {
                 }
 
                 localStorage.clear();
-                window.location.href = "/login";
+                window.location.href = "server-a/members/logout";
             }
 
             // ❌ 권한 없음
@@ -123,7 +124,7 @@ function Review() {
             starPoint: star,
             memberNickname: memberNm
         };
-        await api.post("/review/addReview", review);
+        await api.post("server-c/review/addReview", review);
 
     };
 
@@ -132,10 +133,10 @@ function Review() {
     useEffect(() => {
         const fetchData = async () => {
             const [avg, count, reviews, nm] = await Promise.all([
-                api.get("/review/avgStar"),
-                api.get("/review/reviewCount"),
-                api.get("/review/allReview"),
-                api.get("/user/findNM"),
+                api.get("server-c/review/avgStar"),
+                api.get("server-c/review/reviewCount"),
+                api.get("server-c/review/allReview"),
+                api.get("server-c/user/findNM"),
             ]);
 
             setStarAvg(avg.data);

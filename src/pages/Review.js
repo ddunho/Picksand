@@ -23,19 +23,21 @@ function Review() {
     // const [MemberId ,setMemberId] = useState();
     const api = axios.create({
         // baseURL: "http://localhost:8080/server-c",
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/server-c",
+        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/",
         withCredentials: true,
     });
 
      api.interceptors.request.use((config) => {
         const token = localStorage.getItem("accessToken");
 
-        if (token) {
+
+        if (token && !config.url?.includes('server-a/members/reissue')) {
             config.headers.Authorization = `Bearer ${token}`;
         }
 
         return config;
     });
+
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 7;
 
@@ -66,7 +68,7 @@ function Review() {
 
                 try {
                     const refreshToken = localStorage.getItem("refreshToken");
-                    const res = await api.post("/members/reissue", {
+                    const res = await api.post("server-a/members/reissue", {
                         refreshToken: refreshToken
                     });
 
@@ -85,7 +87,7 @@ function Review() {
                     }
 
                     localStorage.clear();
-                    window.location.href = "/login";
+                    window.location.href = "server-a/members/logout";
                     return Promise.reject(e);
                 }
             }
@@ -98,7 +100,7 @@ function Review() {
                 }
 
                 localStorage.clear();
-                window.location.href = "/login";
+                window.location.href = "server-a/members/logout";
             }
 
             // ❌ 권한 없음
@@ -130,9 +132,9 @@ function Review() {
     useEffect(() => {
         const fetchData = async () => {
             const [avg, count, reviews] = await Promise.all([
-                api.get("/review/avgStar"),
-                api.get("/review/reviewCount"),
-                api.get("/review/allReview"),
+                api.get("server-c/review/avgStar"),
+                api.get("server-c/review/reviewCount"),
+                api.get("server-c/review/allReview"),
             ]);
 
             setStarAvg(avg.data);

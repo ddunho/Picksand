@@ -87,7 +87,7 @@ function OrderList() {
                     }
 
                     localStorage.clear();
-                    window.location.href = "/login";
+                    window.location.href = "server-a/members/logout";
                     return Promise.reject(e);
                 }
             }
@@ -100,7 +100,7 @@ function OrderList() {
                 }
 
                 localStorage.clear();
-                window.location.href = "/login";
+                window.location.href = "server-a/members/logout";
             }
 
             // ❌ 권한 없음

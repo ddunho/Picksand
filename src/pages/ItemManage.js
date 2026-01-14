@@ -36,14 +36,15 @@ function ItemManage() {
 
     const api = axios.create({
         // baseURL: "http://localhost:8080/server-c",
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/server-c",
+        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/",
         withCredentials: true,
     });
 
      api.interceptors.request.use((config) => {
         const token = localStorage.getItem("accessToken");
 
-        if (token) {
+
+        if (token && !config.url?.includes('server-a/members/reissue')) {
             config.headers.Authorization = `Bearer ${token}`;
         }
 
@@ -67,7 +68,7 @@ function ItemManage() {
 
                 try {
                     const refreshToken = localStorage.getItem("refreshToken");
-                    const res = await api.post("/members/reissue", {
+                    const res = await api.post("server-a/members/reissue", {
                         refreshToken: refreshToken
                     });
 
@@ -86,7 +87,7 @@ function ItemManage() {
                     }
 
                     localStorage.clear();
-                    window.location.href = "/login";
+                    window.location.href = "server-a/members/logout";
                     return Promise.reject(e);
                 }
             }
@@ -99,7 +100,7 @@ function ItemManage() {
                 }
 
                 localStorage.clear();
-                window.location.href = "/login";
+                window.location.href = "server-a/members/logout";
             }
 
             // ❌ 권한 없음
@@ -131,7 +132,7 @@ function ItemManage() {
         alert(alertmessage[newIndex]);
 
         try {
-            await api.post("/store/storeManage", {
+            await api.post("server-c/store/storeManage", {
                 storeUid: storeUid,
                 storeState: newState
             });
@@ -143,7 +144,7 @@ function ItemManage() {
 
     useEffect(() => {
         const storeList = async () => {
-            const sto = await api.get("/store/getStore")
+            const sto = await api.get("server-c/store/getStore")
             setStoreInfoList(sto.data)
         }
         storeList();
@@ -154,7 +155,7 @@ function ItemManage() {
 
     useEffect(() => {
         const stockList = async () => {
-            const sto = await api.get("/stock/findStock");
+            const sto = await api.get("server-c/stock/findStock");
             setStock(sto.data);
         };
         stockList();
@@ -164,7 +165,7 @@ function ItemManage() {
 
     useEffect(() => {
         const defSoldOut = async () => {
-            const def = await api.get("/stock/getSoldOut");
+            const def = await api.get("server-c/stock/getSoldOut");
             setSoldOutList(def.data);
         };
         defSoldOut();
@@ -193,7 +194,7 @@ function ItemManage() {
 
     const sendSoldOutStatus = async () => {
         try {
-            await api.post("/stock/soldOut", soldOutList);
+            await api.post("server-c/stock/soldOut", soldOutList);
             alert("저장되었습니다.");
             window.location.reload();
 
