@@ -15,7 +15,7 @@ function PaySuccess() {
 
         if (!orderData || !totalPrice || !receiverName) {
           alert("주문 정보가 올바르지 않습니다.");
-          window.location.href = "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/#/orderpay";
+          window.location.href = "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/orderpay";
           return;
         }
 
