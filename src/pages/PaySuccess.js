@@ -8,6 +8,22 @@ function OrderPay(){
 
     const api = useAxios();
 
+    const [orderDatas, setOrderDatas] = useState([]);
+    const [totalPrice, setTotalPrice] = useState(0);
+
+    useEffect(() => {
+        const savedOrder = sessionStorage.getItem("orderData");
+        const savedTotal = sessionStorage.getItem("totalPrice");
+
+        if (savedOrder) {
+            setOrderDatas(JSON.parse(savedOrder));
+        }
+
+        if (savedTotal) {
+            setTotalPrice(Number(savedTotal));
+        }
+    }, []);
+
     const [userInfo, setUserInfo] = useState({
         nickname: "",
         phoneNumber: "",
@@ -60,39 +76,22 @@ function OrderPay(){
                             <button>3개</button>
                         </div>
                         <div className="ordersandwichcontainerp">
-                            <div className="ordercontentp">
-                                <p>커스텀 샌드위치</p>
-                                <p>베이컨,양상추,토마토,마요네즈</p>
-                                <div className="orderquantityp">
-                                    <div className="quantitycontainerp">
-                                        <p>1</p>
-                                        <p className="quantityminusp">-</p>
-                                        <p className="quantityplusp">+</p>
-                                    </div>
-                                    <div>
-                                        <p>6,500원 x 2</p>
-                                        <p>13,000원</p>
-                                    </div>
-                                </div>
-                                <img src="/images/Trash.png" alt="삭제" className="ordertrashp"></img>
+                            <div className="ordersandwichcontainerp">
+                                {orderDatas.map((data, index) => {
+                                    const { inds, recipe } = data;
 
-                            </div>
-                            <div className="ordercontentp">
-                                <p>커스텀 샌드위치</p>
-                                <p>베이컨,양상추,토마토,마요네즈</p>
-                                <div className="orderquantityp">
-                                    <div className="quantitycontainerp">
-                                        <p>1</p>
-                                        <p className="quantityminusp">-</p>
-                                        <p className="quantityplusp">+</p>
+                                    return (
+                                    <div className="ordercontentp" key={index}>
+                                        <p>{recipe.name}</p>
+                                        <p>{inds.map(ind => ind.name).join(", ")}</p>
+
+                                        <div>
+                                        <p>{recipe.totalPrice.toLocaleString()}원</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p>6,500원 x 2</p>
-                                        <p>13,000원</p>
-                                    </div>
+                                    );
+                                })}
                                 </div>
-                                <img src="/images/Trash.png" alt="삭제" className="ordertrashp"></img>
-                            </div>
                         </div>
 
                         <div className="orderlinep"></div>
@@ -117,53 +116,7 @@ function OrderPay(){
 
                        
                     </div>
-                    {showAddress &&
-                    <div className={`addresswrapperp ${showAddress ? "open" : "close"}`}>
-                        <div className="deliverinfop">
-                        <div className="addresstitlep">
-                            <img src="/images/place.png" alt="위치"></img>
-                            <p>배송지 정보</p>
-                        </div>
-
-                        <p>닉네임</p>
-                            <input
-                            type="text"
-                            value={userInfo.nickname}
-                            readOnly></input>
-                        </div>
-
-                        
-                        <div className="deliverinfop">
-                            <p>휴대폰 번호</p>
-                            <input
-                            type="text"
-                            value={userInfo.phoneNumber}
-                            readOnly></input>
-                        </div>
-
-                        <div className="deliverinfop">
-                            <p>배송 주소</p>
-                            <input
-                            type="text"
-                            value={`${userInfo.address} ${userInfo.addressDetail}`}
-                            readOnly></input>
-                        </div>
-
-                        <div className="deliverinfop">
-                            <p>받으시는 분 성함</p>
-                            <input placeholder="받으시는 분 성함을 입력해 주세요." className="changenameinputp"></input>
-                        </div>
-
-                        <div className="deliverrequestp">
-                            <p>배송 요청 사항</p>
-                            <textarea cols="30" rows="3" className="delivermessagep" placeholder="배송 요청 사항을 적어주세요."></textarea>
-                        </div>  
-
-                        <button className="checkdeliverspotp" onClick={handleAddress}>
-                            배송지 정보를 확인하였습니다. 
-                        </button>            
-                    </div>
-}
+                    
                 </div>
             </div>
         </main>

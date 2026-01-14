@@ -56,23 +56,31 @@ function OrderPay(){
         setShowAddress(prev => !prev)
     }
 
+    
+
     const handlePay = async () => {
-        const tossPayments = await loadTossPayments("test_ck_5OWRapdA8ddBLEl9mY998o1zEqZK");
+        // 🔹 주문 데이터 임시 저장
+        sessionStorage.setItem(
+            "orderData",
+            JSON.stringify(reqDatas)
+        );
+
+        sessionStorage.setItem(
+            "totalPrice",
+            totalProductPrice
+        );
+
+        const tossPayments = await loadTossPayments("test_ck_...");
 
         tossPayments.requestPayment("카드", {
-         amount: totalProductPrice,
-        orderId: "order_" + new Date().getTime(), // 유니크한 ID
-        orderName: "커스텀 샌드위치 주문",
-        customerName: userInfo.nickname || "고객",
-        successUrl: "http://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/paySuccess",
-        failUrl: "http://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/orderpay",
+            amount: totalProductPrice,
+            orderId: "order_" + new Date().getTime(),
+            orderName: "커스텀 샌드위치 주문",
+            customerName: userInfo.nickname || "고객",
+            successUrl: "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/paySuccess",
+            failUrl: "https://picksand-bucket.s3-website.ap-northeast-2.amazonaws.com/orderpay",
         });
         };
-
-    const totalProductPrice = reqDatas.reduce(
-        (sum, data) => sum + data.recipe.totalPrice,
-        0
-        );
 
 
     return(
