@@ -32,7 +32,6 @@ function OrderList() {
     const currentOrders = sortedOrder.slice(indexOfFirst, indexOfLast);
     const totalPages = Math.ceil(sortedOrder.length / reviewsPerPage);
 
-    // ✅ API 인스턴스를 한 번만 생성
     const apiRef = useRef(null);
     
     if (!apiRef.current) {
@@ -44,13 +43,10 @@ function OrderList() {
     
     const api = apiRef.current;
 
-    // ✅ 인터셉터를 한 번만 등록
     useEffect(() => {
-        // Request 인터셉터
         const requestInterceptor = api.interceptors.request.use((config) => {
             const token = localStorage.getItem("accessToken");
             
-            // 재발급 API는 토큰 제외
             if (token && !config.url?.includes('members/reissue')) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
@@ -58,17 +54,16 @@ function OrderList() {
             return config;
         });
 
-        // Response 인터셉터
         const responseInterceptor = api.interceptors.response.use(
             response => response,
             async error => {
                 const originalRequest = error.config;
 
-                // ✅ 401 에러 && ACCESS_TOKEN_EXPIRED && 재시도 안 한 경우
+                // ✅ 401 에러 && 재시도 안 한 경우만 재발급 시도
                 if (
                     error.response?.status === 401 &&
-                    error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
-                    !originalRequest._retry
+                    !originalRequest._retry &&
+                    !originalRequest.url?.includes('members/reissue') // 재발급 API는 재시도 안함
                 ) {
                     originalRequest._retry = true;
 
@@ -76,12 +71,13 @@ function OrderList() {
                         const refreshToken = localStorage.getItem("refreshToken");
                         
                         if (!refreshToken) {
+                            console.log("❌ refreshToken이 없습니다");
                             throw new Error("No refresh token");
                         }
 
                         console.log("🔄 토큰 재발급 시도 중...");
 
-                        // ✅ 재발급 요청 (withCredentials 포함)
+                        // ✅ 재발급 요청
                         const response = await axios.post(
                             "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/server-a/members/reissue",
                             { refreshToken: refreshToken },
@@ -93,12 +89,24 @@ function OrderList() {
                             }
                         );
 
-                        console.log("✅ 토큰 재발급 성공");
+                        // ✅ 응답 상태 체크
+                        if (response.status !== 200) {
+                            throw new Error(`재발급 실패: ${response.status}`);
+                        }
+
+                        console.log("✅ 토큰 재발급 성공:", response.data);
 
                         // 새 토큰 저장
                         const { accessToken, refreshToken: newRefreshToken } = response.data;
+                        
+                        if (!accessToken) {
+                            throw new Error("accessToken이 응답에 없습니다");
+                        }
+                        
                         localStorage.setItem("accessToken", accessToken);
-                        localStorage.setItem("refreshToken", newRefreshToken);
+                        if (newRefreshToken) {
+                            localStorage.setItem("refreshToken", newRefreshToken);
+                        }
 
                         // 원래 요청 재시도
                         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -106,27 +114,37 @@ function OrderList() {
 
                     } catch (refreshError) {
                         console.error("❌ 토큰 재발급 실패:", refreshError);
+                        console.error("에러 상세:", refreshError.response?.data);
                         
                         // 재발급 실패 시 로그아웃
                         if (!isAlertShownRef.current) {
                             isAlertShownRef.current = true;
                             alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                            
+                            localStorage.clear();
+                            
+                            // 약간의 지연 후 페이지 이동
+                            setTimeout(() => {
+                                window.location.href = "/mainpage";
+                            }, 100);
                         }
                         
-                        localStorage.clear();
-                        window.location.href = "/mainpage";
                         return Promise.reject(refreshError);
                     }
                 }
 
-                // ❌ 다른 401 에러 (재발급 대상 아님)
+                // ❌ 다른 401 에러 또는 재발급 API의 401
                 if (error.response?.status === 401) {
                     if (!isAlertShownRef.current) {
                         isAlertShownRef.current = true;
                         alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                        
+                        localStorage.clear();
+                        
+                        setTimeout(() => {
+                            window.location.href = "/mainpage";
+                        }, 100);
                     }
-                    localStorage.clear();
-                    window.location.href = "/mainpage";
                 }
 
                 // ❌ 권한 없음
@@ -141,12 +159,11 @@ function OrderList() {
             }
         );
 
-        // 클린업: 컴포넌트 언마운트 시 인터셉터 제거
         return () => {
             api.interceptors.request.eject(requestInterceptor);
             api.interceptors.response.eject(responseInterceptor);
         };
-    }, []); // ✅ 빈 배열: 마운트 시 한 번만 실행
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -160,6 +177,7 @@ function OrderList() {
                 setOrder(orderRes.data);
             } catch (e) {
                 console.error("데이터 로드 실패:", e);
+                // 401 에러는 인터셉터에서 처리됨
             } finally {
                 setIsLoading(false);
             }
