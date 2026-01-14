@@ -1,6 +1,6 @@
 import './App.css';
 import Header from "./components/Header.js";
-import { Routes, Route, Navigate, BrowserRouter, HashRouter} from 'react-router-dom';
+import { Routes, Route, Navigate, BrowserRouter} from 'react-router-dom';
 import MainPage from './pages/MainPage.js';
 import UserInfo from './pages/UserInfo.js';
 import Signup from './pages/Signup.js';
@@ -23,7 +23,7 @@ function App() {
     <>
     <AuthProvider>
       <GlobalProvider>
-      <HashRouter>
+      <BrowserRouter>
           <Header></Header>
           <Routes>
             <Route path="/" element={<Navigate to="/mainpage" replace />} />
@@ -39,7 +39,7 @@ function App() {
             <Route path='/paySuccess' element={<PaySuccess/>}/>
             <Route path='/ReviewWrite' element={<ReviewWrite />} />
           </Routes>
-      </HashRouter>
+      </BrowserRouter>
       </GlobalProvider>
     </AuthProvider>
     </>
