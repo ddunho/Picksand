@@ -984,6 +984,7 @@ function MainPage() {
 
     return(
         <div className='MP_noSelect'>
+            <Toaster/>
 
             <main className='MP_main MP_HorizontalContainer'>
 
