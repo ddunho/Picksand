@@ -875,7 +875,7 @@ function MainPage() {
         }
         
         
-        
+        console.log(reqDatas);
             
         //PageNavigate
         navigate("/orderpay", {
