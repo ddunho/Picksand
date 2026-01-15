@@ -195,7 +195,7 @@ function SandwichBox({sandwichIndex,
         {
             setSandwichAry([
                 {
-                    name: 'DefaultName',
+                    name: '나만의 샌드위치',
                     Ingredients: [],
                 }
             ]);
@@ -437,7 +437,7 @@ function MainPage() {
 
     const [sandwichAry, setSandwichAry] = useState([
         {
-            name: 'DefaultName',
+            name: '나만의 샌드위치',
             Ingredients: [],
         }
     ]);
@@ -733,7 +733,7 @@ function MainPage() {
     function handleAddNewSandwich() {
 
         const newEmptySandwich = {
-            name: 'newSandwich' + sandwichAry.length,
+            name: '새 샌드위치 ' + sandwichAry.length,
             Ingredients: []
         }
         createNewSandwich(newEmptySandwich);
