@@ -9,6 +9,8 @@ import { useSpring, animated } from '@react-spring/web'
 import { useAxios } from '../api/axiosInterceptor';
 import { AuthContext } from "../context/AuthProvider";
 
+import toast, { Toaster } from 'react-hot-toast';
+
 function DropIngredient({item, index}) {
 
   const xAlter = useRef(Math.random() * 30 - 15).current; 
@@ -232,7 +234,7 @@ function SandwichBox({sandwichIndex,
 
         if(!userInfo || Object.keys(userInfo).length === 0)
         {
-            alert("로그인이 필요합니다.");
+            toast.error("로그인이 필요합니다.");
             return;
         }
 
@@ -275,11 +277,11 @@ function SandwichBox({sandwichIndex,
 
             console.log(result.data);
             await LoadRecipeDatas(indList);
-            alert(result.data);
+            toast.success(result.data);
 
         }catch(error){
             const errorMassage = error.response && error.response.data ? error.response.data : '개별 처리에 실패 했습니다.';
-            alert(`${errorMassage}`);
+            toast.error(`${errorMassage}`);
         }
         finally{
             setIsSaving(false);
