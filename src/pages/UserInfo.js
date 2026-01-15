@@ -3,12 +3,11 @@ import { useAxios } from "../api/axiosInterceptor";
 import { useEffect, useState } from "react";
 import AddressSearchModal from "../components/AddressSearchModal";
 
-
-
 function UserInfo(){
     const [originUserInfo, setOriginUserInfo] = useState(null);
     const [show, setShow] = useState(false);
     const [modalState, setModalState] = useState(false);
+    const [orders, setOrders] = useState([]);  // ⭐ 주문 내역 상태 추가
 
     const [errors, setErrors] = useState({
         nickname: "",
@@ -25,8 +24,6 @@ function UserInfo(){
             address: data.address
         }));
     };
-
-
 
     const validateField = (name, value) => {
         let message = "";
@@ -78,7 +75,9 @@ function UserInfo(){
     });
     const [editMode, setEditMode] = useState(false);
 
+    // ⭐ 회원 정보와 주문 내역 동시 로딩
     useEffect(() => {
+        // 회원 정보 로딩
         api.get("server-a/members/userinfo")
             .then((res) => {
                 setUserInfo({
@@ -90,6 +89,16 @@ function UserInfo(){
             .catch((err) => {
                 console.error("유저정보 불러오기 오류:", err);
             });
+
+        // ⭐ 주문 내역 로딩
+        api.get("server-a/orders/my-orders")
+            .then((res) => {
+                console.log("주문 내역:", res.data);
+                setOrders(res.data);
+            })
+            .catch((err) => {
+                console.error("주문 내역 불러오기 오류:", err);
+            });
     }, [api]);
 
     const isChanged = () => {
@@ -100,92 +109,84 @@ function UserInfo(){
             userInfo.phoneNumber !== originUserInfo.phoneNumber ||
             userInfo.address !== originUserInfo.address ||
             userInfo.addressDetail !== originUserInfo.addressDetail ||
-            userInfo.password.trim() !== ""   // 비밀번호 입력했는지
+            userInfo.password.trim() !== ""
         );
     };
 
     const isPhoneChanged = () => {
-    if (!originUserInfo) return false;
-    return userInfo.phoneNumber !== originUserInfo.phoneNumber;
-};
-
-
+        if (!originUserInfo) return false;
+        return userInfo.phoneNumber !== originUserInfo.phoneNumber;
+    };
 
     const handleUpdate = async () => {
-    if (!isChanged()) {
-        setEditMode(false);
-        return;
-    }
-
-    if (isPhoneChanged()) {
-        try {
-            await api.get(
-                `server-a/members/check-phone?phoneNumber=${encodeURIComponent(userInfo.phoneNumber)}`
-            );
-    
-        } catch (err) {
-            if (err.response?.status === 409) {
-                alert("이미 사용 중인 휴대폰 번호입니다.");
-            } else {
-                alert("휴대폰 번호 확인 중 오류가 발생했습니다.");
-            }
+        if (!isChanged()) {
+            setEditMode(false);
             return;
         }
-    }
 
-    const nicknameError = validateField("nickname", userInfo.nickname);
-    const phoneError = validateField("phoneNumber", userInfo.phoneNumber);
+        if (isPhoneChanged()) {
+            try {
+                await api.get(
+                    `server-a/members/check-phone?phoneNumber=${encodeURIComponent(userInfo.phoneNumber)}`
+                );
+            } catch (err) {
+                if (err.response?.status === 409) {
+                    alert("이미 사용 중인 휴대폰 번호입니다.");
+                } else {
+                    alert("휴대폰 번호 확인 중 오류가 발생했습니다.");
+                }
+                return;
+            }
+        }
 
-    const passwordError =
-        userInfo.password.trim()
+        const nicknameError = validateField("nickname", userInfo.nickname);
+        const phoneError = validateField("phoneNumber", userInfo.phoneNumber);
+        const passwordError = userInfo.password.trim()
             ? validateField("password", userInfo.password)
             : "";
 
-    if (nicknameError || phoneError || passwordError) {
-        setErrors({
-            nickname: nicknameError,
-            password: passwordError,
-            phoneNumber: phoneError
+        if (nicknameError || phoneError || passwordError) {
+            setErrors({
+                nickname: nicknameError,
+                password: passwordError,
+                phoneNumber: phoneError
+            });
+            alert("입력값을 확인해주세요.");
+            return;
+        }
+
+        api.patch("server-a/members/me", {
+            nickname: userInfo.nickname,
+            password: userInfo.password || null,
+            phoneNumber: userInfo.phoneNumber,
+            address: userInfo.address,
+            addressDetail: userInfo.addressDetail
+        })
+        .then(() => {
+            alert("정보가 수정되었습니다.");
+            setEditMode(false);
+        })
+        .catch((err) => {
+            console.error("정보수정 오류:", err);
+            alert("정보 수정 중 오류가 발생했습니다.");
         });
-        alert("입력값을 확인해주세요.");
-        return;
-    }
-
-    api.patch("server-a/members/me", {
-        nickname: userInfo.nickname,
-        password: userInfo.password || null,
-        phoneNumber: userInfo.phoneNumber,
-        address: userInfo.address,
-        addressDetail: userInfo.addressDetail
-    })
-    .then(() => {
-        alert("정보가 수정되었습니다.");
-        setEditMode(false);
-    })
-    .catch((err) => {
-        console.error("정보수정 오류:", err);
-        alert("정보 수정 중 오류가 발생했습니다.");
-    });
-};
-
+    };
 
     const handleDelete = () => {
         if (!window.confirm("정말로 회원 탈퇴하시겠습니까?")) return;
 
         api.delete("server-a/members/me")
             .then(() => {
-            alert("회원 탈퇴가 완료되었습니다.");
-            // localStorage 삭제
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            // 홈으로 이동
-            window.location.href = "/";
+                alert("회원 탈퇴가 완료되었습니다.");
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                window.location.href = "/";
             })
             .catch((err) => {
-            console.error("회원탈퇴 오류:", err);
-            alert("회원 탈퇴 처리 중 오류가 발생했습니다.");
+                console.error("회원탈퇴 오류:", err);
+                alert("회원 탈퇴 처리 중 오류가 발생했습니다.");
             });
-        };
+    };
 
     return(
         <main>
@@ -230,12 +231,10 @@ function UserInfo(){
                             <input value={userInfo.nickname} readOnly={!editMode} 
                                 onChange={(e) => {
                                     const value = e.target.value;
-
                                     setUserInfo(prev => ({
                                         ...prev,
                                         nickname: value
                                     }));
-
                                     const errorMessage = validateField("nickname", value);
                                     setErrors(prev => ({
                                         ...prev,
@@ -255,21 +254,21 @@ function UserInfo(){
                             <div className="userinfoeye">
                                 <input 
                                     type={show ? "text" : "password"}
-                                    placeholder="정보 수정 시 비밀번호를 다시 설정할 수 있습니다." value={userInfo.password} readOnly={!editMode} 
+                                    placeholder="정보 수정 시 비밀번호를 다시 설정할 수 있습니다." 
+                                    value={userInfo.password} 
+                                    readOnly={!editMode} 
                                     onChange={(e) => {
-                                    const value = e.target.value;
-
-                                    setUserInfo(prev => ({
-                                        ...prev,
-                                        password: value
-                                    }));
-
-                                    const errorMessage = validateField("password", value);
-                                    setErrors(prev => ({
-                                        ...prev,
-                                        password: errorMessage
-                                    }));
-                                }}/>
+                                        const value = e.target.value;
+                                        setUserInfo(prev => ({
+                                            ...prev,
+                                            password: value
+                                        }));
+                                        const errorMessage = validateField("password", value);
+                                        setErrors(prev => ({
+                                            ...prev,
+                                            password: errorMessage
+                                        }));
+                                    }}/>
                                 <img src="/images/Eye.png" alt="눈" onClick={()=> setShow(!show)}></img>
                             </div>
                             {errors.password && (
@@ -285,12 +284,10 @@ function UserInfo(){
                             <input value={userInfo.phoneNumber} readOnly={!editMode}
                                onChange={(e) => {
                                 const value = e.target.value;
-
                                 setUserInfo(prev => ({
                                     ...prev,
                                     phoneNumber: value
                                 }));
-
                                 const errorMessage = validateField("phoneNumber", value);
                                 setErrors(prev => ({
                                     ...prev,
@@ -302,7 +299,6 @@ function UserInfo(){
                             )}
                         </div>
                         <div>
-                            
                             {editMode ? (
                             <div className="dorodetailcontainer">
                                 <div>
@@ -369,90 +365,43 @@ function UserInfo(){
                     />
                 )}
 
-                
                 <div className="deleteaccount">
                     <p onClick={handleDelete}>회원탈퇴</p>
                 </div>
+
+                {/* ⭐ 주문 내역 동적 렌더링 */}
                 <div className="orderinfo">
                     <p>주문 기록</p>
                     <div className="orderlist">
-                        <div>
-                            <div>
-                                <div className="ordernumber">
-                                    <p>주문-004</p>
-                                    <p>2025-11-25</p>
+                        {orders.length === 0 ? (
+                            <p style={{textAlign: 'center', padding: '20px', color: '#999'}}>
+                                주문 내역이 없습니다.
+                            </p>
+                        ) : (
+                            orders.map((order) => (
+                                <div key={order.orderId}>
+                                    <div>
+                                        <div className="ordernumber">
+                                            <p>{order.orderNumber}</p>
+                                            <p>{order.orderDate}</p>
+                                        </div>
+                                        <div className="ordercomponent">
+                                            {order.items.map((item, idx) => (
+                                                item.ingredients.map((ing, ingIdx) => (
+                                                    <button key={`${idx}-${ingIdx}`}>{ing}</button>
+                                                ))
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className={order.orderStatus === 'SHIPPING' ? 'deliverstatusing' : 'deliverstatus'}>
+                                        <p>{order.totalPrice.toLocaleString()}원</p>
+                                        <button>{order.orderStatusText}</button>
+                                    </div>
                                 </div>
-                                <div className="ordercomponent">
-                                    <button>호밀빵</button>
-                                    <button>양상추</button>
-                                    <button>토마토</button>
-                                    <button>치킨</button>
-                                </div>
-                            </div>
-                            <div className="deliverstatusing">
-                                <p>8,700원</p>
-                                <button>배송중</button>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div className="ordernumber">
-                                    <p>주문-003</p>
-                                    <p>2025-11-25</p>
-                                </div>
-                                <div className="ordercomponent">
-                                    <button>호밀빵</button>
-                                    <button>양상추</button>
-                                    <button>토마토</button>
-                                    <button>치킨</button>
-                                </div>
-                            </div>
-                            <div className="deliverstatus">
-                                <p>8,700원</p>
-                                <button>배송완료</button>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div className="ordernumber">
-                                    <p>주문-002</p>
-                                    <p>2025-11-25</p>
-                                </div>
-                                <div className="ordercomponent">
-                                    <button>호밀빵</button>
-                                    <button>양상추</button>
-                                    <button>토마토</button>
-                                    <button>치킨</button>
-                                </div>
-                            </div>
-                            <div className="deliverstatus">
-                                <p>8,700원</p>
-                                <button>배송완료</button>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div className="ordernumber">
-                                    <p>주문-001</p>
-                                    <p>2025-11-25</p>
-                                </div>
-                                <div className="ordercomponent">
-                                    <button>호밀빵</button>
-                                    <button>양상추</button>
-                                    <button>토마토</button>
-                                    <button>치킨</button>
-                                </div>
-                            </div>
-                            <div className="deliverstatus">
-                                <p>8,700원</p>
-                                <button>배송완료</button>
-                            </div>
-                        </div>
+                            ))
+                        )}
                     </div>
-                 </div>
-
-
-
+                </div>
             </div>
         </main>
     );
