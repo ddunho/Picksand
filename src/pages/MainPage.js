@@ -883,8 +883,6 @@ function MainPage() {
         });
 
 
-        console.log(reqDatas);
-
         return;
 
     }
@@ -1157,8 +1155,8 @@ function MainPage() {
                             onClick={() => handleGPStoggle(true)}>
                     <img className='MP_Footer_Img' draggable="false" src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
-                        <div className='MP_FooterText_Large MP_textColor1'>{shopInfos[currentSelectedShopAddr].storeName}</div>
-                        <div className='MP_FooterText_Normal MP_textColor2'>{shopInfos[currentSelectedShopAddr].storeLocation}</div>
+                        <div className='MP_FooterText_Large MP_textColor1'>{shopInfos?.[currentSelectedShopAddr]?.storeName}</div>
+                        <div className='MP_FooterText_Normal MP_textColor2'>{shopInfos?.[currentSelectedShopAddr]?.storeLocation}</div>
                     </div>
                 </div>
 
