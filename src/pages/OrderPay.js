@@ -84,7 +84,7 @@ function OrderPay(){
             }));
 
             // 주문 생성 API 호출
-            const result = await api.post("/server-b/orders", {
+            const result = await api.post("/server-a/orders", {
                 totalPrice: totalProductPrice,
                 receiverName: receiverNameValue,
                 deliveryMessage: deliveryMessageValue,
