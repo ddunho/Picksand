@@ -27,7 +27,7 @@ function OrderList() {
     const currentOrders = sortedOrder.slice(indexOfFirst, indexOfLast);
     const totalPages = Math.ceil(sortedOrder.length / reviewsPerPage);
 
-    const isAlertShownRef = useRef(false);
+    
     
 
     const storeUid = 1; //지점uid
@@ -46,7 +46,7 @@ function OrderList() {
     }
 
     const api = apiRef.current;
-
+    const isAlertShownRef = useRef(false);
 
     useEffect(() => {
         const requestInterceptor = api.interceptors.request.use((config) => {
@@ -81,7 +81,7 @@ function OrderList() {
 
                         originalRequest.headers.Authorization =
                             `Bearer ${res.data.accessToken}`;
-
+                        isAlertShownRef.current = false;
                         return api(originalRequest);
                     } catch (e) {
                         if (!isAlertShownRef.current) {

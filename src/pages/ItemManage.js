@@ -1,6 +1,6 @@
 import '../css/itemManage.css'
 import { FaClipboardList } from "react-icons/fa";
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdFoodBank } from "react-icons/md";
@@ -34,86 +34,75 @@ function ItemManage() {
 
 
 
-    const api = axios.create({
-        // baseURL: "http://localhost:8080/server-c",
-        baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/",
-        withCredentials: true,
-    });
+    const apiRef = useRef(null);
 
-     api.interceptors.request.use((config) => {
-        const token = localStorage.getItem("accessToken");
+    if (!apiRef.current) {
+        apiRef.current = axios.create({
+            baseURL: "http://k8s-picksand-appingre-5fb1cc8acd-1353364338.ap-northeast-2.elb.amazonaws.com/",
+            withCredentials: true,
+        });
+    }
 
+    const api = apiRef.current;
+    const isAlertShownRef = useRef(false);
 
-        if (token && !config.url?.includes('server-a/members/reissue')) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+    useEffect(() => {
+        const requestInterceptor = api.interceptors.request.use((config) => {
+            const token = localStorage.getItem("accessToken");
 
-        return config;
-    });
+            if (token && !config.url?.includes('server-a/members/reissue')) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        });
 
-    let isAlertShown = false;
+        const responseInterceptor = api.interceptors.response.use(
+            response => response,
+            async error => {
+                const originalRequest = error.config;
 
-    api.interceptors.response.use(
-        response => response,
-        async error => {
-            const originalRequest = error.config;
+                if (
+                    error.response?.status === 401 &&
+                    !originalRequest._retry &&
+                    !originalRequest.url.includes("server-a/members/reissue")
+                ) {
+                    originalRequest._retry = true;
 
-            // ✅ Access Token 만료 → refresh
-            if (
-                error.response?.status === 401 &&
-                error.response.data?.error === "ACCESS_TOKEN_EXPIRED" &&
-                !originalRequest._retry
-            ) {
-                originalRequest._retry = true;
+                    try {
+                        const refreshToken = localStorage.getItem("refreshToken");
+                        const res = await api.post("server-a/members/reissue", {
+                            refreshToken
+                        });
 
-                try {
-                    const refreshToken = localStorage.getItem("refreshToken");
-                    const res = await api.post("server-a/members/reissue", {
-                        refreshToken: refreshToken
-                    });
+                        localStorage.setItem("accessToken", res.data.accessToken);
+                        localStorage.setItem("refreshToken", res.data.refreshToken);
 
-                    localStorage.setItem("accessToken", res.data.accessToken);
-                    localStorage.setItem("refreshToken", res.data.refreshToken);
-                    originalRequest.headers.Authorization =
-                        `Bearer ${res.data.accessToken}`;
+                        originalRequest.headers.Authorization =
+                            `Bearer ${res.data.accessToken}`;
+                        isAlertShownRef.current = false;
+                        return api(originalRequest);
+                    } catch (e) {
+                        if (!isAlertShownRef.current) {
+                            isAlertShownRef.current = true;
+                            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                        }
 
-                    return api(originalRequest);
-
-                } catch (e) {
-                    // ⛔ refresh 실패 → alert 한 번만
-                    if (!isAlertShown) {
-                        isAlertShown = true;
-                        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                        localStorage.clear();
+                        window.location.href = "mainpage";
+                        return Promise.reject(e);
                     }
-
-                    localStorage.clear();
-                    window.location.href = "mainpage";
-                    return Promise.reject(e);
-                }
-            }
-
-            // ❌ refresh 대상이 아닌 401
-            if (error.response?.status === 401) {
-                if (!isAlertShown) {
-                    isAlertShown = true;
-                    alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
                 }
 
-                localStorage.clear();
-                window.location.href = "mainpage";
+                return Promise.reject(error);
             }
+        );
 
-            // ❌ 권한 없음
-            if (error.response?.status === 403) {
-                if (!isAlertShown) {
-                    isAlertShown = true;
-                    alert("접근 권한이 없습니다.");
-                }
-            }
-
-            return Promise.reject(error);
-        }
-    );
+        // ✅ 컴포넌트 unmount 시 interceptor 제거 (중요!)
+        return () => {
+            api.interceptors.request.eject(requestInterceptor);
+            api.interceptors.response.eject(responseInterceptor);
+        };
+    }, []);
 
 
     const change = async () => {
