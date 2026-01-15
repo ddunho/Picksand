@@ -369,7 +369,7 @@ function UserInfo(){
                     <p onClick={handleDelete}>회원탈퇴</p>
                 </div>
 
-                {/* 주문 내역 동적 렌더링 */}
+                {/* ⭐ 주문 내역 동적 렌더링 */}
                 <div className="orderinfo">
                     <p>주문 기록</p>
                     <div className="orderlist">
@@ -387,9 +387,7 @@ function UserInfo(){
                                         </div>
                                         <div className="ordercomponent">
                                             {order.items.map((item, idx) => (
-                                                item.ingredients.map((ing, ingIdx) => (
-                                                    <button key={`${idx}-${ingIdx}`}>{ing}</button>
-                                                ))
+                                                <button key={idx}>{item.sandwichName}</button>
                                             ))}
                                         </div>
                                     </div>
