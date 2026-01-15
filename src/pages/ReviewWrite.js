@@ -46,10 +46,11 @@ function Review() {
     }
 
     const api = apiRef.current;
-    const isAlertShownRef = useRef(false);
+const isAlertShownRef = useRef(false);
+const refreshingRef = useRef(false); // ✅ 재발급 진행 중 플래그
+const refreshPromiseRef = useRef(null); // ✅ 재발급 Promise 저장
 
- useEffect(() => {
-    // ✅ Request Interceptor 추가 (Authorization 헤더 추가용)
+useEffect(() => {
     const requestInterceptor = api.interceptors.request.use((config) => {
         const token = localStorage.getItem("accessToken");
 
@@ -59,71 +60,96 @@ function Review() {
         return config;
     });
 
-   const responseInterceptor = api.interceptors.response.use(
-    response => response,
-    async error => {
-        const originalRequest = error.config;
+    const responseInterceptor = api.interceptors.response.use(
+        response => response,
+        async error => {
+            const originalRequest = error.config;
 
-        if (
-            (error.response?.status === 401 || error.response?.status === 403) &&
-            !originalRequest._retry &&
-            !originalRequest.url.includes("server-a/members/reissue")
-        ) {
-            originalRequest._retry = true;
+            if (
+                (error.response?.status === 401 || error.response?.status === 403) &&
+                !originalRequest._retry &&
+                !originalRequest.url.includes("server-a/members/reissue")
+            ) {
+                originalRequest._retry = true;
 
-            try {
-                const refreshToken = localStorage.getItem("refreshToken");
-                
-                if (!refreshToken) {
-                    throw new Error("리프레시 토큰이 없습니다.");
+                // ✅ 이미 재발급 중이면 해당 Promise를 기다림
+                if (refreshingRef.current && refreshPromiseRef.current) {
+                    console.log("토큰 재발급이 이미 진행 중입니다. 대기 중...");
+                    try {
+                        await refreshPromiseRef.current;
+                        // 재발급 완료 후 원래 요청 재시도
+                        const token = localStorage.getItem("accessToken");
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        return api(originalRequest);
+                    } catch (e) {
+                        return Promise.reject(e);
+                    }
                 }
 
-                // ✅ 어떤 API에서 에러가 발생했는지 로그
-                console.log("403 에러 발생한 API:", originalRequest.url);
-                console.log("토큰 재발급 시도...");
+                // ✅ 재발급 시작
+                refreshingRef.current = true;
                 
-                const res = await api.post("server-a/members/reissue", {
-                    refreshToken
-                });
+                refreshPromiseRef.current = (async () => {
+                    try {
+                        const refreshToken = localStorage.getItem("refreshToken");
+                        
+                        if (!refreshToken) {
+                            throw new Error("리프레시 토큰이 없습니다.");
+                        }
 
-                if (!res.data?.accessToken || !res.data?.refreshToken) {
-                    throw new Error("토큰 재발급 실패: 유효하지 않은 응답");
+                        console.log("토큰 재발급 시도...");
+                        const res = await api.post("server-a/members/reissue", {
+                            refreshToken
+                        });
+
+                        if (!res.data?.accessToken || !res.data?.refreshToken) {
+                            throw new Error("토큰 재발급 실패: 유효하지 않은 응답");
+                        }
+
+                        console.log("토큰 재발급 성공");
+                        localStorage.setItem("accessToken", res.data.accessToken);
+                        localStorage.setItem("refreshToken", res.data.refreshToken);
+
+                        isAlertShownRef.current = false;
+                        return res.data;
+                        
+                    } catch (e) {
+                        console.error("토큰 재발급 실패:", {
+                            message: e.message,
+                            response: e.response?.data,
+                            status: e.response?.status,
+                        });
+
+                        if (!isAlertShownRef.current) {
+                            isAlertShownRef.current = true;
+                            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                        }
+
+                        localStorage.clear();
+                        window.location.href = "/mainpage";
+                        throw e;
+                    } finally {
+                        // ✅ 재발급 완료 후 플래그 초기화
+                        refreshingRef.current = false;
+                        refreshPromiseRef.current = null;
+                    }
+                })();
+
+                try {
+                    await refreshPromiseRef.current;
+                    // 재발급 성공 후 원래 요청 재시도
+                    const token = localStorage.getItem("accessToken");
+                    originalRequest.headers.Authorization = `Bearer ${token}`;
+                    return api(originalRequest);
+                } catch (e) {
+                    return Promise.reject(e);
                 }
-
-                console.log("토큰 재발급 성공");
-                localStorage.setItem("accessToken", res.data.accessToken);
-                localStorage.setItem("refreshToken", res.data.refreshToken);
-
-                originalRequest.headers.Authorization =
-                    `Bearer ${res.data.accessToken}`;
-                isAlertShownRef.current = false;
-                return api(originalRequest);
-                
-            } catch (e) {
-                console.error("토큰 재발급 실패:", {
-                    originalUrl: originalRequest.url, // ✅ 원래 요청 URL
-                    message: e.message,
-                    response: e.response?.data,
-                    status: e.response?.status,
-                    refreshToken: localStorage.getItem("refreshToken") ? "존재" : "없음"
-                });
-
-                if (!isAlertShownRef.current) {
-                    isAlertShownRef.current = true;
-                    alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-                }
-
-                localStorage.clear();
-                window.location.href = "/mainpage";
-                return Promise.reject(e);
             }
+
+            return Promise.reject(error);
         }
+    );
 
-        return Promise.reject(error);
-    }
-);
-
-    // ✅ Cleanup: 컴포넌트 언마운트 시 interceptor 제거
     return () => {
         api.interceptors.request.eject(requestInterceptor);
         api.interceptors.response.eject(responseInterceptor);
