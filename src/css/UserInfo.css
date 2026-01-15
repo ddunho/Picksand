@@ -376,6 +376,70 @@
     cursor: pointer;
     font-size: 14px;
 }
+/* 주문 우측 영역 */
+.orderright {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.orderbuttongroup {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* 주문 상태별 버튼 색상 */
+.orderstatus-주문확인 {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: default;
+    background-color: #ffcdd2;  /* 연한 빨강 */
+    color: #c62828;
+}
+
+.orderstatus-배달중 {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: default;
+    background-color: #ffe0b2;  /* 연한 주황 */
+    color: #e65100;
+}
+
+.orderstatus-배달완료 {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: default;
+    background-color: #c8e6c9;  /* 연한 초록 */
+    color: #2e7d32;
+}
+
+/* 리뷰 작성 버튼 */
+.orderreviewbtn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #81c784;  /* 부드러운 초록 */
+    color: white;
+    transition: background-color 0.2s;
+}
+
+.orderreviewbtn:hover {
+    background-color: #66bb6a;
+}
 
 .orderReviewBTN:hover {
     background-color: #45a049;
