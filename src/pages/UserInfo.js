@@ -1,13 +1,14 @@
 import "../css/UserInfo.css";
 import { useAxios } from "../api/axiosInterceptor";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";  // ⭐ 추가
 import AddressSearchModal from "../components/AddressSearchModal";
 
 function UserInfo(){
     const [originUserInfo, setOriginUserInfo] = useState(null);
     const [show, setShow] = useState(false);
     const [modalState, setModalState] = useState(false);
-    const [orders, setOrders] = useState([]);  // ⭐ 주문 내역 상태 추가
+    const [orders, setOrders] = useState([]);
 
     const [errors, setErrors] = useState({
         nickname: "",
@@ -16,6 +17,7 @@ function UserInfo(){
     });
 
     const api = useAxios();
+    const navigate = useNavigate();  // ⭐ 추가
 
     const onCompletePost = (data) => {
         setModalState(false);
@@ -186,6 +188,13 @@ function UserInfo(){
                 console.error("회원탈퇴 오류:", err);
                 alert("회원 탈퇴 처리 중 오류가 발생했습니다.");
             });
+    };
+
+    // ⭐ 리뷰 작성 페이지로 이동
+    const handleReviewWrite = (orderId) => {
+        navigate('/ReviewWrite', {
+            state: { orderId }
+        });
     };
 
     return(
@@ -386,7 +395,7 @@ function UserInfo(){
                                             <p>{order.orderDate}</p>
                                         </div>
                                         <div className="orderstoreName">
-                                            OOO점
+                                            {order.storeName}
                                         </div>
                                         <div className="ordercomponent">
                                             {order.items.map((item, idx) => (
@@ -398,7 +407,14 @@ function UserInfo(){
                                         <p>{order.totalPrice.toLocaleString()}원</p>
                                         <div className="orderRight">
                                             <button>{order.orderStatusText}</button>
-                                            {order.orderStatus === 'PAYED' && <button className="orderReviewBTN">리뷰작성</button>}
+                                            {order.orderStatus === 'DELIVERED' && (
+                                                <button 
+                                                    className="orderReviewBTN"
+                                                    onClick={() => handleReviewWrite(order.orderId)}
+                                                >
+                                                    리뷰작성
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
