@@ -396,7 +396,10 @@ function UserInfo(){
                                     </div>
                                     <div className={order.orderStatus === 'SHIPPING' ? 'deliverstatusing' : 'deliverstatus'}>
                                         <p>{order.totalPrice.toLocaleString()}원</p>
-                                        <button>{order.orderStatusText}</button>
+                                        <div className="orderRight">
+                                            <button>{order.orderStatusText}</button>
+                                            <button>리뷰 작성</button>
+                                        </div>
                                     </div>
                                 </div>
                             ))
