@@ -84,7 +84,7 @@ function OrderPay(){
             }));
 
             // 주문 생성 API 호출
-            await api.post("/server-a/orders", {
+            const result = await api.post("/server-b/orders", {
                 totalPrice: totalProductPrice,
                 receiverName: receiverNameValue,
                 deliveryMessage: deliveryMessageValue,
@@ -92,7 +92,10 @@ function OrderPay(){
             });
 
             alert("결제가 완료되었습니다!");
-            
+
+            console.log(result)
+
+            /*
             // PaySuccess 페이지로 이동 (주문 정보 전달)
             navigate("/paySuccess", {
                 state: {
@@ -102,6 +105,7 @@ function OrderPay(){
                     deliveryMessage: deliveryMessageValue
                 }
             });
+            */
 
         } catch (err) {
             console.error("결제 실패:", err);
