@@ -93,11 +93,13 @@ export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe
                                     currentSelectedRecipeType === -1 ||
                                     element.recipeType === currentSelectedRecipeType;
                                 
-                                const isIndTypeMatch =
-                                    currentSelectedIndType.length === 0 ||
-                                    (currentSelectedIndType.every(selectedType => 
-                                        element.Ingredients.some(ing => ing.indType === selectedType)
-                                    ));
+                                const recipeIngredientTypes = element.ingredientsUidList.map(uid => {
+                                    const targetInd = indList.find(ind => ind.uid === uid);
+                                    return targetInd ? targetInd.typeUid : null;
+                                });
+                                
+                                const isIndTypeMatch = currentSelectedIndType.length === 0 || 
+                                    currentSelectedIndType.every(selectedTypeUid => recipeIngredientTypes.includes(selectedTypeUid + 1)); 
 
                                 if (!isTypeMatch || !isIndTypeMatch) return null;
 
