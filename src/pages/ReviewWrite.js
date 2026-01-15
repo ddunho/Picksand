@@ -59,12 +59,11 @@ function Review() {
         return config;
     });
 
-    const responseInterceptor = api.interceptors.response.use(
+   const responseInterceptor = api.interceptors.response.use(
     response => response,
     async error => {
         const originalRequest = error.config;
 
-        // ✅ 401 또는 403 에러 모두 처리
         if (
             (error.response?.status === 401 || error.response?.status === 403) &&
             !originalRequest._retry &&
@@ -79,7 +78,10 @@ function Review() {
                     throw new Error("리프레시 토큰이 없습니다.");
                 }
 
-
+                // ✅ 어떤 API에서 에러가 발생했는지 로그
+                console.log("403 에러 발생한 API:", originalRequest.url);
+                console.log("토큰 재발급 시도...");
+                
                 const res = await api.post("server-a/members/reissue", {
                     refreshToken
                 });
@@ -88,7 +90,7 @@ function Review() {
                     throw new Error("토큰 재발급 실패: 유효하지 않은 응답");
                 }
 
-
+                console.log("토큰 재발급 성공");
                 localStorage.setItem("accessToken", res.data.accessToken);
                 localStorage.setItem("refreshToken", res.data.refreshToken);
 
@@ -99,6 +101,7 @@ function Review() {
                 
             } catch (e) {
                 console.error("토큰 재발급 실패:", {
+                    originalUrl: originalRequest.url, // ✅ 원래 요청 URL
                     message: e.message,
                     response: e.response?.data,
                     status: e.response?.status,
