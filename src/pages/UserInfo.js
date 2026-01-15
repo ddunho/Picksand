@@ -385,6 +385,9 @@ function UserInfo(){
                                             <p>{order.orderNumber}</p>
                                             <p>{order.orderDate}</p>
                                         </div>
+                                        <div className="orderstoreName">
+                                            OOO점
+                                        </div>
                                         <div className="ordercomponent">
                                             {order.items.map((item, idx) => (
                                                 <button key={idx}>{item.sandwichName}</button>

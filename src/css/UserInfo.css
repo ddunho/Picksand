@@ -250,6 +250,9 @@
     color: #F54A00;
 }
 
+.orderstoreName{
+}
+
 .ordercomponent{
     display: flex;
     gap: 8px;
