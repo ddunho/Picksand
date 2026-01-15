@@ -376,93 +376,9 @@
     cursor: pointer;
     font-size: 14px;
 }
-.ordercard {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    border-radius: 12px;
-    background-color: #fff7e8;
-    margin-bottom: 16px;
-}
 
-.orderleft {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.ordernumber p:first-child {
-    color: #ff5722;
-    font-weight: 600;
-}
-
-.orderstoreName {
-    font-weight: 600;
-}
-
-.ordercomponent button {
-    margin-right: 6px;
-    padding: 6px 10px;
-    border-radius: 12px;
-    border: 1px solid #ffab91;
-    background-color: #fff;
-    font-size: 13px;
-}
-
-/* 오른쪽 영역 */
-.orderright {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: space-between;
-}
-
-.orderbuttongroup {
-    display: flex;
-    gap: 8px;
-}
-
-/* ⭐ 주문 상태 버튼 (영문 클래스) */
-.orderstatus-confirm {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background-color: #ffcdd2;
-    color: #c62828;
-    font-weight: 500;
-}
-
-.orderstatus-shipping {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background-color: #ffe0b2;
-    color: #e65100;
-    font-weight: 500;
-}
-
-.orderstatus-complete {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background-color: #c8e6c9;
-    color: #2e7d32;
-    font-weight: 500;
-}
-
-/* 리뷰 작성 버튼 */
-.orderreviewbtn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background-color: #81c784;
-    color: white;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.orderreviewbtn:hover {
-    background-color: #66bb6a;
+.orderReviewBTN:hover {
+    background-color: #45a049;
 }
 @media (max-width: 768px){
     
