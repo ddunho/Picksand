@@ -62,6 +62,17 @@ function OrderPay(){
             return;
         }
 
+        // ⭐ 전화번호와 주소 유효성 검증 추가
+        if (!userInfo.phoneNumber) {
+            alert("회원 정보에 전화번호가 없습니다. 회원 정보를 수정해주세요.");
+            return;
+        }
+
+        if (!userInfo.address) {
+            alert("회원 정보에 주소가 없습니다. 회원 정보를 수정해주세요.");
+            return;
+        }
+
         // 결제 확인 알럿
         const confirmPayment = window.confirm(
             `총 ${totalProductPrice.toLocaleString()}원을 결제하시겠습니까?`
@@ -83,20 +94,26 @@ function OrderPay(){
                 }))
             }));
 
-            // 주문 생성 API 호출
-            const result = await api.post("/server-a/orders", {
+            // ⭐ receiverPhone, deliveryAddress 추가
+            const orderData = {
                 totalPrice: totalProductPrice,
                 receiverName: receiverNameValue,
+                receiverPhone: userInfo.phoneNumber,                                    // ⭐ 추가
+                deliveryAddress: `${userInfo.address} ${userInfo.addressDetail}`,       // ⭐ 추가
                 deliveryMessage: deliveryMessageValue,
                 orderItems
-            });
+            };
+
+            console.log("📦 주문 데이터:", orderData);
+
+            // 주문 생성 API 호출
+            const result = await api.post("/server-a/orders", orderData);
 
             alert("결제가 완료되었습니다!");
 
-            console.log(result)
+            console.log(result);
 
-            /*
-            // PaySuccess 페이지로 이동 (주문 정보 전달)
+            // PaySuccess 페이지로 이동 (주석 해제 가능)
             navigate("/paySuccess", {
                 state: {
                     orderData: reqDatas,
@@ -105,7 +122,6 @@ function OrderPay(){
                     deliveryMessage: deliveryMessageValue
                 }
             });
-            */
 
         } catch (err) {
             console.error("결제 실패:", err);
