@@ -93,7 +93,12 @@ export default function LoadRecipe({indType, indList, recipeList, handleLRRecipe
                                     currentSelectedRecipeType === -1 ||
                                     element.recipeType === currentSelectedRecipeType;
 
-                                if (!isTypeMatch) return null;
+                                const isIndTypeMatch =
+                                    currentSelectedIndType.length === 0 ||
+                                    element.Ingredients.every(selectedType => 
+                                        element.Ingredients.some(ing => ing.indType === selectedType));
+
+                                if (!isTypeMatch || !isIndTypeMatch) return null;
 
                                 return (
                                     <RecipeBox
