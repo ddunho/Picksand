@@ -48,63 +48,84 @@ function OrderList() {
     const api = apiRef.current;
     const isAlertShownRef = useRef(false);
 
-    useEffect(() => {
-        const requestInterceptor = api.interceptors.request.use((config) => {
-            const token = localStorage.getItem("accessToken");
+useEffect(() => {
+    // ✅ Request Interceptor 추가 (Authorization 헤더 추가용)
+    const requestInterceptor = api.interceptors.request.use((config) => {
+        const token = localStorage.getItem("accessToken");
 
-            if (token && !config.url?.includes('server-a/members/reissue')) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;
-        });
+        if (token && !config.url?.includes('server-a/members/reissue')) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    });
 
-        const responseInterceptor = api.interceptors.response.use(
-            response => response,
-            async error => {
-                const originalRequest = error.config;
+    // ✅ Response Interceptor (401 에러 처리용)
+    const responseInterceptor = api.interceptors.response.use(
+        response => response,
+        async error => {
+            const originalRequest = error.config;
 
-                if (
-                    error.response?.status === 401 &&
-                    !originalRequest._retry &&
-                    !originalRequest.url.includes("server-a/members/reissue")
-                ) {
-                    originalRequest._retry = true;
+            if (
+                error.response?.status === 401 &&
+                !originalRequest._retry &&
+                !originalRequest.url.includes("server-a/members/reissue")
+            ) {
+                originalRequest._retry = true;
 
-                    try {
-                        const refreshToken = localStorage.getItem("refreshToken");
-                        const res = await api.post("server-a/members/reissue", {
-                            refreshToken
-                        });
-
-                        localStorage.setItem("accessToken", res.data.accessToken);
-                        localStorage.setItem("refreshToken", res.data.refreshToken);
-
-                        originalRequest.headers.Authorization =
-                            `Bearer ${res.data.accessToken}`;
-                        isAlertShownRef.current = false;
-                        return api(originalRequest);
-                    } catch (e) {
-                        if (!isAlertShownRef.current) {
-                            isAlertShownRef.current = true;
-                            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-                        }
-
-                        localStorage.clear();
-                        window.location.href = "mainpage";
-                        return Promise.reject(e);
+                try {
+                    const refreshToken = localStorage.getItem("refreshToken");
+                    
+                    if (!refreshToken) {
+                        throw new Error("리프레시 토큰이 없습니다.");
                     }
+
+                    console.log("토큰 재발급 시도...");
+                    const res = await api.post("server-a/members/reissue", {
+                        refreshToken
+                    });
+
+                    if (!res.data?.accessToken || !res.data?.refreshToken) {
+                        throw new Error("토큰 재발급 실패: 유효하지 않은 응답");
+                    }
+
+                    console.log("토큰 재발급 성공");
+                    localStorage.setItem("accessToken", res.data.accessToken);
+                    localStorage.setItem("refreshToken", res.data.refreshToken);
+
+                    originalRequest.headers.Authorization =
+                        `Bearer ${res.data.accessToken}`;
+                    isAlertShownRef.current = false;
+                    return api(originalRequest);
+                    
+                } catch (e) {
+                    console.error("토큰 재발급 실패:", {
+                        message: e.message,
+                        response: e.response?.data,
+                        status: e.response?.status,
+                        refreshToken: localStorage.getItem("refreshToken") ? "존재" : "없음"
+                    });
+
+                    if (!isAlertShownRef.current) {
+                        isAlertShownRef.current = true;
+                        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+                    }
+
+                    localStorage.clear();
+                    window.location.href = "/mainpage";
+                    return Promise.reject(e);
                 }
-
-                return Promise.reject(error);
             }
-        );
 
-        // ✅ 컴포넌트 unmount 시 interceptor 제거 (중요!)
-        return () => {
-            api.interceptors.request.eject(requestInterceptor);
-            api.interceptors.response.eject(responseInterceptor);
-        };
-    }, []);
+            return Promise.reject(error);
+        }
+    );
+
+    // ✅ Cleanup: 컴포넌트 언마운트 시 interceptor 제거
+    return () => {
+        api.interceptors.request.eject(requestInterceptor);
+        api.interceptors.response.eject(responseInterceptor);
+    };
+}, []);
 
 
 
