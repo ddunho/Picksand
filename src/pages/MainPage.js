@@ -278,7 +278,15 @@ function SandwichBox({sandwichIndex,
 
             console.log(result.data);
             await LoadRecipeDatas(indList);
-            toast.success(result.data);
+
+            if(result.data.code === 1)
+            {
+                toast.success(result.data.message);
+            }
+            else
+            {
+                toast.error(result.data.message);
+            }
 
         }catch(error){
             const errorMassage = error.response && error.response.data ? error.response.data : '개별 처리에 실패 했습니다.';
@@ -986,7 +994,6 @@ function MainPage() {
     return(
         <div className='MP_noSelect'>
             <Toaster
-                limit={5}
                 toastOptions={{
                 // 기본 지속 시간 (밀리초 단위, 1000 = 1초)
                 duration: 3000 
