@@ -403,13 +403,15 @@ function UserInfo(){
                                             ))}
                                         </div>
                                     </div>
-                                    <div className={order.orderStatus === 'SHIPPING' ? 'deliverstatusing' : 'deliverstatus'}>
+                                    <div className="orderright">
                                         <p>{order.totalPrice.toLocaleString()}원</p>
-                                        <div className="orderRight">
-                                            <button>{order.orderStatus}</button>
-                                            {order.orderStatus === 'DELIVERED' && (
+                                        <div className="orderbuttongroup">
+                                            <button className={`orderstatus-${order.orderStatus.toLowerCase()}`}>
+                                                {order.orderStatus}
+                                            </button>
+                                            {order.orderStatus === '배달완료' && (
                                                 <button 
-                                                    className="orderReviewBTN"
+                                                    className="orderreviewbtn"
                                                     onClick={() => handleReviewWrite(order.orderId)}
                                                 >
                                                     리뷰작성
