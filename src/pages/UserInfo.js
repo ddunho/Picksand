@@ -404,12 +404,7 @@ function UserInfo(){
                                         </div>
                                     </div>
                                     <div className="orderright">
-                                        <p>{order.totalPrice.toLocaleString()}원</p>
-                                        <div className="orderbuttongroup">
-                                            <button className={`orderstatus-${order.orderStatus.toLowerCase()}`}>
-                                                {order.orderStatus}
-                                            </button>
-                                            {order.orderStatus === '배달완료' && (
+                                        {order.orderStatus === '배달완료' && (
                                                 <button 
                                                     className="orderreviewbtn"
                                                     onClick={() => handleReviewWrite(order.orderId)}
@@ -417,6 +412,12 @@ function UserInfo(){
                                                     리뷰작성
                                                 </button>
                                             )}
+                                        <p>{order.totalPrice.toLocaleString()}원</p>
+                                        <div className="orderbuttongroup">
+                                            <button className={`orderstatus-${order.orderStatus.toLowerCase()}`}>
+                                                {order.orderStatus}
+                                            </button>
+                                    
                                         </div>
                                     </div>
                                 </div>
