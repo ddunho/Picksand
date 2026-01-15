@@ -224,10 +224,10 @@ function SandwichBox({sandwichIndex,
         );
     }
 
-    const [isSaving, setIsSaving] = useState(false);
+    const isSaving = useRef(false);
     async function handleSandwichBoxSaveBTN(e, sandwichIndex)
     {
-        if(isSaving)
+        if(isSaving.current)
         {
             return;
         }
@@ -247,7 +247,7 @@ function SandwichBox({sandwichIndex,
             return;
         }
         
-        setIsSaving(true);
+        isSaving.current = true;
         let totalPrice = 0;
         for(let x = 0; x < target.Ingredients.length; x++)
         {
@@ -284,7 +284,7 @@ function SandwichBox({sandwichIndex,
             toast.error(`${errorMassage}`);
         }
         finally{
-            setIsSaving(false);
+            isSaving.current = false;
         }
     }
 
@@ -984,7 +984,11 @@ function MainPage() {
 
     return(
         <div className='MP_noSelect'>
-            <Toaster/>
+            <Toaster
+                toastOptions={{
+                // 기본 지속 시간 (밀리초 단위, 1000 = 1초)
+                duration: 3000 
+            }}/>
 
             <main className='MP_main MP_HorizontalContainer'>
 
