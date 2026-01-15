@@ -322,8 +322,8 @@
 .orderReviewBTN
 {
     background: #ffffff !important;
-    color: black;
-    border: 1px solid #e1e1e1;
+    color: black !important;
+    border: 1px solid #e1e1e1 !important;
     box-sizing: border-box;
 }
 
