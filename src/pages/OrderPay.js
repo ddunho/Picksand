@@ -83,6 +83,14 @@ function OrderPay(){
         }
 
         try {
+            // ⭐ storeUid 추출 (첫 번째 주문의 shopInfo에서)
+            const storeUid = reqDatas[0]?.shopInfo?.storeUid;
+
+            if (!storeUid) {
+                alert("매장 정보를 찾을 수 없습니다.");
+                return;
+            }
+
             // 서버로 보낼 데이터 가공
             const orderItems = reqDatas.map(item => ({
                 recipeId: item.recipe.id,
@@ -94,13 +102,14 @@ function OrderPay(){
                 }))
             }));
 
-            // ⭐ receiverPhone, deliveryAddress 추가
+            // ⭐ receiverPhone, deliveryAddress, storeUid 추가
             const orderData = {
                 totalPrice: totalProductPrice,
                 receiverName: receiverNameValue,
-                receiverPhone: userInfo.phoneNumber,                                    // ⭐ 추가
-                deliveryAddress: `${userInfo.address} ${userInfo.addressDetail}`,       // ⭐ 추가
+                receiverPhone: userInfo.phoneNumber,
+                deliveryAddress: `${userInfo.address} ${userInfo.addressDetail}`,
                 deliveryMessage: deliveryMessageValue,
+                storeUid: storeUid,  // ⭐ 추가
                 orderItems
             };
 
