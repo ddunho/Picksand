@@ -186,7 +186,7 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos,
                   <div>위도: {selectedPlace.lat}</div>
                   <div>경도: {selectedPlace.lng}</div>
                   {selectedPlace.storeUid !== -1 && <div className="GGMap_PinReview" 
-                    onClick={() => handleReviewOnClick(selectedPlace)}>리뷰 n개</div>}
+                    onClick={() => handleReviewOnClick(selectedPlace)}>리뷰 보기</div>}
                 </div>
               </InfoWindow>
             )}
