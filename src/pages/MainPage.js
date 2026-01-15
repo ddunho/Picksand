@@ -244,6 +244,7 @@ function SandwichBox({sandwichIndex,
         let target = sandwichAry[sandwichIndex];
         if(target.Ingredients.length < 1)
         {
+            toast.error("샌드위치가 없습니다!");
             return;
         }
         
@@ -985,6 +986,7 @@ function MainPage() {
     return(
         <div className='MP_noSelect'>
             <Toaster
+                limit={5}
                 toastOptions={{
                 // 기본 지속 시간 (밀리초 단위, 1000 = 1초)
                 duration: 3000 
