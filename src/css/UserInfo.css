@@ -285,7 +285,7 @@
     color: #7C290C;
 }
 
-.deliverstatusing > button{
+.deliverstatusing button{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -303,7 +303,7 @@
     color: #7C290C;
 }
 
-.deliverstatus > button{
+.deliverstatus button{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -315,6 +315,11 @@
     background: inherit;
     background-color: #C6F0D6;
     color: #3CA366;
+}
+
+.orderReviewBTN
+{
+    
 }
 
 .dorodetailcontainer{
@@ -480,7 +485,7 @@
         font-size: 12px;
     }
 
-    .deliverstatusing > button{
+    .deliverstatusing button{
         width: 50px;
         height: 20px;
         font-size: 12px;
@@ -494,7 +499,7 @@
     .deliverstatus > p{
         font-size: 12px;
     }
-    .deliverstatus > button{
+    .deliverstatus button{
         width: 58px;
         height: 20px;
         font-size: 12px;
