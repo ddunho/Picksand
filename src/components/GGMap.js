@@ -24,7 +24,8 @@ const CurrentPosition = {
   //37.5394772 127.1248288
 ];
 
-export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
+export default function GGMap({handleGPStoggle, userInfo, shopInfos, 
+  currentSelectedShopAddr, setCurrentSelectedShopAddr}) {
 
   const navigate = useNavigate(); 
 
@@ -45,7 +46,6 @@ export default function GGMap({handleGPStoggle, userInfo, shopInfos}) {
 //
 
   const [currentSelectedUserAddr, setCurrentSelectedUserAddr] = useState(0);
-  const [currentSelectedShopAddr, setCurrentSelectedShopAddr] = useState(0);
 
   async function tempMarker()
   {

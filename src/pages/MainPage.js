@@ -431,6 +431,7 @@ function MainPage() {
     const [mobileCurretnSelectedType, setMobileCurretnSelectedType] = useState(0);
     const [isMobileView, setIsMobileView] = useState(false);
     const [isCartMode,setIsCartMode] = useState(false);
+    const [currentSelectedShopAddr, setCurrentSelectedShopAddr] = useState(0);
 
     const [userInfo, setUserInfo] = useState(null);
 
@@ -852,6 +853,10 @@ function MainPage() {
                 }
 
                 const newData = {
+                    "shopInfo":{
+                        ShopUid: shopInfos[currentSelectedShopAddr].id,
+                        ShopName: shopInfos[currentSelectedShopAddr].storeName
+                    },
                     "recipe":{
                     recipeType: 2,
                     name: target.name,
@@ -1152,8 +1157,8 @@ function MainPage() {
                             onClick={() => handleGPStoggle(true)}>
                     <img className='MP_Footer_Img' draggable="false" src={`${process.env.PUBLIC_URL}/images/shop_img.png`} alt='shop_img.png'/>
                     <div className='MP_Footer_TextBox MP_VerticalContainer'>
-                        <div className='MP_FooterText_Large MP_textColor1'>천호점</div>
-                        <div className='MP_FooterText_Normal MP_textColor2'>서울 강동구 천호대로 1027 동원천호빌딩 5층</div>
+                        <div className='MP_FooterText_Large MP_textColor1'>{ShopInfo.currentSelectedShopAddr.storeName}</div>
+                        <div className='MP_FooterText_Normal MP_textColor2'>{ShopInfo.currentSelectedShopAddr.storeLocation}</div>
                     </div>
                 </div>
 
@@ -1177,7 +1182,8 @@ function MainPage() {
 
             <div className='MP_GPSPopupContainer MP_GPSPopupDisabled' ref={GGMapRef}>
                 <div className='MP_GPSPopup'>
-                    {isLoaded && <GGMap handleGPStoggle={handleGPStoggle} userInfo={userInfo} shopInfos={shopInfos}></GGMap>}
+                    {isLoaded && <GGMap handleGPStoggle={handleGPStoggle} userInfo={userInfo} shopInfos={shopInfos}
+                    currentSelectedShopAddr={currentSelectedShopAddr} setCurrentSelectedShopAddr={setCurrentSelectedShopAddr}></GGMap>}
                 </div>
                 <div className='MP_GPSPopupBackground'
                             onClick={() => handleGPStoggle(false)}>
