@@ -266,6 +266,8 @@
 .orderRight{
     display: flex;
     flex-direction: column;
+
+    gap:4px;
 }
 
 .ordercomponent > button{
@@ -319,7 +321,10 @@
 
 .orderReviewBTN
 {
-    
+    background: #ffffff !important;
+    color: black;
+    border: 1px solid #e1e1e1;
+    box-sizing: border-box;
 }
 
 .dorodetailcontainer{
