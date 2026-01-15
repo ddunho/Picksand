@@ -25,7 +25,7 @@ function OrderPay(){
     });
 
     useEffect(() => {
-        api.get("server-a/members/userinfo")
+        api.get("/server-a/members/userinfo")
             .then(res => {
                 setUserInfo(res.data);
             })
