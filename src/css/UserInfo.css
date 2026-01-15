@@ -432,18 +432,16 @@
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    background-color: #BBDEFB;  /* 연한 블루 */
+    background-color: #EEF2F7; /* 연한 블루 */
     color: #1565C0;   
     transition: background-color 0.2s;
 }
 
 .orderreviewbtn:hover {
-    background-color: #66bb6a;
+    background-color: #1565C0;
+    color: #BBDEFB;
 }
 
-.orderReviewBTN:hover {
-    background-color: #45a049;
-}
 @media (max-width: 768px){
     
 
